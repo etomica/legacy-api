@@ -179,17 +179,7 @@ public class CFileGenerator extends FileGenerator {
                     writeLine("}");
                     writer.newLine();
                 }
- 
-                // setJavaObject method
-                writeLine("void " + cct[classIndex].getClassname() + "::setJavaObject(jobject jobj) {");
-                indentLevel++;
-                writeLine("myObject = jobj;");
-                for(int i = 0; i < cct[classIndex].getExtends().length; i++) {
-                    writeLine(cct[classIndex].getExtends()[i] + "::setJavaObject(myObject);");
-                }
-                indentLevel--;
-                writeLine("}");
-                
+
             }
             
             // public methods
@@ -361,11 +351,7 @@ public class CFileGenerator extends FileGenerator {
             writeHashCode("myObject");
             myLine = new String(objectPersistHash + "::addEntry(hashValue, this);");
             writeLine(myLine);
-            
-            // Call superclass setJavaObject
-            for(int i = 0; i < cct[classIndex].getExtends().length; i++) {
-                writeLine(cct[classIndex].getExtends()[i] + "::setJavaObject(myObject);");
-            }
+
         } // end ctor case
         else {
             if(returnType.compareTo("void") == 0) {

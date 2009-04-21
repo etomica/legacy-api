@@ -18,6 +18,12 @@ public class Java_To_C {
         String[] javaList = inputReader.getFileList();
         InputParameters ip = inputReader.getParameters();
 
+        // Create object class
+        ObjectClassCreator oCreate = new ObjectClassCreator(inputReader.getOutputDir());
+        oCreate.createInterface();
+        oCreate.createConcreteClass();
+        
+        // Create object persistence class
         ObjectPersistGenerator cop = new ObjectPersistGenerator(objectPersistName, inputReader.getOutputDir());
         cop.createIncludeFile();
         cop.createCFile();

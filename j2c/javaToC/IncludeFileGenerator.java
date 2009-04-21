@@ -104,23 +104,26 @@ public class IncludeFileGenerator extends FileGenerator {
             else
                 classLine = new String("class " + innerClass + "::" + cct.getClassname());
             
-            if(cct.getImplements().length > 0 || cct.getExtends().length > 0) {
-                classLine = classLine.concat(" : ");
-                // concrete inheritance
-                if(cct.getExtends().length > 0) {
-                    for(int i = 0; i < cct.getExtends().length; i++) {
-                        if(i > 0) classLine = classLine.concat(",");
-                        classLine = classLine.concat(" public "+ cct.getExtends()[i]);
-                    }
-                }
-                // virtual inheritance
-                if(cct.getImplements().length > 0) {
-                    for(int i = 0; i < cct.getImplements().length; i++) {
-                        if(i > 0 || cct.getExtends().length > 0) classLine = classLine.concat(",");
-                        classLine = classLine.concat(" public virtual "+ cct.getImplements()[i]);
-                    }
+
+            classLine = classLine.concat(" : ");
+            // concrete inheritance
+            if(cct.getExtends().length > 0) {
+                for(int i = 0; i < cct.getExtends().length; i++) {
+                    if(i > 0) classLine = classLine.concat(",");
+                    classLine = classLine.concat(" public "+ cct.getExtends()[i]);
                 }
             }
+            else {
+                classLine = classLine.concat(" public virtual Object");
+            }
+            // virtual inheritance
+            if(cct.getImplements().length > 0) {
+                for(int i = 0; i < cct.getImplements().length; i++) {
+                    classLine = classLine.concat(",");
+                    classLine = classLine.concat(" public virtual "+ cct.getImplements()[i]);
+                }
+            }
+
     
             classLine = classLine.concat(" {");
             writeLine(classLine);
@@ -184,42 +187,20 @@ public class IncludeFileGenerator extends FileGenerator {
                     }
 
                 }
-                
-                if(!cct.isAbstractClass())
-                    writeLine("jobject getJavaObject() {return myObject;}");
-                
+                                
                 indentLevel--;
                 
             }
-            // Create getJavaObject method for concrete classes
-            if(cct.isAbstractClass()) {
-                writer.newLine();
-                writeLine("public :");
-                indentLevel++;
-                writeLine("virtual jobject getJavaObject() = 0;");
-                indentLevel--;
-            }
-            
+
             if(!cct.isPureVirtualClass()) {
                 writer.newLine();
                 writeLine("protected:");
                 indentLevel++;
                 if(!hasDefaultCtor)
                     writeLine(cct.getClassname() + "() { }");
-                writeLine("void setJavaObject(jobject jobj);// {myObject = jobj; }");
-                indentLevel--;
-            }
-            
-            if(!cct.isPureVirtualClass()) {
-                writer.newLine();
-                writeLine("private:");
-                indentLevel++;
-                writeLine("jobject myObject;");
                 indentLevel--;
             }
 
-
-            
             indentLevel--;
         
             writer.newLine();
