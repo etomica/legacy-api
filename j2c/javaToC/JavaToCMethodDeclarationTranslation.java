@@ -28,6 +28,16 @@ public abstract class JavaToCMethodDeclarationTranslation {
     	for(int i = 0; i < sigItems.length; i++) {
             sigItems[i] = StringUtilities.removeEdgeWhitespace(sigItems[i]);
 
+            String item = new String(sigItems[i]);
+            item = item.replace("[]", "");
+            if(ClassType.isArgUsable(item) == false) {
+                if(sigItems[i].indexOf("[]") >= 0)
+                    sigItems[i] = new String("WrapperObject" + sigItems[i].substring(sigItems[i].indexOf("[]")));
+                else
+                    sigItems[i] = new String("WrapperObject");
+                
+            }
+            
             // signature item will be a pointer to a user defined object.
             // Add to signature list.
     	    if(!TypeConversion.isBasicJavaType(sigItems[i]) &&
@@ -69,6 +79,15 @@ public abstract class JavaToCMethodDeclarationTranslation {
         String returnType = new String("");
          
         for(int i = 0; i < items.length; i++) {
+            String item = new String(items[i]);
+            item = item.replace("[]", "");
+            if(ClassType.isArgUsable(item) == false) {
+                if(items[i].indexOf("[]") >= 0)
+                    items[i] = new String("WrapperObject" + items[i].substring(items[i].indexOf("[]")));
+                else
+                    items[i] = new String("WrapperObject");
+            }
+
             returnType = returnType.concat(TypeConversion.getCType(items[i]) + " ");
         }
 

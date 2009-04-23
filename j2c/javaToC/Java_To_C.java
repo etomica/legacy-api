@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class Java_To_C {
 
-    private String inputFile;
     private ClassTypeJava[] javaClass;
     private ClassTypeC[] cClass;
     private String objectPersistName = "ObjectPersist";

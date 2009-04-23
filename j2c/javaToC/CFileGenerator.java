@@ -441,7 +441,10 @@ writeLine("#include \"InstanceHash.h\"");
                         try {
                             arrayClassLine = arrayClassLine.concat(container.getCClass(item.varType).getJNIName() + "\");");
                         }
-                        catch (ClassNotFoundException ex) { ex.printStackTrace();}
+                        catch (ClassNotFoundException ex) {
+                            System.out.println("Unknown class of array type -> " + item.varType + " : Using java Object class");
+                            arrayClassLine = arrayClassLine.concat(Object.class.getName().replace(".", "/") + "\");");
+                        }
                     }
                     writeLine(arrayClassLine);
                 }

@@ -66,7 +66,10 @@ public class CSourceGenerationUtilities {
             try {
                 vmType = vmType.concat(container.getCClass(myVMReturn).getJNIName() + ";");
             }
-            catch (ClassNotFoundException ex) { ex.printStackTrace(); }
+            catch (ClassNotFoundException ex) {
+                System.out.println("Unknown type when creating JNI method signature: Will use java object");
+                vmType = vmType.concat(Object.class.getName().replace(".", "/") + ";");
+            }
         }
 
         String mn;
@@ -99,7 +102,10 @@ public class CSourceGenerationUtilities {
                 try {
                     type = type.concat(container.getCClass(pairs[i]).getJNIName() + ";");
                 }
-                catch (ClassNotFoundException ex) { ex.printStackTrace(); }
+                catch (ClassNotFoundException ex) {
+                    System.out.println("Unknown type when creating JNI method return: Will use java object");
+                    type = type.concat(Object.class.getName().replace(".", "/") + ";");
+                }
             }
 //System.out.println("      type -> " + type);
 

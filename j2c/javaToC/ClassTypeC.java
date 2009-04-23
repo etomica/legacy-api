@@ -52,7 +52,7 @@ public class ClassTypeC extends ClassType {
             String[] args = StringUtilities.parseCommaSeparatedList(jct.getCtorSignature()[i]);
             for(int j = 0; j < args.length; j++) {
 //System.out.println("arg : " + args[j]);
-                if(isArgUsable(args[j]) == false ||
+                if(/*isArgUsable(args[j]) == false ||*/
                    args[j].contains("[][]") == true) {
 //System.out.println("  should not include this method");
                     ctorStatus = false;
@@ -91,14 +91,14 @@ public class ClassTypeC extends ClassType {
             String[] args = StringUtilities.parseCommaSeparatedList(jct.getMethodSignature()[i]);
             for(int j = 0; j < args.length; j++) {
 //System.out.println("arg : " + args[j]);
-                if(isArgUsable(args[j]) == false  ||
+                if(/*isArgUsable(args[j]) == false  ||*/
                    args[j].contains("[][]") == true) {
 //System.out.println("  should not include this method");
                     sigStatus = false;
                     break;
                 }
             }
-            if(isArgUsable(jct.getMethodReturn()[i]) &&
+            if(/*isArgUsable(jct.getMethodReturn()[i]) &&*/
                jct.getMethodReturn()[i].contains("[]") == false &&
                jct.getMethodName()[i].compareTo("main") != 0 &&
                sigStatus) {

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.BeanInfo;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.ObjectInputStream;
@@ -11,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -132,10 +134,11 @@ public class ClassType {
         return jniClassname;
     }
     
-    protected boolean isArgUsable(String arg) {
+    static protected boolean isArgUsable(String arg) {
         if(arg.compareTo(ActionEvent.class.getSimpleName())           != 0 &&
            arg.compareTo(ArrayList.class.getSimpleName())             != 0 &&
            arg.compareTo(ActionListener.class.getSimpleName())        != 0 &&
+           arg.compareTo(BeanInfo.class.getSimpleName())              != 0 &&
            arg.compareTo(Class.class.getSimpleName())                 != 0 &&
            arg.compareTo(Cloneable.class.getSimpleName())             != 0 &&
            arg.compareTo(Color.class.getSimpleName())                 != 0 &&
@@ -144,6 +147,7 @@ public class ClassType {
            arg.compareTo(DefaultListModel.class.getSimpleName())      != 0 &&
            arg.compareTo(Exception.class.getSimpleName())             != 0 &&
            arg.compareTo(Field.class.getSimpleName())                 != 0 &&
+           arg.compareTo(FieldPosition.class.getSimpleName())         != 0 &&
            arg.compareTo(File.class.getSimpleName())                  != 0 &&
            arg.compareTo(FileWriter.class.getSimpleName())            != 0 &&
            arg.compareTo(Graphics.class.getSimpleName())              != 0 &&

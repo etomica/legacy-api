@@ -39,7 +39,9 @@ public class IR2 {
 //System.out.println("    ADDING TO LIST : " + classList.get(i).getClassname());System.out.flush();
                     myList[idx].add(classList.get(i).getClassname());
                 }
-                catch (ClassNotFoundException ex) { ex.printStackTrace(); }
+                catch (ClassNotFoundException ex) {
+                    System.out.println("Ignoring unknown inheritance class : " + classList.get(i).getExtends()[j]);
+                }
 
             }
 

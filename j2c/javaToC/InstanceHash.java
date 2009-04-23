@@ -179,7 +179,6 @@ public class InstanceHash extends FileGenerator {
         for(int i = 0; i < container.getCClassCount(); i++) {
             boolean inList = false;
             for(int j = 0; j < nList.size(); j++) {
-                System.out.println("namespace : " + container.getCClass(i).getNamespace());
                 if(container.getCClass(i).getNamespace().compareTo(nList.get(j)) == 0) {
                     inList = true;
                     break;
