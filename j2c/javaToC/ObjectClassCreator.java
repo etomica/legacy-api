@@ -10,11 +10,13 @@ public class ObjectClassCreator extends FileGenerator {
     private String outputDir;
     private String interfaceName;
     private String concreteName;
+    private CSourceGenerationUtilities cUtils;
     
-    public ObjectClassCreator(String dir) {
+    public ObjectClassCreator(String dir, ClassTypeContainer container) {
         outputDir = dir;
-        interfaceName = new String("IObject");
-        concreteName = new String("Object");
+        interfaceName = new String("IWrapperObject");
+        concreteName = new String("WrapperObject");
+        cUtils = new CSourceGenerationUtilities("myMethodID", container);
     }
     
     /**
@@ -112,7 +114,20 @@ public class ObjectClassCreator extends FileGenerator {
             
             indentLevel++;
     
-            writeLine("virtual jobject getJavaObject() { return myObject; };");
+            writeLine(concreteName + "(jobject jobj);");
+            writeLine("jobject getJavaObject() { return myObject; };");
+            writer.newLine();
+            
+            indentLevel--;
+            
+            // Protected Section
+            writeLine("protected:");
+            writer.newLine();
+            
+            indentLevel++;
+    
+            writeLine(concreteName + "();");
+            writeLine("void setJavaObject(jobject jobj) {myObject = jobj;};");
             writer.newLine();
             
             indentLevel--;
@@ -134,6 +149,49 @@ public class ObjectClassCreator extends FileGenerator {
      * 
      */
     private void createConcreteSource() {
+        try {
+            writer = new BufferedWriter(new FileWriter(new File(outputDir +
+                    File.separator + concreteName + ".cpp")));
+            writeLine("#include <typeinfo>");
+            writeLine("#include \"" + concreteName + ".h\"");
+            writeLine("#include \"ObjectPersist.h\"");
+            writer.newLine();
+            
+            writeLine(concreteName + "::" + concreteName + "() {");
+            writeLine("}");
+            writer.newLine();
+            
+            writeLine(concreteName + "::" + concreteName + "(jobject jobj) {");
+            indentLevel++;
+            writeLine("myObject = jobj;");
+            writeLine("if(typeid(*this) == typeid(" + concreteName + ")) {");
+            
+            indentLevel++;
 
+            writeLine("JavaVM *jvm;");
+            writeLine("jint ret = JNI_GetCreatedJavaVMs(&jvm, 1, NULL);");
+            writeLine("JNIEnv *jenv;");
+            writeLine("(jvm)->AttachCurrentThread((void **)&jenv, NULL);");
+
+            writeLine("jclass myClass = (jenv)->GetObjectClass(myObject);");
+
+            String hashLine = cUtils.constructMethodID("hashCode", "int", "", "hashID", false);
+            
+            writeLine(hashLine);
+            writeLine("jint hashValue = (jenv)->CallIntMethod(myObject, hashID);");
+            
+            writeLine("ObjectPersist::addEntry(hashValue, this);");
+            
+            indentLevel--; 
+            writeLine("}");
+            
+            indentLevel--;
+            writeLine("}");
+            
+            writer.close();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

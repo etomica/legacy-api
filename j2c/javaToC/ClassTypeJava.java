@@ -132,6 +132,7 @@ public class ClassTypeJava extends ClassType {
 //            else if(Modifier.isPrivate(myClass.getDeclaredClasses()[i].getModifiers()) == true)
 //                innerClassAccess[i] = new String("private");
         }
+
     }
 
     public String getPackageName() {
@@ -162,8 +163,12 @@ public class ClassTypeJava extends ClassType {
     
         if(myClass.isInterface())
             System.out.println("INTERFACE : " + myClass.getSimpleName());
-        else
-            System.out.println("CLASS : " + myClass.getSimpleName());
+        else {
+            if(isAbstractClass())
+                System.out.println("ABSTRACT CLASS : " + myClass.getSimpleName());
+            else
+                System.out.println("CLASS : " + myClass.getSimpleName());
+        }
         System.out.println("  canonical name : " + myClass.getCanonicalName());
         System.out.println("  name           : " + myClass.getName());
         System.out.println("  simple name    : " + myClass.getSimpleName());

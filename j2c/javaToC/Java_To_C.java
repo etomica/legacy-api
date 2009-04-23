@@ -17,11 +17,6 @@ public class Java_To_C {
         InputFileReader inputReader = new InputFileReader(file);
         String[] javaList = inputReader.getFileList();
         InputParameters ip = inputReader.getParameters();
-
-        // Create object class
-        ObjectClassCreator oCreate = new ObjectClassCreator(inputReader.getOutputDir());
-        oCreate.createInterface();
-        oCreate.createConcreteClass();
         
         // Create object persistence class
         ObjectPersistGenerator cop = new ObjectPersistGenerator(objectPersistName, inputReader.getOutputDir());
@@ -66,16 +61,29 @@ public class Java_To_C {
         System.out.println("  Creating C Class Instances...");
         for(int i = 0; i < javaClass.length; i++) {
             cClass[i] = new ClassTypeC(javaClass[i]);
+            if(ip.useNamespace()) {
+                if(ip.usePackageAsNamespace()) cClass[i].setNamespace(javaClass[i].getPackageName());
+                else cClass[i].setNamespace(ip.getNamespace());
+            }
         }
+
+        ClassTypeContainer container = new ClassTypeContainer(cClass, javaClass);
+        
+        // Create object class
+        ObjectClassCreator oCreate = new ObjectClassCreator(inputReader.getOutputDir(), container);
+        oCreate.createInterface();
+        oCreate.createConcreteClass();
+        
+        // Create instance hash class
+        InstanceHash iHash = new InstanceHash(inputReader.getOutputDir(), container);
+        iHash.createClass();
+        
 
         for(int i = 0; i < javaClass.length; i++) {
 
             System.out.println("    Processing   : " + javaClass[i].getClassname());
             
-            if(ip.useNamespace()) {
-                if(ip.usePackageAsNamespace()) cClass[i].setNamespace(javaClass[i].getPackageName());
-                else cClass[i].setNamespace(ip.getNamespace());
-            }
+
             
             ImportResolver ir = new ImportResolver(ip.getForwardDeclare(), cClass[i]);
             
@@ -92,7 +100,7 @@ public class Java_To_C {
 
 	            String cFile = includeFile.replace(".h", ".cpp");
 	            CFileGenerator cfg = new CFileGenerator(new File(inputReader.getOutputDir() + File.separator + cFile),
-	                                                    cClass, javaClass, i, ip, objectPersistName,ir);
+	                                                    container, i, ip, objectPersistName,ir);
 
 	            cfg.writeCFile();
             }

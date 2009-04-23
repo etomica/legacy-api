@@ -27,6 +27,7 @@ public class ObjectPersistGenerator extends FileGenerator {
             // Include section
             writeLine("#include \"jni.h\"");
             writeLine("#include <map>");
+            writeLine("#include \"WrapperObject.h\"");
             writer.newLine();
             
             // Class Declaration
@@ -41,8 +42,8 @@ public class ObjectPersistGenerator extends FileGenerator {
             
             indentLevel++;
 
-            writeLine("static void *getCObject(jint hashCode);");
-            writeLine("static void addEntry(jint hashCode, void *cObj);");
+            writeLine("static WrapperObject *getCObject(jint hashCode);");
+            writeLine("static void addEntry(jint hashCode, WrapperObject *cObj);");
             writer.newLine();
             
             indentLevel--;
@@ -53,7 +54,7 @@ public class ObjectPersistGenerator extends FileGenerator {
             
             indentLevel++;
             
-            writeLine("static std::map<jint, void *> objectHash;");
+            writeLine("static std::map<jint, WrapperObject *> objectHash;");
             writer.newLine();
             
             indentLevel--;
@@ -80,16 +81,16 @@ public class ObjectPersistGenerator extends FileGenerator {
             writeLine("#include \"" + className + ".h\"");
             writer.newLine();
             
-            writeLine("std::map<jint, void *>ObjectPersist::objectHash;");
+            writeLine("std::map<jint, WrapperObject *>ObjectPersist::objectHash;");
             writer.newLine();
             
-            writeLine("void " + className + "::addEntry(jint hashCode, void *cObj) {");
+            writeLine("void " + className + "::addEntry(jint hashCode, WrapperObject *cObj) {");
             
             indentLevel++;
             writeLine("if(objectHash.find(hashCode) == objectHash.end()) {");
             indentLevel++;
-            writeLine("objectHash.insert(std::pair<jint, void *>(hashCode, cObj));");
-writeLine("printf(\"------------------------------> %d  %x\\n\", hashCode, cObj); fflush(stdout);");
+            writeLine("objectHash.insert(std::pair<jint, WrapperObject *>(hashCode, cObj));");
+writeLine("printf(\"----------- ADD %d -------------->  %x\\n\", hashCode, cObj); fflush(stdout);");
             indentLevel--;
             writeLine("}");
             indentLevel--;
@@ -97,12 +98,12 @@ writeLine("printf(\"------------------------------> %d  %x\\n\", hashCode, cObj)
             writeLine("}");
             writer.newLine();
             
-            writeLine("void *" + className + "::getCObject(jint hashCode) {");
+            writeLine("WrapperObject *" + className + "::getCObject(jint hashCode) {");
             
             indentLevel++;
-            writeLine("void *theObj = NULL;");
+            writeLine("WrapperObject *theObj = NULL;");
             writeLine("if(objectHash.find(hashCode) != objectHash.end()) theObj = objectHash.find(hashCode)->second;");
-writeLine("printf(\"---------------FETCH----------> %d  %x\\n\", hashCode, theObj); fflush(stdout);");
+writeLine("printf(\"---------------FETCH %d ---------->  %x\\n\", hashCode, theObj); fflush(stdout);");
             writeLine("return theObj;");
             
             indentLevel--;

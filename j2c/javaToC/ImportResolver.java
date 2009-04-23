@@ -52,7 +52,7 @@ public class ImportResolver {
         }
         // classes implemented.  Need to be included in .h file.
         // All classes will extend the Object class
-        includeFileList.add("Object");
+        includeFileList.add("WrapperObject");
         for(int i = 0; i < cct.getExtends().length; i++) {
             includeFileList.add(cct.getExtends()[i]);
         }

@@ -11,33 +11,35 @@ import javaToC.SignatureUtilities.MethodSignatureItem;
 public class CFileGenerator extends FileGenerator {
 
     private ArrayList<String> includeList;
-    private ClassTypeC[] cct;
-    private ClassTypeJava[] jct;
-    private int classIndex;
+    private ClassTypeContainer container;
     private InputParameters inputParms;
     private String objectPersistHash;
     private String methodID = new String("myMethodID");
     private ImportResolver importResolver;
+    private CSourceGenerationUtilities cUtils;
+    private ClassTypeC myCClass;
+    private ClassTypeJava myJavaClass;
 
     
-    CFileGenerator(File includeFile, ClassTypeC[] cc, ClassTypeJava[] jc, int idx, InputParameters ip,
+    CFileGenerator(File includeFile, ClassTypeContainer ctc, int idx, InputParameters ip,
                    String op, ImportResolver ir) {
 
-        cct = cc;
-        jct = jc;
+        container = ctc;
         inputParms = ip;
         importResolver = ir;
         indentLevel = 0;
         objectPersistHash = op;
-        classIndex = idx;
-        
-        
+        myCClass = container.getCClass(idx);
+        myJavaClass = container.getJavaClass(idx);
+
         try {
             writer = new BufferedWriter(new FileWriter(includeFile));
         }
         catch (IOException ex) {
             ex.printStackTrace();
         }
+        
+        cUtils = new CSourceGenerationUtilities(methodID, container);
     }
     
     /**
@@ -45,13 +47,13 @@ public class CFileGenerator extends FileGenerator {
      */
     public void writeCFile() {
         
-        String packageName = new String(jct[classIndex].getPackageName());
+        String packageName = new String(myJavaClass.getPackageName());
         while(packageName.contains(".")) packageName = packageName.replace(".", "/");
 
         try {
             boolean returningCharPointer = false;
-        	for(int i = 0; i < cct[classIndex].getMethodReturn().length; i++) {
-        		if(cct[classIndex].getMethodReturn()[i].compareTo("char *") == 0) {
+        	for(int i = 0; i < myCClass.getMethodReturn().length; i++) {
+        		if(myCClass.getMethodReturn()[i].compareTo("char *") == 0) {
         			returningCharPointer = true;
         			break;
         		}
@@ -62,18 +64,18 @@ public class CFileGenerator extends FileGenerator {
         		writeLine("#include \"malloc.h\"");        		
         	}
             writeLine("#include <typeinfo>");
-            
+writeLine("#include \"InstanceHash.h\"");
         	for(int i = 0; i < importResolver.getSourceFileList().size(); i++) {
         	    writeLine("#include \"" + importResolver.getSourceFileList().get(i) + ".h\"");
         	}
         	
             includeList = new ArrayList<String>();
-            includeList.add(cct[classIndex].getClassname());
+            includeList.add(myCClass.getClassname());
             includeList.add(objectPersistHash);
-            
+/*
             // for each return type, include all subclasses
-            for(int i = 0; i < cct[classIndex].getMethodReturn().length; i++) {
-                String ret = new String(cct[classIndex].getMethodReturn()[i]);
+            for(int i = 0; i < myCClass.getMethodReturn().length; i++) {
+                String ret = new String(myCClass.getMethodReturn()[i]);
                 // Remove pointer notation
                 ret = ret.replace("*", "");
                 // Remove array notation
@@ -82,18 +84,18 @@ public class CFileGenerator extends FileGenerator {
 //System.out.println("ret ->" + ret + "<-");
                 if(!TypeConversion.isBasicCType(ret) && ret.compareTo("") != 0) {
                     try {
-                        int retIdx = getCClassIndex(ret);
+                        int retIdx = container.getCClassIndex(ret);
 //System.out.println("idx = " + retIdx);
-                        for(int j = 0; j < cct[retIdx].getSubclassList().length; j++) {
+                        for(int j = 0; j < container.getCClass(retIdx).getSubclassList().length; j++) {
 //System.out.println("  possible : " + cct[retIdx].getSubclassList()[j]);
                             boolean addInclude = true;
                             for(int k = 0; k < includeList.size(); k++) {
-                                if(cct[retIdx].getSubclassList()[j].compareTo((String)includeList.get(k)) == 0) {
+                                if(container.getCClass(retIdx).getSubclassList()[j].compareTo((String)includeList.get(k)) == 0) {
                                     addInclude = false;
                                     break;
                                 }
                             }
-                            if(addInclude) includeList.add(cct[retIdx].getSubclassList()[j]);
+                            if(addInclude) includeList.add(container.getCClass(retIdx).getSubclassList()[j]);
                         }
                     }
                     catch (ClassNotFoundException ex) {
@@ -102,42 +104,46 @@ public class CFileGenerator extends FileGenerator {
                     }
                 }
             }
-
+*/
             for(int i = 0; i < includeList.size(); i++) {
                 writeLine("#include \"" + (String)includeList.get(i) + ".h\"");
             }
             
             if(inputParms.useNamespace()) {
                 writer.newLine();
-                writeLine("namespace " + cct[classIndex].getNamespace() + " {");
+                writeLine("namespace " + myCClass.getNamespace() + " {");
                 writer.newLine();
                 indentLevel++;
             }
             
-            if(!cct[classIndex].isPureVirtualClass()) {
+            if(!myCClass.isPureVirtualClass()) {
                 
                 // create ctor(jobject)
                 String ctorDeclare;
-                ctorDeclare = new String(cct[classIndex].getClassname() + "::" + cct[classIndex].getClassname() + "(jobject jobj)");
-                if(cct[classIndex].getExtends().length == 0)
-                    ctorDeclare = ctorDeclare.concat(" {");
-                else {
-                    for(int i = 0; i < cct[classIndex].getExtends().length; i++) {
-                        ctorDeclare = ctorDeclare.concat(" : " + cct[classIndex].getExtends()[i] + "(jobj)");
-                    }
-                    ctorDeclare = ctorDeclare.concat(" {");
-                }
-                writeLine(ctorDeclare);
-                
-                indentLevel++;
-                writeLine("myObject = jobj;");
-                writeLine("if(typeid(*this) == typeid(" + cct[classIndex].getClassname() + ")) {");
-                
-                indentLevel++;
-    
-                writeGetJVM(packageName);
+                ctorDeclare = new String(myCClass.getClassname() + "::" + myCClass.getClassname() + "(jobject jobj)");
 
-                writeLine("jclass myClass = (jenv)->FindClass(\"" + cct[classIndex].getJNIName() + "\");");
+//                if(myCClass.getExtends().length == 0)
+//                    ctorDeclare = ctorDeclare.concat(" : WrapperObject(jobj) {");
+                if(myCClass.getExtends().length > 0)/*else*/ {
+                    for(int i = 0; i < myCClass.getExtends().length; i++) {
+                        ctorDeclare = ctorDeclare.concat(" : " + myCClass.getExtends()[i] + "(jobj)");
+                    }
+
+                }
+                ctorDeclare = ctorDeclare.concat(" {");
+                
+                writeLine(ctorDeclare);
+                indentLevel++;
+                
+//                writeLine("myObject = jobj;");
+                writeLine("if(typeid(*this) == typeid(" + myCClass.getClassname() + ")) {");
+                indentLevel++;
+                
+                writeLine("setJavaObject(jobj);");
+                
+                writeGetJVM();
+
+                writeLine("jclass myClass = (jenv)->FindClass(\"" + myCClass.getJNIName() + "\");");
                 writeHashCode("myObject");
                 
                 writeLine(objectPersistHash + "::addEntry(hashValue, this);");
@@ -150,9 +156,9 @@ public class CFileGenerator extends FileGenerator {
                 writer.newLine();
 
                 // Ctors
-                for(int i = 0; i < cct[classIndex].getNumberOfCtors(); i++) {
-                    String methodDeclare = cct[classIndex].getClassname() + "::" + cct[classIndex].getClassname() + "(";
-                    MethodSignatureItem[] mySigItems = SignatureUtilities.parseMethodSignature(cct[classIndex].getCtorSignature()[i]);
+                for(int i = 0; i < myCClass.getNumberOfCtors(); i++) {
+                    String methodDeclare = myCClass.getClassname() + "::" + myCClass.getClassname() + "(";
+                    MethodSignatureItem[] mySigItems = SignatureUtilities.parseMethodSignature(myCClass.getCtorSignature()[i]);
                     methodDeclare = methodDeclare.concat(SignatureUtilities.getSignature(mySigItems));
                     methodDeclare = methodDeclare.concat(") {");
 
@@ -161,15 +167,15 @@ public class CFileGenerator extends FileGenerator {
                     indentLevel++;
                     
     
-                    writeLine("if(typeid(*this) == typeid(" + cct[classIndex].getClassname() + ")) {");
+                    writeLine("if(typeid(*this) == typeid(" + myCClass.getClassname() + ")) {");
                     indentLevel++;
                     
-                    writeGetJVM(packageName);
+                    writeGetJVM();
                     
-                    writeLine("jclass myClass = (jenv)->FindClass(\"" + cct[classIndex].getJNIName() + "\");");
+                    writeLine("jclass myClass = (jenv)->FindClass(\"" + myCClass.getJNIName() + "\");");
 //System.out.println("CTOR : " + cct[classIndex].getCtorSignature()[i]);
-                    writeLine(constructMethodID(cct[classIndex].getClassname(), "", cct[classIndex].getCtorSignature()[i], false));
-                    constructAndWriteMethodCall("", mySigItems/*cct[classIndex].getCtorSignature()[i]*/, false);
+                    writeLine(cUtils.constructMethodID(myCClass.getClassname(), "", myCClass.getCtorSignature()[i], false));
+                    constructAndWriteMethodCall("", mySigItems, false);
     
                     indentLevel--; 
                     writeLine("}");
@@ -186,13 +192,13 @@ public class CFileGenerator extends FileGenerator {
             // It is possible that the class does not have a public ctor.
             // In that case, would need to add one for creation of myObject
             // and inclusion in proxy hash?
-            if(cct[classIndex].getMethodName().length > 0) {
-                for(int i = 0; i < cct[classIndex].getMethodName().length; i++) {
+            if(myCClass.getMethodName().length > 0) {
+                for(int i = 0; i < myCClass.getMethodName().length; i++) {
 
-                    String methodDeclare = cct[classIndex].getMethodReturn()[i] + " " +
-                        cct[classIndex].getClassname() + "::" +
-                        cct[classIndex].getMethodName()[i] + "(";
-                    MethodSignatureItem[] mySigItems = SignatureUtilities.parseMethodSignature(cct[classIndex].getMethodSignature()[i]);
+                    String methodDeclare = myCClass.getMethodReturn()[i] + " " +
+                    myCClass.getClassname() + "::" +
+                    myCClass.getMethodName()[i] + "(";
+                    MethodSignatureItem[] mySigItems = SignatureUtilities.parseMethodSignature(myCClass.getMethodSignature()[i]);
                     methodDeclare = methodDeclare.concat(SignatureUtilities.getSignature(mySigItems));
 
                     methodDeclare = methodDeclare.concat(") {");
@@ -202,17 +208,17 @@ public class CFileGenerator extends FileGenerator {
                     
                     indentLevel++;
                     
-                    writeGetJVM(packageName);
+                    writeGetJVM();
                     
-                    writeLine("jclass myClass = (jenv)->FindClass(\"" + cct[classIndex].getJNIName() + "\");");
-                    writeLine(constructMethodID(cct[classIndex].getMethodName()[i],
-                                                cct[classIndex].getMethodReturn()[i],
-                                                cct[classIndex].getMethodSignature()[i],
-                                                cct[classIndex].getStatic()[i]));
-//System.out.println("Method Return : " + cct[classIndex].getMethodReturn()[i]);
-                    constructAndWriteMethodCall(cct[classIndex].getMethodReturn()[i],
-                                                mySigItems/*cct[classIndex].getMethodSignature()[i]*/,
-                                                cct[classIndex].getStatic()[i]);
+                    writeLine("jclass myClass = (jenv)->FindClass(\"" + myCClass.getJNIName() + "\");");
+                    writeLine(cUtils.constructMethodID(myCClass.getMethodName()[i],
+                            myCClass.getMethodReturn()[i],
+                            myCClass.getMethodSignature()[i],
+                            myCClass.getStatic()[i]));
+//System.out.println("Method Return : " + myCClass.getMethodReturn()[i]);
+                    constructAndWriteMethodCall(myCClass.getMethodReturn()[i],
+                                                mySigItems,
+                                                myCClass.getStatic()[i]);
 
                     indentLevel--;
 
@@ -235,72 +241,7 @@ public class CFileGenerator extends FileGenerator {
         }
     }
     
-    /**
-     * The return value of the call to method ID is assigned to the value of
-     * this classes methodID string.
-     * @param methodName
-     * @param methodReturn
-     * @param signature
-     * @param isStatic
-     * @return Returns a string containing the line of code required to get the
-     *         Java method ID for the method name/signature/return passed in.
-     */
-    private String constructMethodID(String methodName, String methodReturn,
-                                     String signature, boolean isStatic) {
 
-        return constructMethodID(methodName, methodReturn, signature, methodID, isStatic);
-    }
-
-    /**
-     * 
-     * @param methodName
-     * @param methodReturn
-     * @param signature
-     * @param isStatic
-     * @param varName The return value of the call to method ID is assigned to the value of
-     *        this string.
-     * @return Returns a string containing the line of code required to get the
-     *         Java method ID for the method name/signature/return passed in.
-     */
-    private String constructMethodID(String methodName, String methodReturn,
-                                     String signature, String varName, boolean isStatic) {
-        
-        String myVMReturn = new String(methodReturn);
-        
-        // Change local copy of ctor return type
-        if(methodReturn.compareTo("") == 0) myVMReturn = "void";
-        
-        String myLine;
-        if(isStatic)
-            myLine = new String("jmethodID " + varName + " = (jenv)->GetStaticMethodID(myClass, ");
-        else
-            myLine = new String("jmethodID " + varName + " = (jenv)->GetMethodID(myClass, ");
-        
-//System.out.println("METHOD : " + methodName);
-//System.out.println("  signature : " + signature);
-
-//System.out.println("    sig : " + signature);
-        String vmSig = getVMSignature(signature);
-//System.out.println("    vmSig : " + vmSig);
-        String vmType = TypeConversion.translateFromCToVMType(myVMReturn);
-        if(vmType.compareTo(TypeConversion.FULLY_QUALIFIED_CLASS) == 0 ||
-           vmType.compareTo("[" + TypeConversion.FULLY_QUALIFIED_CLASS) == 0) {
-//System.out.println("myVMReturn : " + myVMReturn);
-            try {
-                vmType = vmType.concat(cct[getCClassIndex(myVMReturn)].getJNIName()/*getFullClassname(myVMReturn)*/ + ";");
-            }
-            catch (ClassNotFoundException ex) { ex.printStackTrace(); }
-        }
-
-        String mn;
-//System.out.println("METHOD RETURN ->" + methodReturn + "<-");
-        if(methodReturn.compareTo("") == 0) mn = "\"<init>\"";
-        else mn = "\"" + methodName + "\"";
-            
-        myLine = myLine.concat(mn + ", \"(" + vmSig + ")" + vmType + "\");");
-        return myLine;
-
-    }
 
     /**
      * 
@@ -420,70 +361,20 @@ public class CFileGenerator extends FileGenerator {
                 }
                 else {
                     writeHashCode("returnType");
-                    myLine = new String("void *cObj = " + objectPersistHash + "::getCObject(hashValue);");
+                    myLine = new String("WrapperObject *cObj = " + objectPersistHash + "::getCObject(hashValue);");
                     writeLine(myLine);
                     // If the object is not in the object hash, then the java
                     // object is instantiated, but a C++ object holding the
                     // java object is not instantiated.  Need to instantiate
                     // the C++ object
                     writeLine("if(cObj == NULL) {");
-
                     indentLevel++;
-                    
-                    String ret = new String(returnType);
-                    // Remove pointer notation
-                    ret = ret.replace("*", "");
-                    // Remove array notation
-                    ret = ret.replace("[]", "");
-                    ret = StringUtilities.removeEdgeWhitespace(ret);
-                    try {
-                        String[] subclass;
-                        // get subclass list for return type including the class itself
-                        if(cct[getCClassIndex(ret)].isPureVirtualClass() || cct[getCClassIndex(ret)].isAbstractClass()) {
-                            subclass = cct[getCClassIndex(ret)].getSubclassList();
-                        }
-                        else {
-                            subclass = new String[cct[getCClassIndex(ret)].getSubclassList().length + 1];
-                            subclass[0] = new String(cct[classIndex].getClassname());
-                            for(int i = 0; i < cct[getCClassIndex(ret)].getSubclassList().length; i++) {
-                                subclass[i+1] = new String(cct[getCClassIndex(ret)].getSubclassList()[i]);
-                            }
-                        }
-                        boolean first = true;
-                        for(int i = 0; i < subclass.length; i++) {
-    
-                            if(jct[getCClassIndex(subclass[i])].isAbstractClass() ||
-                               jct[getCClassIndex(subclass[i])].isInterface()) continue;
-    
-                            if(first) {
-                                myLine = "if (";
-                                first = false;
-                            }
-                            else myLine = "else if (";
-                            
-                            myLine = myLine.concat("(jenv)->IsInstanceOf(returnType, (jenv)->FindClass(\"" + cct[getCClassIndex(subclass[i])].getJNIName()/*getFullClassname(subclass[i])*/ + "\")) == JNI_TRUE) {");
-                            writeLine(myLine);
-    
-                            indentLevel++;
-                            myLine = new String("cObj = new " + subclass[i] + "(returnType);");
-                            writeLine(myLine);
-                            indentLevel--;
-                            
-                            writeLine("}");
-    
-                        }
-                    }
-                    catch (ClassNotFoundException ex) { 
-                        System.out.println("Treating class like it is an inner class.");
-                    }
-                    // get subclasses of the return type
 
-                    // add return type in case it is concrete
-                    
+                    writeLine("cObj = InstanceHash::getInstance(jenv, returnType);");
                     indentLevel--;
                     writeLine("}");
                     
-                    myLine = new String("return (" + returnType + ")(cObj);");
+                    myLine = new String("return dynamic_cast<" + returnType + ">(cObj);");
                 }
                 writeLine(myLine);
             }
@@ -492,34 +383,7 @@ public class CFileGenerator extends FileGenerator {
 
     }
     
-    /**
-     * 
-     * @param signature The signature of the C method
-     * @return Returns the VM signature required to get the Java method ID
-     *         as a string.
-     */
-    private String getVMSignature(String signature) {
-//System.out.println("signature : " + signature);
-        String vm = new String("");
-        String[] pairs = StringUtilities.parseCommaSeparatedList(signature);
-        for(int i = 0; i < pairs.length; i++) {
-            pairs[i] = StringUtilities.removeEdgeWhitespace(pairs[i]);
-//System.out.println("    pair -> " + pairs[i]);
-            String type = TypeConversion.translateFromCToVMType(pairs[i]);
-            String nonArrayType = new String(type);
-            nonArrayType = nonArrayType.replace("[", "");
-            if(nonArrayType.compareTo(TypeConversion.FULLY_QUALIFIED_CLASS) == 0) {
-                try {
-                    type = type.concat(cct[getCClassIndex(pairs[i])].getJNIName() + ";");
-                }
-                catch (ClassNotFoundException ex) { ex.printStackTrace(); }
-            }
-//System.out.println("      type -> " + type);
 
-            vm = vm.concat(type);
-        }
-        return vm;
-    }
     
     /**
      * 
@@ -534,12 +398,14 @@ public class CFileGenerator extends FileGenerator {
         cn = StringUtilities.removeEdgeWhitespace(cn);
 //System.out.println("    cn = " + cn);
         String fullName = new String("UNKNOWN_CLASS");
-        for(int i = 0; i < jct.length; i++) {
-            if(cn.compareTo(jct[i].getClassname()) == 0) {
-                if(jct[i].getPackageName().compareTo("") == 0)
-                    fullName = new String(jct[i].getClassname());
+        
+        for(int i = 0; i < container.getJavaClassCount(); i++) {
+            ClassTypeJava jct = container.getJavaClass(i);
+            if(cn.compareTo(jct.getClassname()) == 0) {
+                if(jct.getPackageName().compareTo("") == 0)
+                    fullName = new String(jct.getClassname());
                 else
-                    fullName = new String(jct[i].getPackageName() + "/" + jct[i].getClassname());
+                    fullName = new String(jct.getPackageName() + "/" + jct.getClassname());
             }
         }
         while(fullName.contains(".")) fullName = fullName.replace(".", "/");
@@ -547,35 +413,15 @@ public class CFileGenerator extends FileGenerator {
         return fullName;
     }
     
-    /**
-     * Write the code to the C file that gets a created JVM and attaches the
-     * current thread to the JVM.
-     * @param packageName
-     */
-    private void writeGetJVM(String packageName) {
-        writeLine("JavaVM *jvm;");
-        writeLine("jint ret = JNI_GetCreatedJavaVMs(&jvm, 1, NULL);");
-        writeLine("JNIEnv *jenv;");
-        writeLine("(jvm)->AttachCurrentThread((void **)&jenv, NULL);");
-    }
+
     
     private void writeHashCode(String jObj) {
-        String hashLine = this.constructMethodID("hashCode", "int", "", "hashID", false);
+        String hashLine = cUtils.constructMethodID("hashCode", "int", "", "hashID", false);
         writeLine(hashLine);
         writeLine("jint hashValue = (jenv)->CallIntMethod(" + jObj + ", hashID);");
     }
     
-    private int getCClassIndex(String classname) throws ClassNotFoundException {
 
-        classname = classname.replace("[]", "");
-        classname = classname.replace("*", "");
-        classname = StringUtilities.removeEdgeWhitespace(classname);
-        for(int i = 0; i < cct.length; i++) {
-            if(classname.compareTo(cct[i].getClassname()) == 0) return i;
-        }
-        throw new ClassNotFoundException("Required class does not appear to be in the input file : " + classname);
-
-    }
     
     private void createArrayCode(MethodSignatureItem item) {
 //System.out.println("ARRAY DIMENSIONS = " + item.arrayDimensions);
@@ -593,7 +439,7 @@ public class CFileGenerator extends FileGenerator {
                     }
                     else {
                         try {
-                            arrayClassLine = arrayClassLine.concat(cct[getCClassIndex(item.varType)].getJNIName() + "\");");
+                            arrayClassLine = arrayClassLine.concat(container.getCClass(item.varType).getJNIName() + "\");");
                         }
                         catch (ClassNotFoundException ex) { ex.printStackTrace();}
                     }
@@ -648,4 +494,14 @@ public class CFileGenerator extends FileGenerator {
         }
     }
 
+    /**
+     * Write the code to the C file that gets a created JVM and attaches the
+     * current thread to the JVM.
+     */
+    private void writeGetJVM() {
+        writeLine("JavaVM *jvm;");
+        writeLine("jint ret = JNI_GetCreatedJavaVMs(&jvm, 1, NULL);");
+        writeLine("JNIEnv *jenv;");
+        writeLine("(jvm)->AttachCurrentThread((void **)&jenv, NULL);");
+    }
 }

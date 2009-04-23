@@ -105,24 +105,40 @@ public class IncludeFileGenerator extends FileGenerator {
                 classLine = new String("class " + innerClass + "::" + cct.getClassname());
             
 
-            classLine = classLine.concat(" : ");
-            // concrete inheritance
-            if(cct.getExtends().length > 0) {
-                for(int i = 0; i < cct.getExtends().length; i++) {
-                    if(i > 0) classLine = classLine.concat(",");
-                    classLine = classLine.concat(" public "+ cct.getExtends()[i]);
+//            if(cct.getExtends().length > 0 ||
+//               !cct.isPureVirtualClass() ||
+//               cct.getImplements().length > 0) {
+
+                classLine = classLine.concat(" : ");
+                boolean first = true;
+                // concrete inheritance
+                if(cct.getExtends().length > 0) {
+                    for(int i = 0; i < cct.getExtends().length; i++) {
+                        if(first) first = false;
+                        else classLine = classLine.concat(",");
+                        classLine = classLine.concat(" public "+ cct.getExtends()[i]);
+                    }
                 }
-            }
-            else {
-                classLine = classLine.concat(" public virtual Object");
-            }
-            // virtual inheritance
-            if(cct.getImplements().length > 0) {
-                for(int i = 0; i < cct.getImplements().length; i++) {
-                    classLine = classLine.concat(",");
-                    classLine = classLine.concat(" public virtual "+ cct.getImplements()[i]);
+                else if(cct.isPureVirtualClass()) {
+                    if(first) first = false;
+                    else classLine = classLine.concat(",");
+                    classLine = classLine.concat(" public virtual IWrapperObject");
                 }
-            }
+                else if(!cct.isPureVirtualClass()) {
+                    if(first) first = false;
+                    else classLine = classLine.concat(",");
+                    classLine = classLine.concat(" public virtual WrapperObject");
+                }
+                // virtual inheritance
+                if(cct.getImplements().length > 0) {
+                    for(int i = 0; i < cct.getImplements().length; i++) {
+                        if(first) first = false;
+                        else classLine = classLine.concat(",");
+                        classLine = classLine.concat(" public virtual "+ cct.getImplements()[i]);
+                    }
+                }
+
+//            }
 
     
             classLine = classLine.concat(" {");
@@ -197,7 +213,7 @@ public class IncludeFileGenerator extends FileGenerator {
                 writeLine("protected:");
                 indentLevel++;
                 if(!hasDefaultCtor)
-                    writeLine(cct.getClassname() + "() { }");
+                    writeLine(cct.getClassname() + "() { };");
                 indentLevel--;
             }
 
