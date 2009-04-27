@@ -16,6 +16,7 @@ public class Java_To_C {
         InputFileReader inputReader = new InputFileReader(file);
         String[] javaList = inputReader.getFileList();
         InputParameters ip = inputReader.getParameters();
+        MessageOutput mo = new MessageOutput(ip.getOutputLevel());
         
         // Create object persistence class
         ObjectPersistGenerator cop = new ObjectPersistGenerator(objectPersistName, inputReader.getOutputDir());
@@ -25,12 +26,12 @@ public class Java_To_C {
         // Parse all the java classes first.  Necessary because the fully
         // qualified path of some of the classes will be needed when
         // getting a method ID when calling into java.
-        System.out.println("  Creating java class instances...");
+        mo.printInfoMessage("  Creating java class instances...");
         ArrayList<ClassTypeJava> jList = new ArrayList<ClassTypeJava>();
         for(int i = 0; i < javaList.length; i++) {
             jList.add(new ClassTypeJava(javaList[i]));
         }
-        System.out.println("  Creating inner class instances...");
+        mo.printInfoMessage("  Creating inner class instances...");
         int startIdx = 0;
         int endIdx = jList.size();
         while(startIdx < endIdx) {
@@ -52,12 +53,12 @@ public class Java_To_C {
         }
 
 //        InheritanceResolver inherit = new InheritanceResolver(javaClass);
-        System.out.println("  Resolving java inheritance...");
+        mo.printInfoMessage("  Resolving java inheritance...");
         IR2 inherit = new IR2(javaClass);
         inherit.resolveInheritance();
        
         // Create C classes
-        System.out.println("  Creating C Class Instances...");
+        mo.printInfoMessage("  Creating C Class Instances...");
         for(int i = 0; i < javaClass.length; i++) {
             cClass[i] = new ClassTypeC(javaClass[i]);
             if(ip.useNamespace()) {
@@ -69,7 +70,7 @@ public class Java_To_C {
         ClassTypeContainer container = new ClassTypeContainer(cClass, javaClass);
         
         // Create object class
-        ObjectClassCreator oCreate = new ObjectClassCreator(inputReader.getOutputDir(), container);
+        ObjectClassCreator oCreate = new ObjectClassCreator(inputReader.getOutputDir(), container, mo);
         oCreate.createInterface();
         oCreate.createConcreteClass();
         
@@ -80,7 +81,7 @@ public class Java_To_C {
 
         for(int i = 0; i < javaClass.length; i++) {
 
-            System.out.println("    Processing   : " + javaClass[i].getClassname());
+            mo.printInfoMessage("  Processing -> " + javaClass[i].getClassname());
             
 
             
@@ -99,7 +100,7 @@ public class Java_To_C {
 
 	            String cFile = includeFile.replace(".h", ".cpp");
 	            CFileGenerator cfg = new CFileGenerator(new File(inputReader.getOutputDir() + File.separator + cFile),
-	                                                    container, i, ip, objectPersistName,ir);
+	                                                    container, i, ip, objectPersistName,ir, mo);
 
 	            cfg.writeCFile();
             }

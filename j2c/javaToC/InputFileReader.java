@@ -15,6 +15,7 @@ public class InputFileReader {
     private InputParameters inputParms;
     private String[] files;
     private String outputDir;
+
     
     InputFileReader(String[] args) {
 
@@ -25,6 +26,7 @@ public class InputFileReader {
         classList = new ArrayList();
         outputDir = new String(".");
 
+        inputParms.setOutputLevel(InputParameters.MESSAGES_INFO);
         
         inputFile = new String(args[args.length-1]);
         for(int i = 0; i < args.length-1; i++) {
@@ -56,6 +58,21 @@ public class InputFileReader {
             // Forward Declaration of used classes
             if(args[i].contains("-f") && args[i].indexOf("-f") == 0) {
                 inputParms.setForwardDeclare(true);
+            }
+            // Warning/Error output
+            if(args[i].contains("-W") && args[i].indexOf("-W") == 0) {
+                String oLevel = args[i].substring("-W".length());
+                if(oLevel.compareTo("all") == 0)
+                    inputParms.setOutputLevel(InputParameters.MESSAGES_ALL);
+                else if(oLevel.compareTo("none") == 0)
+                    inputParms.setOutputLevel(InputParameters.MESSAGES_NONE);
+                else if(oLevel.compareTo("info") == 0)
+                    inputParms.setOutputLevel(InputParameters.MESSAGES_INFO);
+                else {
+                    System.out.println("Incorrect output format directive.");
+                    inputParms.setOutputLevel(InputParameters.MESSAGES_INFO);
+                }
+
             }
         }
         
@@ -99,11 +116,15 @@ public class InputFileReader {
     public static void printUsage() {
         System.out.println("Usage :");
         System.out.println("  jtoc <OPTIONS> <INPUT FILE>");
-        System.out.println("    -n       : Use namespaces (see also -N option)");
-        System.out.println("    -f       : User forward declarations in generated include files");
-        System.out.println("    -np      : Use java package name as namespaces");
+        System.out.println("    -n          : Use namespaces (see also -N option)");
+        System.out.println("    -f          : User forward declarations in generated include files");
+        System.out.println("    -np         : Use java package name as namespaces");
 //        System.out.println("    -I<DIR>  : Directory entry to look for java files");
-        System.out.println("    -N<NAME> : Name of namespace for -n option");
-        System.out.println("    -O<DIR>  : Name of directory to write output files to");
+        System.out.println("    -N<NAME>    : Name of namespace for -n option");
+        System.out.println("    -O<DIR>     : Name of directory to write output files to");
+        System.out.println("    -W<OPTION>  : Warning/Error output directive");
+        System.out.println("      all       : Display all information messages");
+        System.out.println("      info      : Display information messages only");
+        System.out.println("      none      : Do not display information messages");
     }
 }

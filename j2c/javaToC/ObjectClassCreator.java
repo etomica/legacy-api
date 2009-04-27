@@ -12,11 +12,11 @@ public class ObjectClassCreator extends FileGenerator {
     private String concreteName;
     private CSourceGenerationUtilities cUtils;
     
-    public ObjectClassCreator(String dir, ClassTypeContainer container) {
+    public ObjectClassCreator(String dir, ClassTypeContainer container, MessageOutput mo) {
         outputDir = dir;
         interfaceName = new String("IWrapperObject");
         concreteName = new String("WrapperObject");
-        cUtils = new CSourceGenerationUtilities("myMethodID", container);
+        cUtils = new CSourceGenerationUtilities("myMethodID", container, mo);
     }
     
     /**

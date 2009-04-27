@@ -19,10 +19,11 @@ public class CFileGenerator extends FileGenerator {
     private CSourceGenerationUtilities cUtils;
     private ClassTypeC myCClass;
     private ClassTypeJava myJavaClass;
+    private MessageOutput messageOutput;
 
     
     CFileGenerator(File includeFile, ClassTypeContainer ctc, int idx, InputParameters ip,
-                   String op, ImportResolver ir) {
+                   String op, ImportResolver ir, MessageOutput mo) {
 
         container = ctc;
         inputParms = ip;
@@ -31,6 +32,7 @@ public class CFileGenerator extends FileGenerator {
         objectPersistHash = op;
         myCClass = container.getCClass(idx);
         myJavaClass = container.getJavaClass(idx);
+        messageOutput = mo;
 
         try {
             writer = new BufferedWriter(new FileWriter(includeFile));
@@ -39,7 +41,7 @@ public class CFileGenerator extends FileGenerator {
             ex.printStackTrace();
         }
         
-        cUtils = new CSourceGenerationUtilities(methodID, container);
+        cUtils = new CSourceGenerationUtilities(methodID, container, messageOutput);
     }
     
     /**
@@ -442,7 +444,7 @@ writeLine("#include \"InstanceHash.h\"");
                             arrayClassLine = arrayClassLine.concat(container.getCClass(item.varType).getJNIName() + "\");");
                         }
                         catch (ClassNotFoundException ex) {
-                            System.out.println("Unknown class of array type -> " + item.varType + " : Using java Object class");
+                            messageOutput.printWarningMessage("Unknown class of array type -> " + item.varType + " : Using java Object class");
                             arrayClassLine = arrayClassLine.concat(Object.class.getName().replace(".", "/") + "\");");
                         }
                     }

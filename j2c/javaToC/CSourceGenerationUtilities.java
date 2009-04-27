@@ -6,10 +6,12 @@ public class CSourceGenerationUtilities {
 
     private String methodID;
     private ClassTypeContainer container;
+    private MessageOutput messageOutput;
     
-    public CSourceGenerationUtilities(String mID, ClassTypeContainer ctc) {
+    public CSourceGenerationUtilities(String mID, ClassTypeContainer ctc, MessageOutput mo) {
         methodID = new String(mID);
         container = ctc;
+        messageOutput = mo;
     }
     
     /**
@@ -67,7 +69,7 @@ public class CSourceGenerationUtilities {
                 vmType = vmType.concat(container.getCClass(myVMReturn).getJNIName() + ";");
             }
             catch (ClassNotFoundException ex) {
-                System.out.println("Unknown type when creating JNI method signature: Will use java object");
+                messageOutput.printWarningMessage("Unknown type when creating JNI method signature(" + myVMReturn + "). Will use java object");
                 vmType = vmType.concat(Object.class.getName().replace(".", "/") + ";");
             }
         }
@@ -103,7 +105,7 @@ public class CSourceGenerationUtilities {
                     type = type.concat(container.getCClass(pairs[i]).getJNIName() + ";");
                 }
                 catch (ClassNotFoundException ex) {
-                    System.out.println("Unknown type when creating JNI method return: Will use java object");
+                    messageOutput.printWarningMessage("Unknown type when creating JNI method return (" + pairs[i] + "). Will use java object");
                     type = type.concat(Object.class.getName().replace(".", "/") + ";");
                 }
             }

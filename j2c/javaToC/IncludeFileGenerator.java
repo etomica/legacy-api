@@ -14,7 +14,8 @@ public class IncludeFileGenerator extends FileGenerator {
     private InputParameters inputParms;
     private ImportResolver importResolver;
     
-    IncludeFileGenerator(File includeFile, ClassTypeC cc, InputParameters ip, ImportResolver ir) {
+    IncludeFileGenerator(File includeFile, ClassTypeC cc, InputParameters ip,
+            ImportResolver ir) {
 
         cct = cc;
         inputParms = ip;
