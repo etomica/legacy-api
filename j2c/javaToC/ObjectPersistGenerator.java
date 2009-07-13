@@ -90,7 +90,7 @@ public class ObjectPersistGenerator extends FileGenerator {
             writeLine("if(objectHash.find(hashCode) == objectHash.end()) {");
             indentLevel++;
             writeLine("objectHash.insert(std::pair<jint, WrapperObject *>(hashCode, cObj));");
-writeLine("printf(\"----------- ADD %d -------------->  %x\\n\", hashCode, cObj); fflush(stdout);");
+writeLine("//printf(\"----------- ADD %d -------------->  %x\\n\", hashCode, cObj); fflush(stdout);");
             indentLevel--;
             writeLine("}");
             indentLevel--;
@@ -103,7 +103,7 @@ writeLine("printf(\"----------- ADD %d -------------->  %x\\n\", hashCode, cObj)
             indentLevel++;
             writeLine("WrapperObject *theObj = NULL;");
             writeLine("if(objectHash.find(hashCode) != objectHash.end()) theObj = objectHash.find(hashCode)->second;");
-writeLine("printf(\"---------------FETCH %d ---------->  %x\\n\", hashCode, theObj); fflush(stdout);");
+writeLine("//printf(\"---------------FETCH %d ---------->  %x\\n\", hashCode, theObj); fflush(stdout);");
             writeLine("return theObj;");
             
             indentLevel--;

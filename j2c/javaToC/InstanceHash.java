@@ -112,7 +112,7 @@ public class InstanceHash extends FileGenerator {
             writeLine("jboolean isCopy;");
             writeLine("const char *classString = (jenv)->GetStringUTFChars((jstring)nameObject, &isCopy);");
             
-            writeLine("printf(\"CLASS STRING : %s\\n\", classString); fflush(stdout);");
+            writeLine("//printf(\"CLASS STRING : %s\\n\", classString); fflush(stdout);");
             writer.newLine();
             
             writeLine("WrapperObject *returnObject = NULL;");
