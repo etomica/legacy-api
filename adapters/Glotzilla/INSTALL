@@ -65,6 +65,11 @@ The simplest way to compile this package is (after Glotzilla is built):
                                       where the make command would be issued
                                       to build Glotzilla.  It must contain the
                                       'include' and 'lib' directories.
+     --with-install0dir (optional)    The directory where the Glotzilla adapters
+                                      library should be installed.  This should
+                                      be the directory.  The default is the
+                                      directory where the adapter source code
+                                      resides.
 
   2. Type `make' to compile the package.
 

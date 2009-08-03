@@ -12,12 +12,7 @@ GLOTZ_INSTALL_DIR=
 JAVA_INSTALL_DIR=
 USER_INCLUDES=
 GLOTZ_LIB=
-
-echo "host : " $host
-echo "host_alias : " $host_alias
-echo "host_cpu : " $host_cpu
-echo "host_vendor : " $host_vendor
-echo "host_os : " $host_os
+INSTALL_DIR="."
 
 case $host in
   *-*-linux*)
@@ -38,9 +33,6 @@ case $host in
     ;;
 esac
 
-#AC_CHECK_HEADER(jni.h, ac_found_jni=yes, ac_found_jni=no)
-#AC_CHECK_HEADER(jni_md.h, ac_found_jni_md=yes, ac_found_jni_md=no)
-
 AC_ARG_WITH(api-include,
 [  --with-api-include=dir  Location of the C++ include files],
   API_INCLUDE_DIR=$withval)
@@ -60,11 +52,15 @@ fi
 USER_INCLUDES="$USER_INCLUDES -I$GLOTZ_INSTALL_DIR/include"
 GLOTZ_LIB="-L$GLOTZ_INSTALL_DIR/lib -lglotzilla"
 
-echo "USER INCLUDES : $USER_INCLUDES"
+AC_ARG_WITH(install-dir,
+[  --with-install=dir  Location to install Glotzilla adapter library],
+  INSTALL_DIR=$withval)
+
 
 AC_SUBST(USER_INCLUDES)
 AC_SUBST(GLOTZ_LIB)
 AC_SUBST(LIBFLAG)
+AC_SUBST(INSTALL_DIR)
 
 AC_PREFIX_DEFAULT([${PWD}])
 AC_CONFIG_FILES([

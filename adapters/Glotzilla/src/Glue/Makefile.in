@@ -3,6 +3,7 @@
 USER_INCLUDES = @USER_INCLUDES@
 GLOTZ_LIB = @GLOTZ_LIB@
 LIBFLAG = @LIBFLAG@
+INSTALL_DIR = @INSTALL_DIR@
 
 SRC = apisim_wrap.cpp \
 	GlotzillaPotentialMasterBruteForceShifted.cpp \
@@ -91,7 +92,7 @@ clean:
 	rm *.o *.so
 
 install: lib
-	mv *.so ../../lib
+	mv *.so $(INSTALL_DIR)
 
 %.o:%.cpp
 	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
