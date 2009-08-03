@@ -388,11 +388,10 @@ lib:	$(OBJ)
 	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
 
 clean:
-	rm *.o *.a *.so
+	rm *.o *.so
 
 install: lib
 	mv *.so ../../lib
-	mv *.a ../../lib
 
 %.o:%.cpp
 	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
