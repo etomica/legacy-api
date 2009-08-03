@@ -1,0 +1,101 @@
+@SET_MAKE@
+
+USER_INCLUDES = @USER_INCLUDES@
+GLOTZ_LIB = @GLOTZ_LIB@
+LIBFLAG = @LIBFLAG@
+
+SRC = apisim_wrap.cpp \
+	GlotzillaPotentialMasterBruteForceShifted.cpp \
+	GlotzillaAtom.cpp GlotzillaPotentialMasterCellForce.cpp \
+	GlotzillaAtomList.cpp \
+	GlotzillaPotentialMasterCellForceMulti.cpp \
+	GlotzillaAtomPositionDefinitionSimple.cpp \
+	GlotzillaPotentialMasterCellForceShifted.cpp \
+	GlotzillaAtomType.cpp GlotzillaPotentialMaster.cpp \
+	GlotzillaAtomTypeSphere.cpp \
+	GlotzillaPotentialMasterVerletCellForce.cpp \
+	GlotzillaBondFene.cpp \
+	GlotzillaPotentialMasterVerletCellForceMulti.cpp \
+	GlotzillaBondHarmonic.cpp \
+	GlotzillaPotentialMasterVerletCellForceMultiShifted.cpp \
+	GlotzillaBoundary.cpp \
+	GlotzillaPotentialMasterVerletCellForceShifted.cpp \
+	GlotzillaBoundaryEventManager.cpp \
+	GlotzillaPotentialMasterVerletForce.cpp \
+	GlotzillaBoundaryPeriodic.cpp \
+	GlotzillaPotentialMasterVerletForceMulti.cpp \
+	GlotzillaBoxAtomEvent.cpp \
+	GlotzillaPotentialMasterVerletForceMultiShifted.cpp \
+	GlotzillaBoxAtomIndexEvent.cpp \
+	GlotzillaPotentialMasterVerletForceShifted.cpp \
+	GlotzillaBox.cpp \
+	GlotzillaPotentialTwelveSixLj.cpp \
+	GlotzillaBoxEvent.cpp GlotzillaPotentialWCA.cpp \
+	GlotzillaBoxEventManager.cpp \
+	GlotzillaRandom.cpp \
+	GlotzillaBoxIndexEvent.cpp \
+	GlotzillaSimulationAtomTypeEvent.cpp \
+	GlotzillaBoxListenerNative.cpp \
+	GlotzillaSimulationAtomTypeIndexEvent.cpp \
+	GlotzillaBoxMoleculeCountEvent.cpp \
+	GlotzillaSimulationBoxEvent.cpp \
+	GlotzillaBoxMoleculeEvent.cpp GlotzillaSimulation.cpp \
+	GlotzillaBoxMoleculeIndexEvent.cpp \
+	GlotzillaSimulationEvent.cpp \
+	GlotzillaConformationNative.cpp \
+	GlotzillaSimulationEventManager.cpp \
+	GlotzillaIntegrator.cpp GlotzillaSimulationIndexEvent.cpp \
+	GlotzillaIntegratorEuler.cpp \
+	GlotzillaSimulationListenerNative.cpp \
+	GlotzillaIntegratorEventManager.cpp \
+	GlotzillaSimulationSpeciesEvent.cpp \
+	GlotzillaIntegratorLeapFrog.cpp \
+	GlotzillaSimulationSpeciesIndexEvent.cpp \
+	GlotzillaIntegratorListener.cpp \
+	GlotzillaSpace.cpp \
+	GlotzillaIntegratorListenerNative.cpp \
+	GlotzillaSpecies.cpp \
+	GlotzillaIntegratorVelocityVerlet.cpp \
+	GlotzillaSpeciesManager.cpp \
+	GlotzillaMolecule.cpp GlotzillaSpeciesSpheresMono.cpp \
+	GlotzillaMoleculeList.cpp \
+	GlotzillaSpeciesSpheresPolymer.cpp \
+	GlotzillaMonatomicMolecule.cpp GlotzillaSpring.cpp \
+	GlotzillaNativeAtomPositionDefinition.cpp \
+	GlotzillaVector2D.cpp GlotzillaPolymer.cpp \
+	GlotzillaVector3D.cpp \
+	GlotzillaPotential.cpp \
+	GlotzillaVector.cpp \
+	GlotzillaPotentialDzugutov.cpp ObjectManager.cpp \
+	GlotzillaPotentialLJ.cpp PotentialGroup.cpp \
+	GlotzillaPotentialMasterBruteForce.cpp
+
+LIB = libglotzilla_adapter.so
+INCLUDES = $(USER_INCLUDES)
+OBJ =	$(SRC:.cpp=.o)
+
+CCFLAGS =	-O1 -fPIC -g -v
+ARCHIVE =	ar
+ARCHFLAG =	-rc
+DEPFLAGS =	-M
+LINK =		g++
+LINKFLAGS =	-O1
+USRLIBS =	$(GLOTZ_LIB)
+
+all:	lib
+
+lib:	$(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
+
+clean:
+	rm *.o *.so
+
+install: lib
+	mv *.so ../../lib
+
+%.o:%.cpp
+	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

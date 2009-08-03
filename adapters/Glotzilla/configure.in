@@ -1,0 +1,77 @@
+AC_INIT([noidea],[1.0])
+AC_PREREQ([2.5.9])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS([config.h])
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_INSTALL
+AM_PROG_LIBTOOL
+
+API_INCLUDE_DIR=
+GLOTZ_INSTALL_DIR=
+JAVA_INSTALL_DIR=
+USER_INCLUDES=
+GLOTZ_LIB=
+
+echo "host : " $host
+echo "host_alias : " $host_alias
+echo "host_cpu : " $host_cpu
+echo "host_vendor : " $host_vendor
+echo "host_os : " $host_os
+
+case $host in
+  *-*-linux*)
+    LIBFLAG="-shared"
+    CXXFLAGS="$CXXFLAGS -O1 -v"
+    ;;
+  *-apple-darwin*)
+    LIBFLAG="-dynamiclib -arch $host_cpu -framework JavaVM -undefined dynamic_lookup"
+    CXXFLAGS="$CXXFLAGS -O1 -v"
+    AC_ARG_WITH(jni-install,
+    [  --with-jni-install=dir  Location of the Java installation directory(which will contain a Header directory)],
+      JAVA_INSTALL_DIR=$withval)
+    if test ! -d "$JAVA_INSTALL_DIR"; then
+      AC_MSG_ERROR([Must use the --with-jni-install directive with
+      a valid directory.])
+    fi
+    USER_INCLUDES="$USER_INCLUDES -I$JAVA_INSTALL_DIR/Headers"
+    ;;
+esac
+
+#AC_CHECK_HEADER(jni.h, ac_found_jni=yes, ac_found_jni=no)
+#AC_CHECK_HEADER(jni_md.h, ac_found_jni_md=yes, ac_found_jni_md=no)
+
+AC_ARG_WITH(api-include,
+[  --with-api-include=dir  Location of the C++ include files],
+  API_INCLUDE_DIR=$withval)
+if test ! -d "$API_INCLUDE_DIR"; then
+  AC_MSG_ERROR([Must use the --with-api-include directive with
+a valid directory.])
+fi
+USER_INCLUDES="$USER_INCLUDES -I$API_INCLUDE_DIR"
+
+AC_ARG_WITH(glotz-install,
+[  --with-glotz-install=dir  Location of the Glotzilla installation directory],
+  GLOTZ_INSTALL_DIR=$withval)
+if test ! -d "$GLOTZ_INSTALL_DIR"; then
+  AC_MSG_ERROR([Must use the --with-glotz-install directive with
+a valid directory.])
+fi
+USER_INCLUDES="$USER_INCLUDES -I$GLOTZ_INSTALL_DIR/include"
+GLOTZ_LIB="-L$GLOTZ_INSTALL_DIR/lib -lglotzilla"
+
+echo "USER INCLUDES : $USER_INCLUDES"
+
+AC_SUBST(USER_INCLUDES)
+AC_SUBST(GLOTZ_LIB)
+AC_SUBST(LIBFLAG)
+
+AC_PREFIX_DEFAULT([${PWD}])
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+src/Glue/Makefile
+])
+AC_OUTPUT
+
+
