@@ -1,0 +1,45 @@
+/*
+ *  LammpsSpeciesSpheresMono.h
+ *  API Glue
+ *
+ */
+
+#ifndef LAMMPS_SPECIESMONO_WRAPPER_H
+#define LAMMPS_SPECIESMONO_WRAPPER_H
+
+#include "IAPISpecies.h"
+#include "IAPIAtomTypeLeaf.h"
+#include "IAPISimulation.h"
+#include "IAPISpeciesManager.h"
+
+#include "LammpsSpecies.h"
+#include "LammpsAtomTypeSphere.h"
+#include "LammpsNativeConformation.h"
+
+
+namespace lammpswrappers
+{
+
+    class LammpsSpeciesSpheresMono : public LammpsSpecies, public virtual IAPISpecies {
+
+        public:
+            LammpsSpeciesSpheresMono();
+            LammpsSpeciesSpheresMono(LammpsNativeConformation *conf);
+
+            // API compliant methods
+            virtual int getIndex();
+            virtual void setIndex(int index);
+            virtual IAPIMolecule *makeMolecule();
+            virtual int getNumLeafAtoms();
+            virtual void setSpeciesManager(IAPISpeciesManager *mgr);
+
+            // Non-API  methods
+            IAPIMolecule *makeMolecule(IAPISimulation *sim, int atomTag[]);
+            void addChildType(IAPIAtomTypeLeaf *type, int nAtoms);
+
+        private:
+            void init(LammpsConformation *c);
+    };
+}
+
+#endif

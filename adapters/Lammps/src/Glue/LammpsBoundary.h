@@ -1,0 +1,56 @@
+
+/*
+ *  LammpsBoundary.h
+ *  API Glue
+ *
+ */
+
+#ifndef LAMMPS_BOUNDARY_WRAPPER_H
+#define LAMMPS_BOUNDARY_WRAPPER_H
+
+#include <string>
+#include <vector>
+
+#include "IAPIBoundary.h"
+#include "IAPIBoundaryEventManager.h"
+#include "IAPISimulation.h"
+#include "IAPIVector.h"
+#include "IAPIVectorMutable.h"
+#include "LammpsSimulation.h"
+
+using namespace molesimAPI;
+
+namespace lammpswrappers
+{
+
+    class LammpsBoundary : public virtual IAPIBoundary {
+
+        public:
+            LammpsBoundary(IAPISimulation *sim);
+
+            // API Compliance
+            IAPIVector *getBoxSize();
+            void setBoxSize(IAPIVector *v);
+            double volume();
+            void nearestImage(IAPIVectorMutable *v);
+            IAPIVector *centralImage(IAPIVector *v);
+            void setBox(IAPIBox *box);
+            IAPIBox *getBox();
+            virtual IAPIVector *getEdgeVector(int d) = 0;
+            IAPIVector *getCenter();
+            virtual bool getPeriodicity(int d) = 0;
+            IAPIBoundaryEventManager *getEventManager();
+
+            // Non-API methods
+            virtual void lammpsSetup() = 0;
+
+        protected:
+            LammpsSimulation *mSim;
+            IAPIVectorMutable *mVector;
+            IAPIVector *mCenter;
+            IAPIBox *mBox;
+            IAPIBoundaryEventManager *mEventMgr;
+    };
+}
+
+#endif

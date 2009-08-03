@@ -1,0 +1,133 @@
+@SET_MAKE@
+
+USER_INCLUDES = @USER_INCLUDES@
+LAMMPS_LIB = @LAMMPS_LIB@
+LIBFLAG = @LIBFLAG@
+
+SRC =  LammpsBox.cpp \
+	LammpsBoxEventManager.cpp \
+	LammpsAtomType.cpp \
+	LammpsAtomTypeSphere.cpp \
+	LammpsAtom.cpp \
+	LammpsMolecule.cpp \
+	LammpsSimulationEvent.cpp \
+	LammpsSimulationBoxEvent.cpp \
+	LammpsSimulationSpeciesEvent.cpp \
+	LammpsSimulationSpeciesIndexEvent.cpp \
+	LammpsSimulationIndexEvent.cpp \
+	LammpsSimulationAtomTypeEvent.cpp \
+	LammpsSimulationAtomTypeIndexEvent.cpp \
+	LammpsSimulationListenerNative.cpp \
+	LammpsSimulationEventManager.cpp \
+	LammpsSimulation.cpp \
+	LammpsSpeciesManager.cpp \
+	LammpsRandom.cpp \
+	LammpsBoundary.cpp \
+	LammpsBoundaryPeriodic.cpp \
+	LammpsBoundaryFixed.cpp \
+	LammpsBoundaryShrink.cpp \
+	LammpsBoundaryShrinkMin.cpp \
+	LammpsBoundaryCustom.cpp \
+	LammpsBoundaryDeformable.cpp \
+	LammpsSpace.cpp \
+	LammpsVector.cpp \
+	LammpsVector2D.cpp \
+	LammpsVector3D.cpp \
+	LammpsAtomList.cpp \
+	LammpsMoleculeList.cpp \
+	LammpsSpecies.cpp \
+	LammpsSpeciesSpheres.cpp \
+	LammpsConformation.cpp \
+	LammpsNativeConformation.cpp \
+	LammpsAtomPositionDefinition.cpp \
+	LammpsIntegrator.cpp \
+	LammpsIntegratorEventManager.cpp \
+	LammpsIntegratorListenerNative.cpp \
+	LammpsIntegratorRespa.cpp \
+	LammpsIntegratorVerlet.cpp \
+	LammpsNativeAtomPositionDefinition.cpp \
+	LammpsPotential.cpp \
+	LammpsPair.cpp \
+	PotentialGroup.cpp \
+	LammpsBondHarmonic.cpp \
+	LammpsBondFene.cpp \
+	LammpsBondFeneExpand.cpp \
+	LammpsBondMorse.cpp \
+	LammpsBondClass2.cpp \
+	LammpsBondNonlinear.cpp \
+	LammpsBondQuartic.cpp \
+	LammpsPairLennardJonesCutoff.cpp \
+	LammpsPairLennardJonesCutoffCoulombCutoff.cpp \
+	LammpsPairLennardJonesExpand.cpp \
+	LammpsPairMorse.cpp \
+	LammpsPairDPD.cpp \
+	LammpsPairColloid.cpp \
+	LammpsPairMeam.cpp \
+	LammpsPairBuck.cpp \
+	LammpsPairTable.cpp \
+	LammpsPotentialMaster.cpp \
+	LammpsNeighborList.cpp \
+	LammpsNeighborListBin.cpp \
+	LammpsNeighborListMulti.cpp \
+	LammpsNeighborListNsq.cpp \
+	LammpsLattice.cpp \
+	LammpsLatticeHex.cpp \
+	LammpsLatticeSQ.cpp \
+	LammpsLatticeSQ2.cpp \
+	LammpsLatticeSC.cpp \
+	LammpsLatticeBCC.cpp \
+	LammpsLatticeFCC.cpp \
+	LammpsLatticeHCP.cpp \
+	LammpsLatticeDiamond.cpp \
+	LammpsTemperatureRescale.cpp \
+	LammpsMomentum.cpp \
+	LammpsNPH.cpp \
+	LammpsNPT.cpp \
+	LammpsNPTAsphere.cpp \
+	LammpsNPTSphere.cpp \
+	LammpsNVE.cpp \
+	LammpsNVEAsphere.cpp \
+	LammpsNVESphere.cpp \
+	LammpsNVELimit.cpp \
+	LammpsNVENoforce.cpp \
+	LammpsNVT.cpp \
+	LammpsNVTSllod.cpp \
+	LammpsNVTSphere.cpp \
+	LammpsNVTAsphere.cpp \
+	LammpsRegion.cpp \
+	LammpsRegionBlock.cpp \
+	LammpsRegionPrism.cpp \
+	LammpsRegionSphere.cpp \
+	IDManager.cpp \
+	ObjectManager.cpp \
+	apisim_wrap.cpp
+
+LIB = liblammps_adapter.so
+INCLUDES = $(USER_INCLUDES)
+OBJ =	$(SRC:.cpp=.o)
+
+CCFLAGS =	-O1 -fPIC -g -v
+ARCHIVE =	ar
+ARCHFLAG =	-rc
+DEPFLAGS =	-M
+LINK =		g++
+LINKFLAGS =	-O1
+USRLIBS =	$(LAMMPS_LIB)
+
+all:	lib
+
+lib:	$(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
+
+clean:
+	rm *.o *.so
+
+install: lib
+	mv *.so ../../lib
+
+%.o:%.cpp
+	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

@@ -1,0 +1,30 @@
+/*
+ *  LammpsLatticeHCP.h
+ *  API Glue
+ *
+ */
+
+#ifndef LAMMPS_LATTICEHCP_WRAPPER_H
+#define LAMMPS_LATTICEHCP_WRAPPER_H
+
+#include "lammps.h"
+
+#include "IAPISimulation.h"
+#include "LammpsLattice.h"
+
+using namespace molesimAPI;
+
+namespace lammpswrappers
+{
+
+    class LammpsLatticeHCP : public virtual LammpsLattice {
+
+        public:
+            LammpsLatticeHCP(IAPISimulation *sim, double sc);
+
+        private:
+            static const char* const LATTICE_NAME;
+    };
+}
+
+#endif

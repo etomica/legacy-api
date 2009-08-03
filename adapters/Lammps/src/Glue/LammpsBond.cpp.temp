@@ -1,0 +1,58 @@
+/*
+ *  LammpsBond.cpp
+ *  API Glue
+ *
+ */
+
+#include "malloc.h"
+#include "string.h"
+
+#include "LammpsBond.h"
+#include "LammpsPotential.h"
+
+namespace lammpswrappers
+{
+
+    LammpsBond::LammpsBond(int n, int nParms, const char *type) : LammpsPotential(n) {
+        nParameters = nParms;
+        parameters = (double *) malloc (nParms * sizeof(double));
+        bondType = (char *) malloc ((strlen(type) + 1) * sizeof(char));
+        strcpy(bondType, type);
+    }
+
+    /*
+     * setParameter()
+     */
+    void LammpsBond::setParameter(int index, double val) {
+        if(index >= 0 && index < nParameters) {
+            parameters[index] = val;
+        }
+    }
+
+    /*
+     * getParameter()
+     */
+    double LammpsBond::getParameter(int index) {
+        if(index >= 0 && index < nParameters) {
+            return parameters[index];
+        }
+    }
+
+    /*
+     * getParameterCount()
+     */
+    int LammpsBond::getParameterCount() {
+        return nParameters;
+    }
+
+    /*
+     * getParameterType();
+     */
+    char *LammpsBond::getBondType() {
+        return bondType;
+    }
+
+
+}
+  
+

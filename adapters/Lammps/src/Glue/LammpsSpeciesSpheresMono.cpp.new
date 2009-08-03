@@ -1,0 +1,86 @@
+/*
+ *  LammpsSpeciesSpheresSpheresMono.cpp
+ *  API Glue
+ *
+ */
+
+#include "stdio.h"
+
+#include "LammpsSpeciesSpheresMono.h"
+#include "LammpsAtomKinetic.h"
+#include "LammpsMolecule.h"
+#include "LammpsConformation.h"
+
+namespace lammpswrappers
+{
+
+    LammpsSpeciesSpheresMono::LammpsSpeciesSpheresMono() {
+        init(new LammpsConformation());
+    }
+
+    LammpsSpeciesSpheresMono::LammpsSpeciesSpheresMono(
+                             LammpsNativeConformation *conf) {
+        init(conf);
+    }
+
+    /*
+     * init()
+     */
+    void LammpsSpeciesSpheresMono::init(LammpsConformation *c) {
+        mConformation = c;
+    }
+
+    /*
+     * makeMolecule()
+     */
+    IAPIMolecule *LammpsSpeciesSpheresMono::makeMolecule() {
+printf("WARNING : LammpsSpeciesSpheresMono::makeMolecule() is NOT implemented yet.\n");
+    }
+
+    /*
+     * getNumLeafAtoms()
+     */
+    int LammpsSpeciesSpheresMono::getNumLeafAtoms() {
+
+        int count = 0;
+        for(int i = 0; i < typeCount.size(); i++) {
+            count += typeCount.at(i);
+        }
+        return count;
+    }
+
+    /*
+     * setSpeciesManager()
+     */
+    void LammpsSpeciesSpheresMono::setSpeciesManager(IAPISpeciesManager *mgr) {
+printf("WARNING : LammpsSpeciesSpheresMono::setSpeciesManager() is NOT implemented yet.\n");
+    }
+
+    /*
+     * makeMolecule()
+     */
+    IAPIMolecule *LammpsSpeciesSpheresMono::makeMolecule(IAPISimulation *sim, int atomTag[]) {
+
+        LammpsMolecule *mole = new LammpsMolecule(sim, this);
+        std::map<IAPIAtomTypeLeaf *, int>::iterator it;
+        int ctr = 0;
+        for(int i = 0; i < typeList.size(); i++) {
+            for(int j = 0; i < typeCount.at(i); i++) {
+                mole->addChildAtom(new LammpsAtomKinetic(sim, atomTag[ctr], typeList.at(i)));
+                ctr++;
+            }
+        }
+        return mole;
+
+    }
+
+    /*
+     * addChildType()
+     */
+    void LammpsSpeciesSpheresMono::addChildType(IAPIAtomTypeLeaf *type, int nAtoms) {
+        typeList.push_back(type);
+        typeCount.push_back(nAtoms);
+    }
+
+
+}

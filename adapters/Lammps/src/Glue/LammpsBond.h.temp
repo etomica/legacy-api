@@ -1,0 +1,40 @@
+/*
+ *  LammpsBond.h
+ *  API Glue
+ *
+ */
+
+#ifndef LAMMPS_BOND_WRAPPER_H
+#define LAMMPS_BOND_WRAPPER_H
+
+
+#include "IAPIPotential.h"
+#include "LammpsPotential.h"
+
+namespace lammpswrappers
+{
+
+    class LammpsBond : public LammpsPotential, public virtual IAPIPotential {
+
+        public:			
+            LammpsBond(int n, int nParms, const char *type);		
+
+            // API Compliance
+            double getRange() = 0;
+            double energy(IAPIAtomSet *) = 0;
+            void setBox(IAPIBox *) = 0;
+
+            // Non-API methods
+            void setParameter(int index, double val);
+            double getParameter(int index);
+            int getParameterCount();
+            char *getBondType();
+
+        private:
+            double *parameters;
+            int    nParameters;
+            char   *bondType;
+
+    };
+}
+#endif
