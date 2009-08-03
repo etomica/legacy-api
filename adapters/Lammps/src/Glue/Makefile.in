@@ -3,6 +3,7 @@
 USER_INCLUDES = @USER_INCLUDES@
 LAMMPS_LIB = @LAMMPS_LIB@
 LIBFLAG = @LIBFLAG@
+LAMMPS_INSTALL_DIR = @LAMMPS_INSTALL_DIR@
 
 SRC =  LammpsBox.cpp \
 	LammpsBoxEventManager.cpp \
@@ -123,7 +124,7 @@ clean:
 	rm *.o *.so
 
 install: lib
-	mv *.so ../../lib
+	mv *.so $(LAMMPS_INSTALL_DIR)
 
 %.o:%.cpp
 	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
