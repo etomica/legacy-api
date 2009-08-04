@@ -6,7 +6,7 @@
 
 #include "stdio.h"
 
-#ifdef __MACOSX__
+#if defined(__MACH__) && defined(__APPLE__)
 #include "stdlib.h"
 #else
 #include "malloc.h"
