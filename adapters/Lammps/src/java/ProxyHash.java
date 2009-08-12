@@ -1,4 +1,4 @@
-package glotz.wrapper;
+package lammps.wrapper;
 
 import java.util.HashMap;
 
