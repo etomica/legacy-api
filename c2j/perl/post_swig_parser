@@ -1,0 +1,604 @@
+#!/usr/bin/perl
+
+require "cl_parser";
+require "get_inheritance";
+require "inheritance_sniffer";
+require "instance_type";
+
+print "REQUIRED OPTIONS : -dn -da -pa -pn -i -jp -nn -na -jo\n";
+
+
+local(@instance_type_base);
+&get_it_virtual_base_list(*instance_type_base);
+
+$list_length = $num_classes;
+
+$in_filename = &get_cxx_name();
+$out_filename = $in_filename . ".tmp";
+
+local($base_index) = -1;
+local($ctor_insert) = 0;
+$change_return = 0;
+
+@file_list;
+@signature_list;
+@virtual_list;
+&get_ctor_list(*file_list, *virtual_list);
+$file_list_len = @file_list;
+
+@java_arg_type = ( "int",  "long",  "Object",  "String" );
+@jni_arg_type  = ("jint", "jlong", "jobject", "jstring" );
+
+# Change java proxy class ctor for classes that take
+# a native object as an arguement in the ctor.
+&java_native_ctor_change();
+
+# Signature argument cast variables
+$MAX_ARGS = 9;
+@typecast_arg  = { "", "", "", "", "", "", "", "", "" };
+@signature_change = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+open(IN_FILE, $in_filename);
+open(OUT_FILE, ">$out_filename");
+
+while(<IN_FILE>) {
+
+  # Use dynamic_cast to pass a pointer to the least derived virtual class
+  # in the objects inheritance chain.
+  if(m/JNIEXPORT jlong/) {
+
+    $change_return = 1;
+  }
+
+  # Get the signature argument types and change them to the least
+  # derived class
+  if(m/$API_NAMESPACE\:\:([^ ]*) \*arg([^ ]*) =/) {
+    m/$API_NAMESPACE\:\:([^ ]*) \*arg([^ ]*) =/;
+    $arg_num = $2;
+    if($arg_num > 1) {
+      $idx = &get_index_for_class($1);
+      $v_base = @virtual_names[$idx];
+      $typecast[$arg_num] = $1;
+
+      if($v_base ne $UNKNOWN_CLASS) {
+        s/$API_NAMESPACE\:\:$1/$API_NAMESPACE\:\:$v_base/g;
+        $signature_change[$arg_num] = 1;
+      }
+      else {
+        $signature_change[$arg_num] = 0;
+      }
+    }
+  }
+  else {
+    for($i = 2; $i < $MAX_ARGS; $i++) {
+
+      if($signature_change[$i] == 1) {
+
+        if(m/arg$arg_num = \*\($API_NAMESPACE\:\:([^ ]*) \*\*\)/) {
+          m/$API_NAMESPACE\:\:([^ ]*) \*arg$i/;
+          $idx = &get_index_for_class($1);
+          $v_base = @virtual_names[$idx];
+          if($v_base ne $UNKNOWN_CLASS) {
+            s/$API_NAMESPACE\:\:$1/$API_NAMESPACE\:\:$v_base/g;
+          }
+        }
+
+        if($signature_change[$i] == 1) {
+          if(m/->([^!]*)\(arg$i/) {
+            s/arg$i/dynamic_cast<@typecast[$i] \*>(arg$i)/;
+            $signature_change[$i] = 0;
+          }
+          elsif(m/->([^!]*),arg$i/) {
+            s/arg$i/dynamic_cast<@typecast[$i] \*>(arg$i)/;
+            $signature_change[$i] = 0;
+          }
+          elsif(m/new([^!]*)\(arg$i/) {
+            s/arg$i/dynamic_cast<$typecast[$i] \*>(arg$i)/;
+            $signature_change[$i] = 0;
+          }
+          elsif(m/new([^!]*),arg$i/) {
+           s/arg$i/dynamic_cast<$typecast[$i] \*>(arg$i)/;
+            $signature_change[$i] = 0;
+          }
+        }
+
+      } # end  if($signature_change[$i] == 1) {
+
+    } # end for loop
+
+  }
+
+  if($change_return == 1) {
+
+    # Variable Definition
+    if(m/$NATIVE_NAMESPACE[^ ]* \*result = 0/) {
+      m/$NATIVE_NAMESPACE\::([^ ]*) \*result = 0/;
+      $base_index = &getBaseListIndex;
+      $is_api = 0;
+
+      # If the return type class is not one being changed,
+      # set the change_return flag to false.
+      if($base_index == -1) {
+        $change_return = 0;
+      }
+      # Don't cast something to the same type
+      elsif($1 eq @concrete_names[$base_index]) {
+        $change_return = 0;
+      }
+    }
+    elsif(m/$API_NAMESPACE[^ ]* \*result = 0/) {
+      m/$API_NAMESPACE\::([^ ]*) \*result = 0/;
+      $base_index = &getBaseListIndex;
+      $is_api = 1;
+      # If the return type class is not one being changed,
+      # set the change_return flag to false.
+      if($base_index == -1) {
+        $change_return = 0;
+      }
+      # Don't cast something to the same type
+      elsif($1 eq @virtual_names[$base_index]) {
+        $change_return = 0;
+      }
+    }
+    elsif(m/result = 0/) {
+      $change_return = 0;
+    }
+
+    if($change_return == 1) {
+      if(m/return jresult/) {
+        if($base_index != -1) {
+          # Don't need to do anything with an interface type return that does not have a superclass.
+          if(@virtual_names[$base_index] eq $UNKNOWN_CLASS && $is_api == 1) {
+            $change_return = 0;
+          }
+          else {
+            print OUT_FILE "  jlong jresult2 = 0;\n";
+# Commented next line on 1/5/2009 - RR
+#            if(@virtual_names[$base_index] eq $UNKNOWN_CLASS && $is_api == 0) {
+            if($is_api == 0) {
+              print OUT_FILE "  *($NATIVE_NAMESPACE\::@concrete_names[$base_index] **)&jresult2 = dynamic_cast<@concrete_names[$base_index] \*>\(result\);\n";
+            }
+            else {
+              print OUT_FILE "  *($API_NAMESPACE\::@virtual_names[$base_index] **)&jresult2 = dynamic_cast<@virtual_names[$base_index] \*>\(result\);\n";
+            }
+            $_ = "  return jresult2;\n";
+            $base_index = -1;
+            $change_return = 0;
+          }
+        }
+        else {
+          $change_return = 0;
+          $base_index = -1;
+        }
+      }
+    }
+  }
+
+  # Add the native ctors and instance type methods
+  if(m/#ifdef __cplusplus/) {
+    $ctor_insert = 1;
+    $_ = "";
+  }
+  elsif($ctor_insert == 1 && m/}/) {
+    local($package) = &parse_package_name();
+    local($mod_name) = &get_module_name();
+    local($sig);
+    local($j_type);
+    local($arg_name);
+    # native ctor
+    for(local($i) = 0; ($i) < $file_list_len; $i++) {
+      local($arg_list) = "";
+      local($declerations) = "";
+      print OUT_FILE "JNIEXPORT jlong JNICALL Java_$package\_$mod_name\JNI_create_1@file_list[$i]";
+      print OUT_FILE "(JNIEnv *jenv, jclass jcls, ";
+
+#print "JNIEXPORT jlong JNICALL Java_$package\_$mod_name\JNI_create_1@file_list[$i]\n";
+      $sig = @signature_list[$i];
+#print "SIGNATURE : $sig\n";
+      while($sig ne "") {
+        $_ = $sig;
+        /([^ ]*) ([^,]*)/;
+        $j_type = $1;
+        $arg_name = $2;
+        $_ = $j_type;
+
+        local($len);
+        $len = @java_arg_type;
+        local($found) = 0;
+        for(local($j) = 0; ($j) < $len; $j++) {
+          if($j_type eq @java_arg_type[$j]) {
+            print OUT_FILE "@jni_arg_type[$j] $arg_name";
+            $arg_list = $arg_list . $arg_name;
+            $found = 1;
+            last;
+          }
+          elsif(/$API_PREFIX/) {
+            print OUT_FILE "jlong $arg_name";
+            $arg_list = $arg_list . "l$arg_name";
+            $found = 1;
+            $declerations = $declerations . "  $API_NAMESPACE\:\:$j_type *l$arg_name = ($API_NAMESPACE\:\:$j_type *) 0;\n";
+            $declerations = $declerations . "  l$arg_name = *($API_NAMESPACE\:\:$j_type **)&$arg_name;\n";
+            last;
+          }
+        }
+        if($found == 0) {
+            print OUT_FILE "$j_type $arg_name";
+            $arg_list = $arg_list . $arg_name;
+        }
+        $_ = $sig;
+        if(m/,/) {
+        print OUT_FILE ",";
+          m/([^,]*), ([^!]*)/;
+          $sig = $2;
+          $arg_list = $arg_list . ", ";
+        }
+        else {
+          $sig = "";
+        }
+      }
+      print OUT_FILE ") {\n\n";
+      print OUT_FILE "$declerations\n";
+      print OUT_FILE "  jlong jresult = 0;\n";
+      print OUT_FILE "  $NATIVE_NAMESPACE\::@file_list[$i] *result = 0 ;\n\n";
+      print OUT_FILE "  result = ($NATIVE_NAMESPACE\::@file_list[$i] *)";
+      print OUT_FILE "new $NATIVE_NAMESPACE\::@file_list[$i](jenv, $arg_list);\n";
+      print OUT_FILE "  *($NATIVE_NAMESPACE\::@file_list[$i] **)&jresult = result;\n\n";
+      print OUT_FILE "  return jresult;\n";
+      print OUT_FILE "}\n\n";
+    }
+
+    # instance type methods
+    local($num_instance_type_methods);
+    $num_instance_type_methods = @instance_type_base;
+
+    local($package) = &parse_package_name();
+    local($mod_name) = &get_module_name();
+ 
+    for(local($i) = 0; $i < $num_instance_type_methods; $i++) {
+      if(&generate_instance_type_method(@instance_type_base[$i]) == 1) {
+        $_ = @instance_type_base[$i];
+        local($concrete_name) = &bottom_of_barrel(@instance_type_base[$i]);
+        local($i_ctr) = 0;
+#        local($virtual_class) = &get_base_virtual_class(@instance_type_base[$i]);
+        local($virtual_class) = @instance_type_base[$i];
+        print OUT_FILE "JNIEXPORT jint JNICALL Java_$package\_";
+        print OUT_FILE "$mod_name\JNI_$concrete_name\_1instanceType";
+        print OUT_FILE "(JNIEnv *jenv, jclass jcls, jlong jarg1) {\n";
+        print OUT_FILE "  jint jresult = 0;\n";
+        $_ = $virtual_class;
+        if(m/$API_PREFIX/) {
+            print OUT_FILE "  $API_NAMESPACE\::$virtual_class *arg1 = ($API_NAMESPACE\::$virtual_class *) 0;\n";
+            print OUT_FILE "  int instanceType;\n\n";
+            print OUT_FILE "  arg1 = *($API_NAMESPACE\::$virtual_class **)&jarg1;\n\n";
+        }
+        else {
+            print OUT_FILE "  $NATIVE_NAMESPACE\::$virtual_class *arg1 = ($NATIVE_NAMESPACE\::$virtual_class *) 0;\n";
+            print OUT_FILE "  int instanceType;\n\n";
+            print OUT_FILE "  arg1 = *($NATIVE_NAMESPACE\::$virtual_class **)&jarg1;\n\n";
+        }
+
+        local($base_index) = &get_it_inheritance_list_index(@instance_type_base[$i]);
+
+        print OUT_FILE "  if(typeid(*arg1) == typeid(@instance_type_inheritance[$base_index])) {\n";
+        print OUT_FILE "    instanceType = 0;\n  }\n";
+
+
+        for (local($j) = 1; $j < @instance_type_number[$i] ; $j++) {
+          print OUT_FILE "  else if(typeid(*arg1) == typeid(@instance_type_inheritance[$base_index+$j])) {\n";
+          print OUT_FILE "    instanceType = $j;\n  }\n";
+        }
+
+        print OUT_FILE "\n  jresult = (jint)instanceType;\n";
+        print OUT_FILE "  return jresult;\n";
+        print OUT_FILE "}\n\n";
+      }
+
+    }
+    print OUT_FILE "#ifdef __cplusplus\n";
+    print OUT_FILE "}\n";
+    $ctor_insert = 0;
+    $_ = "";
+  }
+  elsif($ctor_insert == 1) {
+    print OUT_FILE "#ifdef __cplusplus\n";
+    $ctor_insert = 0;
+  }
+
+  print OUT_FILE "$_";
+
+}
+
+close(IN_FILE);
+close(OUT_FILE);
+
+$command = "mv $out_filename $in_filename";
+system($command);
+
+
+# Change java proxy class ctor for classes that take
+# a native object as an arguement in the ctor.
+#&java_native_ctor_change();
+
+# Insert the 'instanceType' methods into testJNI.java and
+# *.java proxy class(es)
+&jni_instance_type_insert;
+&java_instance_type_insert;
+
+
+#
+# getBaseListIndex
+#
+sub getBaseListIndex {
+  local($base_list_index) = -1;
+
+  for(local($i) = 0; $i < $list_length; $i++) {
+    if($1 eq @classname[$i]) {
+      $base_list_index = $i;
+      last;
+    }
+  }
+
+  $base_list_index;
+}
+
+#
+# jni_ctor_insert()
+#
+sub jni_ctor_insert() {
+
+  local($signature) = @_;
+
+  $_ = $signature;
+  while(m/([^!]*)($API_PREFIX[^ ]*)/) {
+    local($arg) = $2;
+    s/$arg/long/;
+  }
+  $signature = $_;
+  local($JNIjava);
+  $JNIjava = &get_JNI_name;
+  local($command) = "sed 's/^}/  public final static native long create_@file_list[$i]($signature);\\n}/' $JNIjava > $JNIjava.tmp";
+  system($command);
+  local($command) = "mv $JNIjava.tmp $JNIjava";
+  system($command);
+
+}
+
+#
+# java_native_ctor_change
+#
+sub java_native_ctor_change() {
+  local($command);
+  local($signature);
+  local($orig);
+  local($mod_name) = &get_module_name();
+
+  for(local($i) = 0; $i < $file_list_len;  $i++) {
+    open(CTOR_IN_FILE, "$JAVA_OUTPUT/$file_list[$i].java");
+    open(CTOR_OUT_FILE, ">$JAVA_OUTPUT/$file_list[$i].java.tmp");
+
+    while(<CTOR_IN_FILE>) {
+      if(/  public @file_list[$i]\(SWIGTYPE_p_JNIEnv /) {
+        $orig = $_;
+
+        m/public @file_list[$i]\(SWIGTYPE_p_JNIEnv ([^,]*), ([^\)]*)/;
+        $signature = $2;
+        push(@signature_list, $signature);
+
+        # Need to insert entry in 'testJNI.java"
+        &jni_ctor_insert($signature);
+
+        print CTOR_OUT_FILE "  public @file_list[$i]\($signature\) {\n";
+        print CTOR_OUT_FILE "    this($mod_name\JNI.create_@file_list[$i](";
+        while($signature ne "") {
+          $_ = $signature;
+          /([^ ]*) ([^,]*)/;
+          local($arg_name) = $2;
+          $_ = $1;
+          if(m/$API_PREFIX/) {
+              print CTOR_OUT_FILE "$_.getCPtr(($_)$arg_name)";
+          }
+          else {
+              print CTOR_OUT_FILE "$arg_name";
+          }
+          $_ = $signature;
+          if(m/,/) {
+            print CTOR_OUT_FILE ",";
+            m/([^,]*), ([^!]*)/;
+            $signature = $2;
+          }
+          else {
+            $signature = "";
+          }
+        }
+        print CTOR_OUT_FILE "), true);\n";
+        print CTOR_OUT_FILE "  }\n\n";
+        $_ = $orig;
+      }
+
+      print CTOR_OUT_FILE "$_";
+    }
+
+    close(CTOR_IN_FILE);
+    close(CTOR_OUT_FILE);
+    $command = "mv $JAVA_OUTPUT/@file_list[$i].java.tmp $JAVA_OUTPUT/@file_list[$i].java";
+    system($command);
+  }
+
+}
+
+#
+# get_module_name()
+#
+sub get_module_name() {
+
+  local($fn);
+  $fn = $NATIVE_DIRECTORY."/".$SWIG_INPUT_FILE;
+  local($mod_name) = "";
+
+  open(JNI_FILE, $fn);
+
+  while(<JNI_FILE>) {
+    if(m/%module/) {
+      /%module ([^ ]*)/;
+      $_ = $1;
+      s/\n//;
+      $mod_name = $_;
+    }
+  }
+
+  close(JNI_FILE);
+  $mod_name;
+
+}
+
+#
+# parse_package_name
+#
+sub parse_package_name() {
+
+  local($package) = "";
+
+  local($pkg) = $JAVA_PACKAGE;
+  $_ = $pkg;
+  s/\./_/;
+  $parse_package = $_;
+
+  $parse_package;
+
+}
+
+#
+# get_cxx_name
+#
+sub get_cxx_name() {
+
+  local($cxx_name) = "";
+
+  $cxx_name = $NATIVE_DIRECTORY."/".$SWIG_INPUT_FILE;
+  $_ = $cxx_name;
+  s/\.i/_wrap\.cxx/;
+  $cxx_name = $_;
+
+  $cxx_name;
+
+}
+
+#
+# get_JNI_name
+#
+sub get_JNI_name() {
+
+  local($jni_name) = "";
+
+  local($mod_name) = &get_module_name();
+  local($JNIjava);
+  $jni_name = $JAVA_OUTPUT."/"."$mod_name\JNI.java";
+
+  $jni_name;
+
+}
+#
+# get_ctor_list() - returns a list of ctors that take a java object
+#                   as an argument.  The list does not contain any
+#                   ctors in a virtual class.  In this context, a
+#                   virtual class must have a virtual method declared
+#                   in its include file.  It is not considered virtual,
+#                   in this context, if it inherits a virtual method.  This
+#                   is a bug that will hopefully be fixed, but the fix is
+#                   going to be time consuming.
+#
+sub get_ctor_list() {
+
+  local(*file_list) = @_[0];
+  local(*virtual_list) = @_[1];
+
+  for(local($i) = 0; $i < $num_classes; $i++) {
+
+    local($ctor) = 0;
+    local($isVirtual) = 0;
+
+    local($filename) = $NATIVE_DIRECTORY."/".@classname[$i].".h";
+    open(CTOR_FILE, $filename);
+
+    while(<CTOR_FILE>) {
+      if(m/@classname[$i]([^!]*)JNIEnv /) {
+        $ctor = 1;
+#        push(@file_list, @classname[$i]);
+#        push(@virtual_list, @virtual_names[$i]);
+      }
+      if(m/virtual ([^!]*)= 0/) {
+        $isVirtual = 1;
+      }
+
+    }
+
+    if($ctor eq 1 && $isVirtual == 0) {
+      push(@file_list, @classname[$i]);
+      push(@virtual_list, @virtual_names[$i]);
+    }
+
+    close(CTOR_FILE);
+  }
+
+}
+
+#
+# jni_instance_type_insert()
+#
+sub jni_instance_type_insert() {
+
+  local($jni_name) = &get_JNI_name;
+
+  local($num_instance_type_methods);
+  $num_instance_type_methods = @instance_type_base;
+  local($inst_str) = "";
+  for(local($i) = 0; $i < $num_instance_type_methods; $i++) {
+    if(&generate_instance_type_method(@instance_type_base[$i]) == 1) {
+      $_ = @instance_type_base[$i];
+      local($concrete_name) = &bottom_of_barrel(@instance_type_base[$i]);
+      $inst_str = $inst_str . "  public final static native int $concrete_name\_instanceType(long jarg1);\\n";
+    }
+  }
+  $inst_str = $inst_str . "}\\n";
+
+  local($command) = "sed 's/}/$inst_str/' $jni_name > $jni_name.tmp";
+  system($command);
+
+  local($command) = "mv $jni_name.tmp $jni_name";
+  system($command);
+
+}
+
+#
+# java_instance_type_insert()
+#
+sub java_instance_type_insert() {
+
+  $num_instance_type_methods = @instance_type_base;
+
+#      local($package) = &parse_package_name();
+#    local($mod_name) = &get_module_name();
+  local($instance_type_method);
+  local($module_name) = &get_module_name;
+  local($virtual_class);
+ 
+  for(local($i) = 0; $i < $num_instance_type_methods; $i++) {
+    if(&generate_instance_type_method(@instance_type_base[$i]) == 1) {
+      $_ = @instance_type_base[$i];
+      local($concrete_name) = &bottom_of_barrel(@instance_type_base[$i]);
+      local($java_file) = $JAVA_OUTPUT . "/" . "$concrete_name.java";
+      $instance_type_method = "  public static int instanceType($instance_type_base[$i] obj) {\\n";
+      $instance_type_method = $instance_type_method .  "    return $module_name\JNI.$concrete_name\_instanceType(@instance_type_base[$i].getCPtr(obj));\\n";
+      $instance_type_method = $instance_type_method . "  }\\n\\n";
+
+      local($command) = "sed 's/^}/$instance_type_method}/' $java_file > $java_file.tmp";
+
+      system($command);
+
+      $command = "mv $java_file.tmp $java_file";
+      system($command);
+    }
+  }
+
+}
+

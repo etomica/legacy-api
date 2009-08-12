@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+require "inheritance_sniffer";
+
+@concrete_names; # array containing lowest concrete subclass
+                 # for each class in @classname (defined in file_list script)
+                 # there is a one->to->one correspondance
+@virtual_names;  # array containing lowest virtual subclass
+                 # for each class in @classname (defined in file_list script)
+                 # there is a one->to->one correspondance
+
+for(local($i) = 0; $i < $num_classes; $i++) {
+  local($base_name);
+  $base_name = &get_base_concrete_class(@classname[$i]);
+  push(@concrete_names, $base_name);
+  local($virtual_name);
+  $virtual_name = &get_base_virtual_class(@classname[$i]);
+  push(@virtual_names, $virtual_name);
+}
+
+return true;
+

@@ -1,0 +1,402 @@
+#!/usr/bin/perl
+
+require "cl_parser";
+require "file_list";
+
+$index = 0;
+$in_javadoc_comment = 0;
+$get_method_name = 0;
+$javadoc_index = 0;
+
+$MAX_LENGTH = 50;
+@javadoc_comments = { "", "", "", "", "", "", "", "", "", "",
+                      "", "", "", "", "", "", "", "", "", "",
+                      "", "", "", "", "", "", "", "", "", "",
+                      "", "", "", "", "", "", "", "", "", "",
+                      "", "", "", "", "", "", "", "", "", "" };
+@method_name = { "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "" };
+@return_type = { "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "",
+                 "", "", "", "", "", "", "", "", "", "" };
+@signatures = { "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", "", "", "",
+                "", "", "", "", "", "", "", "", "", "" };
+#
+#
+#  CHANGE SWIG PROXY CLASSES TO IMPLEMENT INTERFACE
+#
+#
+
+#local(@instance_list);
+#&get_it_virtual_base_list(*instance_list);
+
+for ($index = 0; $index < $num_classes; $index++) {
+
+  $in_filename = @classname[$index] . ".java";
+  $out_filename = $in_filename . ".tmp";
+
+  print "_______________________________\n";
+  print "Comment Generator : $in_filename\n";
+  print "_______________________________\n";
+
+  $in_cpp_filename = @ARGV[0] . "/" . @classname[$index] . ".h";
+
+  &initDeclerations;
+
+  open(CPP_IN_FILE, $in_cpp_filename);
+
+  while(<CPP_IN_FILE>) {
+    if(m/\/\*\*/) {
+      m/([ ]*)([^\n]*)/;
+      @javadoc_comments[$javadoc_index] = "  " . $2 . "\n";
+      $in_javadoc_comment = 1;
+    }
+    elsif(m/\*\//) {
+      m/([ ]*)([^\n]*)/;
+      @javadoc_comments[$javadoc_index] = $javadoc_comments[$javadoc_index] . "    " . $2 . "\n";
+      $in_javadoc_comment = 0;
+      $get_method_name = 1;
+    }
+    elsif($in_javadoc_comment eq 1) {
+      m/([ ]*)([^\n]*)/;
+      @javadoc_comments[$javadoc_index] = $javadoc_comments[$javadoc_index] . "    " . $2 . "\n";
+    }
+    elsif($get_method_name eq 1) {
+# NEED TO DO SOME TYPE OF TEST HERE TO VERIFY THIS LINE IS A METHOD DECLERATION
+# BECAUSE THERE COULD BE OTHER JAVADOC COMMENTS IN FILE.
+#
+# Entire signature may not be on one line
+#
+
+      # CTOR method
+      if(m/([ ]*)@classname[$index]([ ]*)\(([^\)]*)/) {
+#print "CTOR METHOD NAME/SIGNATURE : $_";
+        @return_type[$javadoc_index] = "";
+        @method_name[$javadoc_index] = @classname[$index];
+        @signatures[$javadoc_index] = &processSignature($3);
+#print "    NAME    : @method_name[$javadoc_index]\n";
+#print "    RETURN  : @return_type[$javadoc_index]\n";
+#print "    SIG     : @signatures[$javadoc_index]\n";
+#print "    COMMENT :\n@javadoc_comments[$javadoc_index]\n";
+        $javadoc_index = $javadoc_index + 1;
+      }
+      # virtual method
+      elsif(m/([ ]*)virtual ([^ ]*) ([^(]*)\(([^\)]*)/) {
+#print "VIRTUAL METHOD NAME/SIGNATURE : $_";
+        @return_type[$javadoc_index] = &stripPointer($2);
+        @method_name[$javadoc_index] = &stripPointer($3);
+        @signatures[$javadoc_index] = &processSignature($4);
+#print "    NAME    : @method_name[$javadoc_index]\n";
+#print "    RETURN  : @return_type[$javadoc_index]\n";
+#print "    SIG     : @signatures[$javadoc_index]\n";
+#print "    COMMENT :\n@javadoc_comments[$javadoc_index]\n";
+        $javadoc_index = $javadoc_index + 1;
+      }
+      # "Regular" method
+      elsif(m/([ ]*)([^ ]*) ([^(]*)\(([^\)]*)/) {
+#print "REGULAR METHOD NAME/SIGNATURE : $_";
+        $orig = $_;
+        @return_type[$javadoc_index] = &stripPointer($2);
+        @method_name[$javadoc_index] = &stripPointer($3);
+        $_ = $orig;
+        @signatures[$javadoc_index] = &processSignature($4);
+#print "    NAME    : @method_name[$javadoc_index]\n";
+#print "    RETURN  : @return_type[$javadoc_index]\n";
+#print "    SIG     : @signatures[$javadoc_index]\n";
+#print "    COMMENT :\n@javadoc_comments[$javadoc_index]\n";
+        $javadoc_index = $javadoc_index + 1;
+      }
+
+      $get_method_name = 0;
+    }
+
+  }
+
+  close(CPP_IN_FILE);
+
+
+  open(NATIVE_IN_FILE, $in_filename);
+  open(NATIVE_OUT_FILE, ">$out_filename");
+
+  while(<NATIVE_IN_FILE>) {
+
+    &ctorComment;
+
+    &finalizeComment;
+
+    &deleteComment;
+
+    &getCPtrComment;
+
+    &instanceTypeComment;
+
+    &methodComment;
+
+    print NATIVE_OUT_FILE "$_";
+  }
+
+  close(NATIVE_IN_FILE);
+  close(NATIVE_OUT_FILE);
+
+  $command = "mv $out_filename $in_filename";
+  system($command);
+
+  local($num_native_methods);
+
+}
+#         12345678901234567890123456789012345678901234567890123456789012345678901234567
+
+#
+# ctorComment
+#
+sub ctorComment() {
+
+  if(m/public @classname[$index]\(long cPtr, boolean cMemoryOwn\)/) {
+    # Save original line for output after comment added
+    $orig = $_;
+
+    # Output comment
+    $_ = "  /**\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * WARNING : This method should not be called outside of the java proxy.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *           implementation.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    */\n";
+    print NATIVE_OUT_FILE "$_";
+
+    # Restore original line for output
+    $_ = $orig;
+  }
+  elsif(m/public @classname[$index]\(([^\)]*)\)/) {
+    for($idx = 0; $idx < $MAX_LENGTH; $idx++) {
+      if(@method_name[$idx] eq @classname[$index]) {
+        if(@signatures[$idx] eq $1) {
+          # Save original line for output after comment added
+          $orig = $_;
+
+          print NATIVE_OUT_FILE "@javadoc_comments[$idx]";
+
+          # Restore original line for output and break out
+          # of loop
+          $_ = $orig;
+          last;
+        }
+      }
+    }
+  }
+
+}
+
+#
+# finalizeComment
+#
+sub finalizeComment() {
+  if(m/protected void finalize\(\)/) {
+    # Save original line for output after comment added
+    $orig = $_;
+
+    # Output comment
+    $_ = "  /**\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * Method called just before the object is garbage collected.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    */\n";
+    print NATIVE_OUT_FILE "$_";
+
+    # Restore original line for output
+    $_ = $orig;
+  }
+}
+
+#
+# deleteComment
+#
+sub deleteComment() {
+
+  if(m/public void delete\(\)/) {
+    # Save original line for output after comment added
+    $orig = $_;
+
+    # Output comment
+    $_ = "  /**\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * Method called to delete the underlying C++ object that this java\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * instance is a proxy for.  This method calls the C++ object's destructor.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    */\n";
+    print NATIVE_OUT_FILE "$_";
+
+    # Restore original line for output
+    $_ = $orig;
+  }
+}
+
+#
+# getCPtrComment
+#
+sub getCPtrComment() {
+  if(m/protected static long getCPtr\(/) {
+    # Save original line for output after comment added
+    $orig = $_;
+
+    # Output comment
+    $_ = "  /**\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *  \@param obj Java object to retrieve underlying C++ object ponter for.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *  \@return Returns the pointer (as a long) to the underlying C++ object\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *          for the given java object.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    */\n";
+    print NATIVE_OUT_FILE "$_";
+
+    # Restore original line for output
+    $_ = $orig;
+  }
+}
+
+#
+# instanceTypeComment
+#
+sub instanceTypeComment() {
+
+  if(m/public static int instanceType\(/) {
+    # Save original line for output after comment added
+    $orig = $_;
+
+    # Output comment
+    $_ = "  /**\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * WARNING : This method should not be called outside of the\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *           java proxy level implementation.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * Method that determines the typeid of the underlying C++ object\n"; 
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * and returns a unique ID for that typeid.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * @param Object for which to get id.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    * @return Returns a unique value that ids the type of the underlying\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    *         C++ object in its class tree for the given java object.\n";
+    print NATIVE_OUT_FILE "$_";
+    $_ = "    */\n";
+    print NATIVE_OUT_FILE "$_";
+
+    # Restore original line for output
+    $_ = $orig;
+  }
+}
+#
+# methodComment
+#
+sub methodComment() {
+  if(m/public ([^ ]*) ([^\(]*)\(([^\)]*)\) {/) {
+    for($idx = 0; $idx < $MAX_LENGTH; $idx++) {
+      if(@method_name[$idx] eq $2) {
+        if(@signatures[$idx] eq $3) {
+          # Save original line for output after comment added
+          $orig = $_;
+
+          print NATIVE_OUT_FILE "@javadoc_comments[$idx]";
+
+          # Restore original line for output and break out
+          # of loop
+          $_ = $orig;
+          last;
+        }
+      }
+    }
+  }
+}
+
+#
+# processSignature
+#
+sub processSignature() {
+  local($signature) = @_;
+
+  # check to see if signature is multi-line
+  while(!m/\;/) {
+    $_ = <CPP_IN_FILE>;
+    s/([ ]*)//;
+    $signature = $signature . $_;
+    $_ = $signature;
+    s/\n/ /;
+    $signature = $_;
+  }
+  $_ = $signature;
+  if(m/\);/) {
+    s/\);//;
+  }
+  s/\n//;
+  $signature = $_;
+#print "PROCESS SIGNATURE : $signature\n";
+  $_ = $signature;
+  while(m/$API_PREFIX/) {
+    s/$API_PREFIX/I/;
+  }
+  while(m/\*/) {
+    s/\*//;
+  }
+
+  # Currently only removing one native argument and that
+  # argument cannot be the first one in the list.  Should
+  # a comment fail to show in the java file, this code will
+  # have to be played with
+  if(m/::/) {
+    if(m/, ([^:]*)::([^ ]*)/) {
+      $pre = $1;
+      $post = $2;
+      s/, $pre\::/, SWIGTYPE_p_$pre\__/;
+    }
+  }
+
+  $_;
+
+}
+
+#
+# initDeclerations
+#
+sub initDeclerations() {
+
+  local($idx);
+  $idx = 0;
+
+  $javadoc_index = 0;
+
+  for ($idx = 0; $idx < $MAX_LENGTH; $idx++) {
+    @javadoc_comments[$idx] = "";
+    @method_name[$idx] = "";
+    @return_type[$idx] = "";
+    @signatures[$idx] = "";
+  }
+
+}
+
+#
+# stripPointer
+#
+sub stripPointer() {
+  local($localString) = @_;
+
+  $_ = $localString;
+  s/\*//;
+
+  $_;
+}
+
+

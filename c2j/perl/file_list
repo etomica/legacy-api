@@ -1,0 +1,153 @@
+#!/usr/bin/perl
+
+$api_package = "etomica.api.";
+$etomica_package = "import etomica.api.";
+
+$temp_dir = "/tmp";
+
+@classname; # Array of all java classes created by swig
+@interface; # Array of interfaces for classes in @classname.
+            # NOTE : There is not a 1-1 correspondance between
+            #  @classname and @interface.  See @num_interface_for_class 
+@num_interface_for_class; # Number of interfaces for each entry in @classname
+$num_classes = 0; # Number of classes in @classname
+
+#########################################################################
+# PUBLIC SUBROUTINES
+#########################################################################
+
+#
+# get_index_for_class
+#
+sub get_index_for_class() {
+  local($class_name) = @_;
+  local($index) = 0;
+  local($class_index) = -1;
+  while($index < $num_classes) {
+
+    if(@classname[$index] eq $class_name) {
+      $class_index = $index;
+      last;
+    }
+
+    $index++;
+  }
+  $class_index;
+
+}
+
+#########################################################################
+# END PUBLIC SUBROUTINES
+#########################################################################
+
+$debug_output = 0;
+
+# It appears that using the ls command is easier than using opendir/readir/grep
+$command = "ls $API_DIRECTORY/$API_PREFIX*.h $NATIVE_DIRECTORY/$NATIVE_PREFIX*.h > $temp_dir/include_list.parse";
+system($command);
+
+open(INCLUDE_LIST, "$temp_dir/include_list.parse");
+
+while(<INCLUDE_LIST>) {
+  $filename = $_;
+  if(m/[^\/]*\.h/) {
+    /([^\/]*)\.h/;
+    push(@classname, $1);
+    $my_class = $1;
+
+    open(INCLUDE_FILE, $filename);
+    while(<INCLUDE_FILE>) {
+        if(m/class [^{]*;/) {
+        }
+        elsif(m/class $API_PREFIX[^{]*/) {
+          &parse_api_class_definition;
+        }
+        elsif(m/class $NATIVE_PREFIX[^{]*/) {
+          $next_temp = $_;
+          while(!m/{/) {
+            $_ = <INCLUDE_FILE>;
+            $next_temp = $next_temp . $_;
+          }
+          $_ = $next_temp;
+          &parse_native_class_definition;
+        }
+    }
+    close(INCLUDE_FILE);
+  }
+  else {
+    print "WARNING : $filename is an unknown line.\n";
+  }
+
+}
+
+$num_classes = @classname;
+
+if($debug_output == 1) {
+  $num_interface_ = @interface;
+  print "NUMBER CONCRETE : $num_classes\n";
+  print "NUMBER INTERFACE : $num_interface_\n";
+
+  $index = 0;
+  $int_index = 0;
+  while($index < $num_classes) {
+#    print "@classname[$index]";
+#    print "  INTERFACES : @num_interface_for_class[$index]\n";
+    $temp_index = 0;
+    while($temp_index < @num_interface_for_class[$index]) {
+#      print "  @interface[$int_index]";
+      $temp_index++;
+      $int_index++;
+    }
+    print "\n";
+    $index++;
+  }
+}
+
+close(INCLUDE_LIST);
+
+
+#
+# parse_api_class_definition()
+#
+sub parse_api_class_definition() {
+
+  /class $my_class([^{]*)/;
+  $_ = $my_class;
+  /$API_PREFIX([^ ]*)/;
+
+  push(@interface, "I$1");
+  push(@num_interface_for_class, 1);
+}
+
+#
+# parse_native_class_definition()
+#
+sub parse_native_class_definition() {
+  $class_line = $_;
+  local($count);
+  $count = 0;
+  /class $my_class([^{]*)/;
+  $_ = $1;
+  while(m/$API_PREFIX[^ ]*/) {
+    /($API_PREFIX[^ ]*)/;
+    $_ = $1;
+    /$API_PREFIX([^,]*)/;
+    push(@interface, "I$1");
+    $count++;
+    $_ = $class_line;
+    s/$API_PREFIX([^!]*)/XXXX$1/;
+    $class_line = $_;
+  }
+  push(@num_interface_for_class, $count);
+
+}
+
+#
+# cleanup()
+#
+sub cleanup() {
+
+  $command = "rm $temp_dir/include_list.parse";
+  system($command);
+}
+

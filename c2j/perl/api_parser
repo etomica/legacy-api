@@ -1,0 +1,802 @@
+#!/usr/bin/perl
+
+require "cl_parser";
+require "file_list";
+require "instance_type";
+require "get_inheritance";
+
+@import_list = ();
+$num_imports = 0;
+
+$index = 0;
+$interface_index = 0;
+
+$show_steps = 1;
+$debug_import = 0;
+
+$jni_file = &get_JNI_name();
+
+$in_ctor = 0;
+@ctor_arg = {"", "", "", "", "" };
+$num_ctor_arg = 0;
+
+#
+#
+#  CHANGE SWIG PROXY CLASSES TO IMPLEMENT INTERFACE
+#
+#
+
+local(@instance_list);
+&get_it_virtual_base_list(*instance_list);
+
+local(@native_method_list);
+local(@native_replacement_list);
+local($process_native_method);
+
+for ($index = 0; $index < $num_classes; $index++) {
+
+  $in_filename = @classname[$index] . ".java";
+  $out_filename = $in_filename . ".tmp";
+
+  $in_cpp_filename = @cpp_interface[$index] . ".java";
+  $out_cpp_filename = $in_filename . ".tmp";
+
+  if($show_steps == 1) {
+    print "    $in_filename\n";
+    print "    ------------------------\n";
+  }
+
+  $num_imports = 0;
+  $process_native_method = 0;
+  @native_method_list = ();
+  @native_replacement_list = ();
+
+  open(NATIVE_IN_FILE, $in_filename);
+  open(NATIVE_OUT_FILE, ">$out_filename");
+
+  while(<NATIVE_IN_FILE>) {
+
+    if($in_ctor == 1) {
+      &process_ctor;
+    }
+    # class decleration : add implements statement
+    elsif(m/public class [^ ]*/) {
+      if(@num_interface_for_class[$index] > 0) {
+        &add_implements;
+      }
+    }
+    # typecast arguments in call to IAPI*.getCPtr
+    elsif(m/, $API_PREFIX[^,]*.getCPtr\(/) {
+      &edit_cptr_parm;
+    }
+    elsif(m/long cPtr =[^!]*.getCPtr\(/) {
+      &edit_cptr_parm;
+    }
+    # process ctor that takes a java object
+#    elsif(m/public @classname[$index]([^!]*)SWIGTYPE_p_JNIEnv/) {
+#print "MATCH : $_";
+#      &edit_java_obj_ctor;
+#    }
+    # process method signature here
+    elsif(m/public [^ ]* [^(]*\(/) {
+      &edit_method_signature;
+      &edit_method_return_type;
+    }
+    elsif(m/public @classname[$index]\(/) {
+      &edit_method_signature;
+      &edit_method_return_type;
+    }
+    # Change protected ctor to public
+    elsif(m/protected @classname[$index]\(long/) {
+      s/protected/public/;
+    }
+
+    &change_return_statement;
+
+    &handle_instance_type_return;
+
+    &add_listener;
+
+    if(m/public [^ ]* [^(]*\(Object/) {
+      m/public [^ ]* ([^(]*)\(Object/;
+      push(@native_method_list, $1);
+      $process_native_method = $1;
+    }
+    elsif($process_native_method) {
+      local($idx) = @native_method_list;
+      if(m/$jni_file.[^_]*_@native_method_list[$idx]_/) {
+        push(@native_replacement_list, $_);
+        $process_native_method = 0;
+      }
+    }
+
+    # Add class being implemented to list of imports
+    local($imp_index);
+    $imp_index = 0;
+    while($imp_index < @num_interface_for_class[$index]) {
+      $candidate = @interface[$interface_index + $imp_index];
+      &add_to_list;
+      # Look at line to see if something used needs to be imported
+#      &import_func;
+      $imp_index++;
+    }
+
+    # Look at line to see if something used needs to be imported
+    &import_func;
+
+    print NATIVE_OUT_FILE "$_";
+  }
+
+  close(NATIVE_IN_FILE);
+  close(NATIVE_OUT_FILE);
+
+  $command = "mv $out_filename $in_filename";
+  system($command);
+
+  local($num_native_methods);
+
+  $num_native_methods = @native_method_list;
+  if($num_native_methods > 0) {
+
+    open(NATIVE_IN_FILE, $in_filename);
+    open(NATIVE_OUT_FILE, ">$out_filename");
+
+    while(<NATIVE_IN_FILE>) {
+
+NATIVE_METHOD: {
+      for(local($i) = 0; $i < $num_native_methods; $i++) {
+        $method_name = @native_method_list[$i];
+        if(m/public [^ ]* $method_name\(/) {
+          print NATIVE_OUT_FILE $_;
+          while() {
+            $_ = <NATIVE_IN_FILE>;
+            if(m/$jni_file.[^_]*_@native_method_list[$i]_/) {
+              $_ = @native_replacement_list[$i];
+              last NATIVE_METHOD;
+            }
+            else {
+              print NATIVE_OUT_FILE $_;
+            }
+          }
+        }
+      }
+      } # End NATIVE_METHOD
+      print NATIVE_OUT_FILE $_;
+    }
+
+    close(NATIVE_IN_FILE);
+    close(NATIVE_OUT_FILE);
+
+    $command = "mv $out_filename $in_filename";
+    system($command);
+
+  }
+
+  #
+  # cut down on memory allocation
+  #
+
+  open(NATIVE_IN_FILE, $in_filename);
+  open(NATIVE_OUT_FILE, ">$out_filename");
+
+  while(<NATIVE_IN_FILE>) {
+
+    # Get return type from method signature
+    if(m/public [^ ]* [^(]*\(/) {
+      /public ([^ ]*) ([^(]*)\(/;
+      # If the method is static need to reparse $2
+      if($1 eq "static") {
+         $orig = $_;
+        $_ = $2;
+        /([^ ]*) ([^(]*)/;
+        $cast_return = $1;
+        $method_temp = $2;
+         $_ = $orig;
+      }
+      else {
+        $cast_return = $1;
+        $method_temp = $2;
+      }
+    }
+
+    if(m/long cPtr = $jni_file/) {
+      print NATIVE_OUT_FILE $_;
+      $_ = <NATIVE_IN_FILE>;
+      if(m/return \(cPtr/) {
+        print NATIVE_OUT_FILE "    if(cPtr == 0) {\n";
+        print NATIVE_OUT_FILE "      return null;\n    }\n";
+        print NATIVE_OUT_FILE "    else {\n";
+        print NATIVE_OUT_FILE "      Object obj = ProxyHash.getJavaObject(cPtr);\n";
+        print NATIVE_OUT_FILE "      if(obj == null) {\n";
+        $_ = $cast_return;
+        if(/^[I]/) {
+          s/I/$API_PREFIX/;
+          $_ = &bottom_of_barrel($_);
+        }
+        if($_ eq $UNDETERMINED_CLASS) {
+          print NATIVE_OUT_FILE "        $cast_return temp = null;\n";
+        }
+        else {
+          print NATIVE_OUT_FILE "        $cast_return temp = new $_(cPtr, false);\n";
+        print NATIVE_OUT_FILE "        ProxyHash.setJavaObject(temp, cPtr);\n";
+        }
+        #print NATIVE_OUT_FILE "        System.out.println(\"NOTHING FOUND : $method_temp cPtr : \" + Long.toHexString(cPtr));\n";
+#        print NATIVE_OUT_FILE "        return new $_(cPtr, false);\n";
+        print NATIVE_OUT_FILE "        return temp;\n";
+        print NATIVE_OUT_FILE "      }\n";
+        print NATIVE_OUT_FILE "      else {\n";
+#        print NATIVE_OUT_FILE "        System.out.println(\"FOUND A GOODIN\");\n";
+        print NATIVE_OUT_FILE "        return ($cast_return)obj;\n";
+        print NATIVE_OUT_FILE "      }\n";
+        print NATIVE_OUT_FILE "    }\n";
+      }
+    }
+    else {
+      print NATIVE_OUT_FILE $_;
+    }
+  }
+
+  close(NATIVE_IN_FILE);
+  close(NATIVE_OUT_FILE);
+
+  $command = "mv $out_filename $in_filename";
+  system($command);
+
+  # put the list of imports into the file
+  $in_import = $in_filename;
+  $out_import = $out_filename;
+  &print_import_list;
+
+# Increment loop counter
+  $interface_index = $interface_index + $num_interface_for_class[$index];
+
+}
+
+
+#
+# add_implements()
+#  Add the 'implements' clause to the class declaration.  For example,
+#  Change -> public class GlotzillaSimulation extends IAPISimulation {
+#  To     -> public class GlotzillaSimulation extends IAPISimulation implements ISimulation {
+#
+sub add_implements() {
+
+  /public class ([^ ]*)/;
+  local($class_name);
+  $class_name = $1;
+  local($imp_clause);
+  $imp_clause = "implements ";
+  local($int_index);
+  $int_index = 0;
+  while($int_index < @num_interface_for_class[$index]) {
+    $imp_clause = $imp_clause . @interface[$interface_index + $int_index];
+    $int_index++;
+    if($int_index < @num_interface_for_class[$index]) {
+      $imp_clause = $imp_clause . ",";
+    }
+  }
+  if(m/extends/) {
+    /(extends [^{]*)/;
+    local($extends);
+    $extends = $1;
+    s/$class_name $extends/$class_name $extends $imp_clause/;
+    s/{/ {/;
+    s/  implements/ implements/;
+  }
+  else {
+    s/$class_name/$class_name $imp_clause/;
+  }
+}
+
+#
+# edit_cptr_parm()
+#  Casts arguement to getCPtr method.  The arguement will be cast to the
+#  lowest virtual (interface) class that can be found.
+#   Native Class:
+#    Change -> testJNI.GlotzillaVector3D_mod(swigCPtr, IAPIVector.getCPtr(v));
+#    To     -> testJNI.GlotzillaVector3D_mod(swigCPtr, IAPIVector.getCPtr((IAPIVector)v));
+#
+#    Change -> long cPtr = testJNI.LammpsBox_instance(IAPISimulation.getCPtr(sim));
+#    To     -> long cPtr = testJNI.LammpsBox_instance(IAPISimulation.getCPtr((IAPISimulation)sim));
+#
+sub edit_cptr_parm() {
+
+  while (m/$API_PREFIX[^,]*.getCPtr\([^(]/) {
+
+    /$API_PREFIX([^,]*).getCPtr\([^(]/;
+    local($class_base);
+    $class_base = $1;
+    local($idx) = &get_index_for_class($API_PREFIX.$class_base);
+    local($virtual_base) =  @virtual_names[$idx];
+    # If the class does not have a virtual base, then it
+    # is the virtual base.
+    if($virtual_base eq $UNKNOWN_CLASS) {
+      $virtual_base = $API_PREFIX . $class_base;
+    }
+    s/$API_PREFIX$class_base.getCPtr\(([^(])/$API_PREFIX$class_base.getCPtr\(\($virtual_base\)$1/;
+  }
+
+#  while (m/, $API_PREFIX[^,]*.getCPtr\([^(]/) {
+#
+#    /, $API_PREFIX([^,]*).getCPtr\([^(]/;
+#    local($class_base);
+#    $class_base = $1;
+#    local($idx) = &get_index_for_class($API_PREFIX.$class_base);
+#    local($virtual_base) =  @virtual_names[$idx];
+    # If the class does not have a virtual base, then it
+    # is the virtual base.
+#    if($virtual_base eq $UNKNOWN_CLASS) {
+#      $virtual_base = $API_PREFIX . $class_base;
+#    }
+#    s/, $API_PREFIX$class_base.getCPtr\(([^(])/, $API_PREFIX$class_base.getCPtr\(\($virtual_base\)$1/;
+#  }
+}
+
+#
+# edit_method_signature()
+#  Edit the arguement types in a method signature.
+#  Ctor method : 
+#   Change -> public GlotzillaPotentialMaster(IAPISimulation sim) {
+#   To     -> public GlotzillaPotentialMaster(ISimulation sim) {
+#  Non-Ctor method (excluding 'instanceType' Non-API method) :
+#   Change -> public void mod(IAPIVector arg0) {
+#   To     -> public void mod(IVector arg0) {
+#
+sub edit_method_signature() {
+
+  # Do not change the signature of the non-API method instanceType
+  if(!(m/instanceType/)) {
+    # Non-ctor method
+    if(m/public [^ ]* [^(]*\($API_PREFIX[^ ]*/) {
+      /public ([^ ]*) ([^(]*)\($API_PREFIX([^ ]*)/;
+      local($return_type);
+      local($method_name);
+      local($arg_type);
+      $return_type = $1;
+      $method_name = $2;
+      $arg_type= $3;
+      s/public $return_type $method_name\($API_PREFIX$arg_type/public $return_type $method_name\(I$arg_type/;
+      $candidate = "I".$arg_type;
+      &add_to_list;
+    }
+    # ctor method
+    elsif(m/public @classname[$index]\($API_PREFIX[^ ]*/) {
+      /public @classname[$index]\($API_PREFIX([^ ]*)/;
+      local($return_type);
+      local($method_name);
+      local($arg_type);
+      $arg_type= $1;
+      @ctor_arg[$num_ctor_arg] = $1;
+      s/public @classname[$index]\($API_PREFIX$arg_type/public @classname[$index]\(I$arg_type/;
+      $candidate = "I".$arg_type;
+      &add_to_list;
+      $num_ctor_arg = $num_ctor_arg + 1;
+      $in_ctor = 1;
+    }
+    while(m/, $API_PREFIX[^ ]* /) {
+      /, $API_PREFIX([^ ]*) /;
+      local($class_base);
+      $class_base = $1;
+      s/, $API_PREFIX$class_base /, I$class_base /;
+      $candidate = "I".$class_base;
+      &add_to_list;
+      if($in_ctor) {
+        @ctor_arg[$num_ctor_arg] = $class_base;
+        $num_ctor_arg = $num_ctor_arg + 1;
+      }
+    }
+  }
+}
+
+#
+# edit_method_return_type()
+#  Change the return type of a method.  Will not change the return type of
+#  a ctor.  For example :
+#   Change -> public IAPIBoundary getBoundary() {
+#   To     -> public IBoundary getBoundary() {
+#
+sub edit_method_return_type() {
+
+  # Do not change ctor
+  if(!(m/public @classname[$index]\(/)) {
+    if(m/public $API_PREFIX[^ ]* /) {
+      /public $API_PREFIX([^ [(]*) /;
+      local($return_type);
+      $return_type = $1;
+      s/public $API_PREFIX$return_type/public I$return_type/;
+    }
+  }
+}
+
+#
+# change_return_statement()
+#  Changes the return type of objects in a method.  Methods
+#  should return an instance of a 'native' class and not
+#  an instance of an 'api' class.  For example,
+#   Change -> return (cPtr == 0) ? null : new IAPIMolecule(cPtr, false);
+#   To     -> return (cPtr == 0) ? null : new GlotzillaMolecule(cPtr, false);
+#
+sub change_return_statement() {
+
+  if((m/null \: new ($API_PREFIX[^(]*)/)) {
+    local($orig) = $_;
+    local($virt) = $1;
+    local($conc) = &bottom_of_barrel($virt);
+    $_ = $orig;
+    s/new $virt/new $conc/;
+  }
+}
+
+#
+# handle_instance_type_return()
+#
+sub handle_instance_type_return() {
+  # If not already processing a method that needs to be changed
+  if($in_instance_method == 0) {
+    # Well, the line at least looks like a method decleration
+    if(m/public [^ ]* /) {
+      foreach $c_type (@instance_list) {
+        local($orig) = $_;
+        local($base);
+        $_ = $c_type;
+        s/$API_PREFIX//;
+        $base = $_;
+        $_ = $orig;
+        if(m/public I$base /) {
+          $in_instance_method = 1;
+          $instance_type_method_class = &get_it_implementation_class($c_type); # GlotzillaAtom
+          $instance_type_new_class = $c_type; #IAPIAtom
+          $orig = $_;
+          local($virt) = &get_base_virtual_class($instance_type_method_class);
+          $_ = $virt;
+          s/$API_PREFIX/I/;
+          $return_type = $_;
+          $_ = $orig;
+          $return_type_cast = "I".$base; # IMolecule
+          last;
+        }   
+      }   
+    }   
+  }
+
+  elsif($in_instance_method == 1) {
+    if(m/return [^!]*new/) {
+      $candidate = $return_type;
+      &add_to_list;
+      print NATIVE_OUT_FILE "\n    $return_type instanceType = null;\n\n";
+
+#      print NATIVE_OUT_FILE "    $instance_type_new_class temp = ($instance_type_new_class)ProxyHash.getJavaObject(cPtr);\n";
+#      print NATIVE_OUT_FILE "    if(temp == null) {\n";
+#      print NATIVE_OUT_FILE "      temp = new $instance_type_new_class(cPtr, false);\n";
+#      print NATIVE_OUT_FILE "      ProxyHash.setJavaObject(temp, cPtr);\n";
+#      print NATIVE_OUT_FILE "    }\n";
+#      print NATIVE_OUT_FILE "    int classType = $instance_type_method_class.instanceType(temp);\n";
+ 
+
+      print NATIVE_OUT_FILE "    int classType = $instance_type_method_class.instanceType(new $instance_type_new_class(cPtr, false));\n";
+
+#      local($base_index) = &get_instance_type_base_index($instance_type_new_class);
+      local($base_index) = &get_it_inheritance_list_index($instance_type_new_class);
+      local($idx) = &get_instance_index($instance_type_new_class);
+#print "method class : $instance_type_method_class   new : $instance_type_new_class  base : $base_index  idx : $idx\n";
+ 
+      print NATIVE_OUT_FILE "    if(classType == 0) {\n";
+
+      print NATIVE_OUT_FILE "      instanceType = ($return_type)ProxyHash.getJavaObject(cPtr);\n";
+      print NATIVE_OUT_FILE "      if(instanceType == null) {\n";
+      print NATIVE_OUT_FILE "        instanceType = new @instance_type_inheritance[$base_index](cPtr, false);\n";
+      print NATIVE_OUT_FILE "        ProxyHash.setJavaObject(instanceType, cPtr);\n";
+#        print NATIVE_OUT_FILE " System.out.println(\"MATCH NOT FOUND : $return_type\");\n";
+      print NATIVE_OUT_FILE "      }\n";
+#      print NATIVE_OUT_FILE "      else { System.out.println(\"A MATCH WAS FOUND : $return_type\");\n }\n";
+#        print NATIVE_OUT_FILE "System.out.println(\"A MATCH WAS FOUND\");\n}\n";
+      print NATIVE_OUT_FILE "    }\n";
+
+
+      for(local($i) = 1; $i < @instance_type_number[$idx]; $i++) {
+        print NATIVE_OUT_FILE "    else if(classType == $i) {\n";
+        print NATIVE_OUT_FILE "      instanceType = ($return_type)ProxyHash.getJavaObject(cPtr);\n";
+        print NATIVE_OUT_FILE "      if(instanceType == null) {\n";
+        print NATIVE_OUT_FILE "        instanceType = new @instance_type_inheritance[$base_index+$i](cPtr, false);\n";
+        print NATIVE_OUT_FILE "        ProxyHash.setJavaObject(instanceType, cPtr);\n";
+#        print NATIVE_OUT_FILE " System.out.println(\"MATCH NOT FOUND : $return_type\");\n";
+        print NATIVE_OUT_FILE "      }\n";
+#        print NATIVE_OUT_FILE "      else { System.out.println(\"A MATCH WAS FOUND : $return_type\");\n }\n";
+#        print NATIVE_OUT_FILE "System.out.println(\"A MATCH WAS FOUND\");\n}\n";
+        print NATIVE_OUT_FILE "    }\n";
+      }
+
+    if($return_type_cast eq $return_type) {
+      $_ = "\n    return instanceType;\n";
+    }
+    else {
+      $_ = "\n    return ($return_type_cast)instanceType;\n";
+    }
+    # last line gets printed out in main loop
+    $in_instance_method = 0;
+    }
+  }
+
+}
+
+
+#
+# import_func()
+#
+sub import_func() {
+
+    # non-ctor Method signature first arguement
+    if(m/public [^ ]* [^(]*\(I/) {
+      /public [^ ]* [^(]*\((I[^ ]*) /;
+      $candidate = $1;
+      if($debug_import == 1) {
+        print "1st: $_";
+        print "  candidate : $1\n";
+      }
+      &add_to_list;
+    }
+
+    # ctor Method signature first arguement
+    if(m/public @classname[$index]\(I/) {
+      if(!m/\($API_PREFIX/) {
+        /public @classname[$index]\((I[^ ]*)/;
+        $candidate = $1;
+        if($debug_import == 1) {
+          print "1st: $_";
+          print "  candidate : $1\n";
+        }
+        &add_to_list;
+      }
+    }
+
+    # Method signature arguements after first
+    if(m/, I[^ ]*/) {
+      /, (I[^ .]*)/;
+      $candidate = $1;
+      if($debug_import == 1) {
+        print "2nd: $_";
+        print "  candidate : $1\n";
+      }
+      &add_to_list;
+    }
+
+    # method return types
+    if(m/public I[^ (]* /) {
+      if($debug_import == 1) {
+        print "3rd: $_";
+      }
+#      if(m/public I[^[]*\[/) {
+#        /public (I[^\[]*)\[/;
+#        $candidate = $1;
+#        if($debug_import == 1) {
+#          print "  candidate : $1\n";
+#        }
+#      }
+#      else {
+        /public (I[^ ]*)/;
+        $candidate = $1;
+        if($debug_import == 1) {
+          print "  candidate : $1\n";
+        }
+#      }
+      &add_to_list;
+    }
+
+}
+
+#
+# add_to_list()
+#
+sub add_to_list() {
+
+  local($my_index);
+  $my_index = 0;
+  $found = 0;
+
+      # Do not import IAPI* packages
+  if(index($candidate, "IAPI") == -1 &&
+     &get_index_for_class($candidate) == -1) {
+
+    while($my_index < $num_imports) {
+      if($candidate eq @import_list[$my_index]) {
+        $found = 1;
+      }
+
+      $my_index++;
+    }
+
+    if($found == 0) {
+      if($debug_import == 1) {
+        print "    ITEM ADDED : $candidate\n";
+      }
+      push(@import_list, $candidate);
+      $num_imports++;
+    }
+  }
+
+}
+
+#
+# print_import_list()
+#
+sub print_import_list() {
+  local $my_index = 0;
+
+  if($debug_import == 1) {
+    print "NUMBER OF IMPORTS TO ADD : $num_imports\n";
+  }
+
+  while($my_index < $num_imports) {
+    $package = pop(@import_list);
+    if($my_index == ($num_imports - 1)) {
+      $command = "sed 's/\\(^package.*\\)/\\1\\n\\nimport $api_package$package;\\n/1' $in_import > $out_import";
+#print "SPOT 1 : $command\n";
+    }
+    else {
+      $command = "sed 's/\\(^package.*\\)/\\1\\nimport $api_package$package;\\n/1' $in_import > $out_import";
+#print "SPOT 2 : $command\n";
+    }
+    if($debug_import == 1) {
+      print "  IMPORT : import $api_package$package\n";
+    }
+    system($command);
+
+    system("mv $out_import $in_import");
+    $my_index++;
+  }
+
+}
+
+#
+# process_ctor()
+# Within a ctor, 
+#  Change -> this(testJNI.new_GlotzillaAtomLeaf__SWIG_1(IAPIAtomType.getCPtr(at)), true);
+#  To     -> this(testJNI.new_GlotzillaAtomLeaf__SWIG_1(IAPIAtomType.getCPtr((IAPIAtomType)at)), true);
+#
+sub process_ctor {
+
+
+  if(m/this\($jni_file./) {
+
+    local($idx) = 0;
+#    while(m/[^!]*getCPtr\([^(]/) {
+    while(m/$API_PREFIX[^ ]*getCPtr\([^(]/) {
+#      /([^!]*)getCPtr\(([^(])([^)]*)/;
+      /($API_PREFIX[^ ]*)getCPtr\(([^(])([^)]*)/;
+#
+      local($var_name);
+      $var_name = $2.$3;
+#      s/\($var_name\)/\(\($API_PREFIX@ctor_arg[$num_ctor_arg-1]\)$var_name\)/;
+      s/\($var_name\)/\(\($API_PREFIX@ctor_arg[$idx]\)$var_name\)/;
+      $idx = $idx + 1;
+      $num_ctor_arg = $num_ctor_arg-1;
+    }
+
+  }
+  elsif(m/}/) {
+    $in_ctor = 0;
+    $num_ctor_arg = 0;
+  }
+} # end process_ctor
+
+
+#
+# add_listener()
+#
+sub add_listener() {
+
+  local($arg_ct) = 0;
+  local(@args) = { "", "" };
+  local $l_type = "";
+
+  if(m/public void addListener\(I([^,]*)Listener/) {
+
+    print NATIVE_OUT_FILE "$_";
+
+    if(m/,/) {
+      $arg_ct = 2;
+      m/public void addListener\(I([^,]*)Listener ([^,]*), boolean ([^)]*)/;
+      $l_type = $1;
+      @args[0] = $2;
+      @args[1] = $3;
+    }
+    else {
+      $arg_ct = 1;
+      m/public void addListener\(I([^,]*)Listener ([^)]*)/;
+      $l_type = $1;
+      @args[0] = $2;
+    }
+    $_ = <NATIVE_IN_FILE>;
+    local($temp) = $API_PREFIX . $l_type . "Listener";
+    print NATIVE_OUT_FILE "    if(@args[0] instanceof $temp) {\n";
+    $temp = $API_PREFIX . $l_type . "Listener";
+    s/getCPtr\(@args[0]\)/getCPtr\(\($temp\)@args[0]\)/;
+    print NATIVE_OUT_FILE "  $_";
+    print NATIVE_OUT_FILE "    }\n    else {\n";
+    $temp = $NATIVE_PREFIX . $l_type . "ListenerNative";
+    if(&get_index_for_class($temp) == -1) {
+      print NATIVE_OUT_FILE "      System.out.println(\"Cannot add a listener to this simulation.\");\n";
+    }
+    else { 
+      print NATIVE_OUT_FILE "      long nativeListen = $jni_file.create_$temp(@args[0]);\n";
+      $temp = $API_PREFIX . $l_type . "Listener";
+      s/$temp.getCPtr\(\($temp\)@args[0]\)/nativeListen/;
+      print NATIVE_OUT_FILE "  $_";
+    }
+    print NATIVE_OUT_FILE "    }\n";
+    $_ = <NATIVE_IN_FILE>;
+  }
+
+} # end add_listener
+
+sub edit_java_obj_ctor() {
+    $line1 = $_;
+    print NATIVE_OUT_FILE "$_";
+    $_ = <NATIVE_IN_FILE>;
+    $line2 = $_;
+    print NATIVE_OUT_FILE "$_";
+    $_ = <NATIVE_IN_FILE>;
+    $line3 = $_;
+    print NATIVE_OUT_FILE "$_";
+
+    $_ = $line1;
+    /SWIGTYPE_p_JNIEnv ([^ ]*),/;
+    local ($var_name);
+    $var_name = $1;
+    s/SWIGTYPE_p_JNIEnv $var_name, //;
+    if(/Object/) {
+      s/Object/@virtual_names[$index]/;
+      s/$API_PREFIX/I/;
+    }
+    print NATIVE_OUT_FILE "\n$_";
+    $_ = $line2;
+print "$line2\n";
+#    s/SWIGTYPE_p_JNIEnv.getCPtr(jenv), //;
+    s/SWIGTYPE_p_JNIEnv.getCPtr\($var_name\), //;
+    s/.new_/.create_/;
+    print NATIVE_OUT_FILE "$_";
+    print NATIVE_OUT_FILE "$line3";
+    $_ = "\n";
+} # end edit_java_obj_ctor
+
+#
+# get_JNI_name
+#
+sub get_JNI_name() {
+
+  local($jni_name) = "";
+
+  local($mod_name) = &get_module_name();
+  local($JNIjava);
+  $jni_name = "$mod_name\JNI";
+
+  $jni_name;
+
+}
+
+
+#
+# get_module_name()
+#
+sub get_module_name() {
+
+  local($fn);
+  $fn = $NATIVE_DIRECTORY."/".$SWIG_INPUT_FILE;
+  local($mod_name) = "";
+
+  open(JNI_FILE, $fn);
+
+  while(<JNI_FILE>) {
+    if(m/%module/) {
+      /%module ([^ ]*)/;
+      $_ = $1;
+      s/\n//;
+      $mod_name = $_;
+    }
+  }
+
+  close(JNI_FILE);
+  $mod_name;
+
+}
+

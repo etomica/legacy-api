@@ -1,0 +1,86 @@
+#!/usr/bin/perl
+
+$argc = @ARGV;
+local($idx) = 0;
+
+$NATIVE_DIRECTORY = "";
+$API_DIRECTORY = "";
+$JAVA_PACKAGE = "";
+$SWIG_INPUT_FILE = "";
+$NATIVE_NAMESPACE = "";
+$API_NAMESPACE = "";
+$NATIVE_PREFIX = "";
+$API_PREFIX = "";
+$JAVA_OUTPUT = "";
+
+while($idx < $argc) {
+
+  # -dn -> Native source code (C++) directory
+  if(@ARGV[$idx] =~ m/^-dn/) {
+    $_ = @ARGV[$idx];
+    s/-dn//;
+    $NATIVE_DIRECTORY = $_;
+  }
+  # -da -> API include file (C++) directory
+  elsif(@ARGV[$idx] =~ m/^-da/) {
+    $_ = @ARGV[$idx];
+    s/-da//;
+    $API_DIRECTORY = $_;
+  }
+  # -jp -> Name of package for java proxy classes
+  elsif(@ARGV[$idx] =~ m/^-jp/) {
+    $_ = @ARGV[$idx];
+    s/-jp//;
+    $JAVA_PACKAGE = $_;
+  }
+  # -jo -> Directory to output java proxy classes
+  elsif(@ARGV[$idx] =~ m/^-jo/) {
+    $_ = @ARGV[$idx];
+    s/-jo//;
+    $JAVA_OUTPUT = $_;
+  }
+  # -i -> Name of swig input file (the *.i file)
+  elsif(@ARGV[$idx] =~ m/^-i/) {
+    $_ = @ARGV[$idx];
+    s/-i//;
+    $SWIG_INPUT_FILE = $_;
+  }
+  # -nn -> Namespace of native adapter code (C++)
+  elsif(@ARGV[$idx] =~ m/^-nn/) {
+    $_ = @ARGV[$idx];
+    s/-nn//;
+    $NATIVE_NAMESPACE = $_;
+  }
+  # -na -> Namespace of api interface include file code (C++)
+  elsif(@ARGV[$idx] =~ m/^-na/) {
+    $_ = @ARGV[$idx];
+    s/-na//;
+    $API_NAMESPACE = $_;
+  }
+  # -pn -> Prefix of all native adapter file names (C++)
+  elsif(@ARGV[$idx] =~ m/^-pn/) {
+    $_ = @ARGV[$idx];
+    s/-pn//;
+    $NATIVE_PREFIX = $_;
+  }
+  # -pa -> Prefix of all API interface include file names (C++)
+  elsif(@ARGV[$idx] =~ m/^-pa/) {
+    $_ = @ARGV[$idx];
+    s/-pa//;
+    $API_PREFIX = $_;
+  }
+
+  $idx = $idx + 1;
+
+}
+
+#print "NATIVE_DIRECTORY : $NATIVE_DIRECTORY\n";
+#print "API_DIRECTORY    : $API_DIRECTORY\n";
+#print "JAVA_PACKAGE     : $JAVA_PACKAGE\n";
+#print "SWIG_INPUT_FILE  : $SWIG_INPUT_FILE\n";
+#print "NATIVE_NAMESPACE : $NATIVE_NAMESPACE\n";
+#print "API_NAMESPACE    : $API_NAMESPACE\n";
+#print "NATIVE_PREFIX    : $NATIVE_PREFIX\n";
+#print "API_PREFIX       : $API_PREFIX\n";
+#print "JAVA_OUTPUT      : $JAVA_OUTPUT\n";
+true;

@@ -1,0 +1,338 @@
+#!/usr/bin/perl
+
+require "cl_parser";
+require "get_inheritance";
+require "file_list";
+
+@it_v_base;                 # the base virtual superclass for an
+                            # inheritance chain.
+@it_c_base;                 # Class that holds the instanceType method
+@it_base;                   # it_v_base with no prefix ($API_PREFIX)
+@instance_type_inheritance; # list of classes that inherit from
+                            # @it_v_base.  There is not # 1->1 correspondance.
+@instance_type_number;      # Number of entries in @instance_type_inheritance for
+                            # each entry in @it_v_base.  There is
+                            # a 1->1 correspondance between this list
+                            # and the $it_v_base list.
+@requires_instance_type_method; # 0 -> Does not require instanceType method
+                                # 1 -> Generate instanceType method
+
+local($working) = 1;
+
+local(@classes);
+@classes = @classname;
+local(@virtual_list);
+@virtual_list = @virtual_names;
+local(@looking_list);
+@looking_list = @virtual_names;
+
+local($num_left);
+$num_left = @classes;
+
+$debug_instance_type = 0;
+
+#
+# Collect all classes that have a common virtual superclass.
+#
+
+while($num_left > 0) {
+
+  local(@pop_list);
+  local($virtual_base) = @virtual_list[0];
+  local($num_matches) = 0;
+
+  $_ = @classes[0];
+  if(m/$NATIVE_PREFIX/) {
+
+    if($debug_instance_type) {
+      print "Class : @classes[0]  virtual : $virtual_base\n";
+    }
+
+    for(local($i) = 1;  $i < $num_left;  $i++) {
+      if($debug_instance_type) {
+        print "  Look : @looking_list[$i]\n";
+      }
+
+      if($virtual_base eq @looking_list[$i] && $virtual_base ne "") {
+        if($debug_instance_type) {
+          print "MATCH FOUND : class -> @classes[0]  base -> $virtual_base == class -> @classes[$i]  base -> @looking_list[$i]\n";
+        }
+        push(@pop_list, $i);
+
+        # Do not include 'interface' files in list
+        $_ = @classes[$i];
+        if(m/$NATIVE_PREFIX/) {
+          if($num_matches == 0) {
+            if($debug_instance_type) {
+              print "XXX : $virtual_base\n";
+            }
+            push(@it_v_base, $virtual_base);
+#            $_ = $virtual_base;
+            $_ = &bottom_of_barrel($virtual_base);
+#            s/$API_PREFIX/$NATIVE_PREFIX/;
+            push(@it_c_base, $_);
+            s/$NATIVE_PREFIX//;
+            push(@it_base, $_);
+            push(@instance_type_inheritance, @classes[0]);
+            push(@requires_instance_type_method, 1);
+            $num_matches++;
+          }
+          push(@instance_type_inheritance, @classes[$i]);
+          $num_matches++;
+        }
+      }
+    }
+    if($debug_instance_type) {
+      print "NUM MATCHES : $num_matches\n";
+    }
+  }
+
+  local($pop_len);
+  $pop_len = @pop_list;
+  if($debug_instance_type) {
+    print "POP LEN : $pop_len\n";
+  }
+  for(local($j) = $pop_len-1; $j >= 0; $j--) {
+    $idx = @pop_list[$j];
+    if($debug_instance_type) {
+      print "  removing : $idx   @classes[$idx]\n";
+    }
+    splice(@classes, $idx, 1);
+    splice(@virtual_list, $idx, 1);
+  }
+
+  shift(@classes);
+  shift(@virtual_list);
+  @looking_list = @virtual_list; 
+  $num_left = @classes;
+  if($num_matches > 0) {
+    push(@instance_type_number, $num_matches);
+  }
+
+}
+
+# Now, collect all classes whose virtual superclass is a subclass
+# on one of the virtual superclasses in the list compiled above
+foreach $cls (@classname) {
+
+  # Process only interface classes
+  $_ = $cls;
+  if(m/$API_PREFIX/) {
+    if($debug_instance_type) {
+      print "CLS : $cls\n";
+    }
+    local($list_check) = &get_instance_index;
+    if(&get_instance_index == -1) {
+      local($base) = &get_base_virtual_class($cls);
+      if($debug_instance_type) {
+        print "  virtual base : $base\n";
+      }
+      if($base ne $cls &&
+         $base ne $UNKNOWN_CLASS) {
+        if($debug_instance_type) {
+          print "    LOOKING\n";
+        }
+        foreach $virt_class (@it_v_base) {
+
+          if($base eq $virt_class) {
+            push(@it_v_base, $cls);  # ex. IAPIMolecule ?
+            $_ = $cls;
+            s/$API_PREFIX//;
+            push(@it_base, $_);  # ex. Molecule ?
+            local($vb) = &get_base_virtual_class($cls);
+#            $_ = $vb;
+#            s/$API_PREFIX/$NATIVE_PREFIX/;
+            $_ = &bottom_of_barrel($vb);
+            if($debug_instance_type) {
+              print "      ADDING $cls with concrete base $concrete\n";
+            }
+            push(@it_c_base, $_);   # ex. for, IAPIMolecule, this would be GlotzillaAtom?
+            push(@requires_instance_type_method, 0);
+            local($base_idx) = &get_instance_index($base);
+            if($debug_instance_type) {
+              print "        base index : $base_idx\n";
+            }
+            local(@inh_list);
+            &get_it_inheritance_list($base, *inh_list);
+             for(local($i) = 0;  $i < &get_it_inheritance_count($base);  $i++)  {
+               if($debug_instance_type) {
+                 print "        list add : @inh_list[$i]\n";
+               }
+               push(@instance_type_inheritance, @inh_list[$i]); # Same list as for IAPIAtom
+             }
+             push(@instance_type_number, @instance_type_number[$base_idx]); # Same number as for IAPIAtom
+          }        
+        }
+      }
+    }
+  }
+}
+
+#&print_instance_type_matches();
+
+return true;
+
+#
+# print_instance_type_matches
+#
+sub print_instance_type_matches() {
+  local($count);
+  $count = @instance_type_number;
+
+  for(local($i) = 0; $i < $count; $i++) {
+
+    print "VIRTUAL BASE CLASS : @it_v_base[$i]  Subs : @instance_type_number[$i]\n";
+#    local($idx) = &get_it_v_base_index(@it_v_base[$i]);
+    local($idx) = &get_it_inheritance_list_index(@it_v_base[$i]);
+    for(local($j) = 0; $j < @instance_type_number[$i]; $j++) {
+      print "  sub : @instance_type_inheritance[$idx+$j]\n";
+    }
+  }
+
+}
+
+#
+# get_instance_index
+#  Pass in a class name contained in @it_v_base and get
+#  the index into @it_v_base back.  This is also the index
+#  into @instance_type_number.  Returns -1 if class name not in
+#  the @it_v_base list.
+#
+sub get_instance_index() {
+
+  local($idx) = -1;
+  local($class_name) = @_[0];
+  local($count);
+  $count = @instance_type_number;
+  for(local($i) = 0; $i < $count; $i++) {
+    if($class_name eq @it_v_base[$i]) {
+      $idx = $i;
+    }
+  }
+  $idx;
+}
+
+#
+# get_it_inheritance_list_index
+#  Pass in a class name contained in @it_v_base and get
+#  the index into @instance_type_inheritance
+#
+sub get_it_inheritance_list_index() {
+
+  local($idx) = 0;
+  local($class_name) = @_[0];
+  local($count);
+  $count = @instance_type_number;
+  for(local($i) = 0; $i < $count; $i++) {
+    if($class_name eq @it_v_base[$i]) {
+      last;
+    }
+    else {
+      $idx = $idx + @instance_type_number[$i];
+    }
+  }
+#print "BASE INDEX : $idx\n";
+  $idx;
+
+}
+
+#
+# get_it_inheritance_list()
+#  pass in the interface class name and a blank list.  The
+#  blank list will be populated with the list of
+#  classes that implement the interface.  If the instanceType
+#  method is not necessary for the interface class name passed
+#  in, the list will be blank upon return;
+#
+sub get_it_inheritance_list() {
+
+  local($class_name) = @_[0];
+  local(*my_list) = @_[1];
+
+  local($idx) = &get_it_inheritance_list_index($class_name);
+  local($count) = &get_it_inheritance_count($class_name);
+
+  for(local($i) = 0; $i < $count; $i++) {
+    push(@my_list, @instance_type_inheritance[$idx+$i]);
+  }
+}
+
+#
+# get_it_virtual_base_list()
+#  pass in a blank list.  The
+#  blank list will be populated with the list of
+#  virtual base classes that require a call to instanceType
+#  when returning from a method.
+#
+sub get_it_virtual_base_list() {
+
+  local(*my_list) = @_[0];
+  @my_list = @it_v_base;
+
+}
+
+#
+# get_it_concrete_base_list()
+#  pass in a blank list.  The
+#  blank list will be populated with the list of
+#  concrete base classes that have the instanceType method
+#  implemented.
+#
+sub get_it_concrete_base_list() {
+
+  local(*my_list) = @_[0];
+  @my_list = @it_c_base;
+
+}
+
+#
+# get_it_inheritance_count()
+#  pass in a class name and the number of entries in
+#  in instance_typ_inheritance for that class will
+#  be returned.  -1 will be returned if the class
+#  is not found in the it_b_base list..
+#
+sub get_it_inheritance_count() {
+
+  local($class_name) = @_[0];
+  local($count) = -1;
+
+  local($idx) = &get_instance_index($class_name);
+  if($idx != -1) {
+    $count = @instance_type_number[$idx];
+  }
+
+  $count;
+}
+
+#
+# get_it_implementation_class()
+#  pass in a virtual class name and the class that implements
+#  the instanceType method for that virtual class will be
+#  returned.
+#
+sub get_it_implementation_class() {
+
+  local($class_name) = @_[0];
+  local($idx) = &get_instance_index($class_name);
+
+  local($cls) = @it_c_base[$idx];
+
+  $cls;
+
+}
+
+#
+# generate_instance_type_method
+#  returns a flag indicating whether an instanceType method
+#  should be generated for the class passed in.  The class
+#  should be a class in @it_v_base.
+#
+sub generate_instance_type_method() {
+  local($class_name) = @_[0];
+  local($idx) = &get_instance_index($class_name);
+  local($it_flag) = @requires_instance_type_method[$idx];
+  $it_flag;
+}
+
+

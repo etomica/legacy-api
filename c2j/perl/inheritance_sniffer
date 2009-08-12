@@ -1,0 +1,552 @@
+#!/usr/bin/perl
+
+require "cl_parser";
+require "file_list";
+
+# $API_PREFIX
+# $NATIVE_PREFIX
+
+# @classname; # Array of all java classes created by swig
+# @interface; # Array of interfaces for classes in @classname.
+            # NOTE : There is not a 1-1 correspondance between
+            #  @classname and @interface.  See @num_interface_for_class 
+# @num_interface_for_class; # Number of interfaces for each entry in @classname
+
+@inherit_concrete;
+@inherit_virtual;
+@inherit_concrete_idx;
+@inherit_virtual_idx;
+@num_inherit_concrete;
+@num_inherit_virtual;
+@base_concrete;
+@base_virtual;
+
+
+$index = 0;
+$interface_index = 0;
+
+$UNKNOWN_CLASS = "";
+$UNDETERMINED_CLASS = "NO CONVERGENCE";
+$UNKNOWN_INDEX = -1;
+
+
+# Debug flags
+$debug_read = 0;
+$debug_virtual_list = 0;
+$debug_base_virtual = 0;
+
+# Initialize base and virtual array to unknown value
+for($index = 0; $index < $num_classes; $index++) {
+  push(@base_concrete, $UNKNOWN_CLASS);
+  push(@base_virtual, $UNKNOWN_CLASS);
+}
+
+for($index = 0; $index < $num_classes; $index++) {
+
+  $_ = @classname[$index];
+
+  if(m/$API_PREFIX/) {
+    $filename = $API_DIRECTORY."/".@classname[$index].".h";
+  }
+  else {
+    $filename = $NATIVE_DIRECTORY."/".@classname[$index].".h";
+  }
+#  print "  filename : $filename\n";
+
+  push(@num_inherit_virtual, 0);
+  push(@num_inherit_concrete, 0);
+
+  open(INCLUDE_FILE, $filename);
+
+  while(<INCLUDE_FILE>) {
+
+
+    # check to see if class inherits from another class
+    if(m/[ ]*class @classname[$index]([ ]*):/) {
+
+      # In case declaration is not on single line
+      $line = $_;
+      while(!m/{/) {
+        $_ = <INCLUDE_FILE>;
+        $line = $line . $_;
+      }
+
+      $_ = $line;
+
+      if($debug_read) {
+        print "CLASS : @classname[$index]\n";
+      }
+
+      if($debug_read) {
+        print "    ORIGINAL LINE : $_";
+      }
+
+      $original = $_;
+
+      # PROCESS public virtual inheritance classes
+      while(m/public virtual/) {
+
+        # check for :
+        #    public virtual XXXX 
+        #    where XXXX is the name of the virtually inherited class
+        if(m/[^!]*public virtual ([^,]*)/) {
+          local($temp) = $1;
+          $_ = $temp;
+#          $_ = $1;
+          if(m/$API_PREFIX[^!]*/ || m/$NATIVE_PREFIX[^!]*/) {
+            /([^ ]*)/;
+            push(@inherit_virtual, $1);
+            $temp = $1;
+            if($debug_read) {
+              print "  virtual class : $1\n";
+            }
+          }
+          $_ = $original;
+          s/public virtual $temp//;
+          $original = $_;
+          @num_inherit_virtual[$index]++;
+        }
+        if($debug_read) {
+          print "       LINE : $_";
+        }
+
+      }
+
+      # PROCESS public non-virtual inheritance classes
+      $full_line = $_;
+      while(m/public/) {
+        $_ = $full_line;
+        if(m/[^!]*public ([^ ]*)/) {
+          $_ = $1;
+          if(m/$API_PREFIX/ || m/$NATIVE_PREFIX/) {
+            /([^,]*)/;
+            $inherit_concrete_idx++;
+            push(@inherit_concrete, $1);
+            @num_inherit_concrete[$index]++;
+            if($debug_read) {
+              print "  concrete class : $1\n";
+            }
+          }
+          $_ = $full_line;
+          s/public $1//;
+          $full_line = $_;
+        }
+      }
+
+    }
+    # class does NOT inherit from another class
+    else {
+    }
+
+  }
+
+  close(INCLUDE_FILE);
+
+}
+
+local($current_concrete_ct) = 0;
+local($current_virtual_ct) = 0;
+for(local($i) = 0; $i < $num_classes ; $i++) {
+  if(@num_inherit_concrete[$i] > 0) {
+    push(@inherit_concrete_idx, $current_concrete_ct);
+    $current_concrete_ct = $current_concrete_ct + @num_inherit_concrete[$i];
+  }
+  else {
+    push(@inherit_concrete_idx, $UNKNOWN_INDEX);
+  }
+  if(@num_inherit_virtual[$i] > 0) {
+    push(@inherit_virtual_idx, $current_virtual_ct);
+    $current_virtual_ct = $current_virtual_ct + @num_inherit_virtual[$i];
+  }
+  else {
+    push(@inherit_virtual_idx, $UNKNOWN_INDEX);
+  }
+}
+
+
+#&print_inheritance;
+#&print_virtual;
+#&print_concrete;
+
+return true;
+
+#
+# get_base_virtual_class - Returns the least derived virtual class that the
+#    given concrete class inherits from.  If a single class cannot be
+#    determined, the constant UNDETERMINED_CLASS is returned.
+#
+sub get_base_virtual_class() {
+  local($class_name) = @_[0];
+  local(@virtual_list);
+  &get_virtual_list($class_name, *virtual_list);
+  local($num_virtual);
+  $num_virtual = @virtual_list;
+  local($base);
+  local(@base_list);
+
+  if($debug_base_virtual) {
+    print "CLASS : $class_name\n";
+    print "num virtual : $num_virtual\n";
+  }
+
+  # If class has no virtual inheritance, check the concrete inheritance
+  # chain for virtual inheritance
+  if($num_virtual == 0) {
+
+    local(@concrete_list);
+    &get_concrete_list($class_name, *concrete_list);
+    local($num_concrete);
+    $num_concrete = @concrete_list;
+
+    if($debug_base_virtual) {
+      print "Checking concrete classes -> num_concrete : $num_concrete\n";
+    }
+
+    if($num_concrete > 0) {
+      for(local($i) = 0; $i < $num_concrete; $i++) {
+        $base = &get_base_virtual_class(@concrete_list[$i], *virtual_list);
+        push(@base_list, $base);
+      }
+      local($converged) = &check_convergence(*base_list);
+      if($converged) {
+        $base_virtual = @base_list[0];
+      }
+      else {
+        $base_virtual = $UNDETERMINED_CLASS;
+      }
+    }
+    else {
+      $base_virtual = $UNKNOWN_CLASS;
+    }
+  }
+  # If class has virtual inheritance, follow the virtual inheritance
+  # chain.  It is important to note that a class may have both a
+  # virtual inheritance and concrete inheritance.  If those two paths
+  # do not merge into a single virtual inheritance, this algorithm will
+  # not yeild the correct result (NO_CONVERGENCE).  Instead, the algorithm
+  # will return the virtual inheirtance base class.
+  else {
+    for(local($i) = 0; $i < $num_virtual; $i++) {
+      $base = &get_base_concrete_class(@virtual_list[$i]);
+
+      if($debug_base_virtual) {
+        print "  virtual : @virtual_list[$i]  concrete base : $base\n";
+      }
+
+      $base = &get_base_virtual_class($base);
+      if($base eq $UNKNOWN_CLASS) {
+        $base = @virtual_list[$i];
+      }
+      push(@base_list, $base);
+
+      if($debug_base_virtual) {
+        print "  virtual base : $base\n";
+      }
+
+
+    }
+    local($converged) = &check_convergence(*base_list);
+    if($converged) {
+      $base_virtual = @base_list[0];
+    }
+    else {
+      $base_virtual = $UNDETERMINED_CLASS;
+    }
+  }
+
+  $base_virtual;
+
+}
+
+#
+# get_base_concrete_class
+#
+sub get_base_concrete_class() {
+
+  local($class_name) = @_[0];
+  local(@concrete_list);
+  &get_concrete_list($class_name, *concrete_list);
+  local($num_concrete);
+  $num_concrete = @concrete_list;
+  local($base);
+  local(@base_list);
+#print "CLASS : $class_name\n";
+#print "  num concrete : $num_concrete\n";
+
+  if($num_concrete == 0) {
+    $base_concrete = $class_name;
+  }
+  else {
+    for(local($i) = 0; $i < $num_concrete; $i++) {
+      $base = &get_base_concrete_class(@concrete_list[$i]);
+      push(@base_list, $base);
+    }
+    local($converged) = &check_convergence(*base_list);
+    if($converged) {
+      $base_concrete = @base_list[0];
+    }
+    else {
+      $base_concrete = $UNDETERMINED_CLASS;
+    }
+  }
+
+  $base_concrete;
+}
+
+#
+# bottom_of_barrel - Returns the concrete class for the given interface that
+#   appears to be the superclass of all other concrete classes inheriting
+#   from the interface given.  If it appears there is more than one class
+#   that meets thr criteria, returns the first from the list of acceptable
+#   classes.
+#
+sub bottom_of_barrel() {
+  local($virtual_class_name) = @_[0];
+
+  local($max);
+  $max = @classname;
+  local(@myList);
+
+  for(local($i) = 0; $i < $max; $i++) {
+    $_ = @classname[$i];
+    if(/^$NATIVE_PREFIX/) {
+      $v = &get_base_virtual_class(@classname[$i]);
+      if($v eq $virtual_class_name) {
+        push(@myList, @classname[$i]);
+      }
+    }
+  }
+  $max = @myList;
+  local($returnMe);
+  if($max > 1) {
+    local(@converge_list);
+    for(local($i) = 0; $i < $max; $i++) {
+      local($bc) = &get_base_concrete_class(@myList[$i]);
+      push(@converge_list, $bc);
+    }
+    local($isC) = &check_convergence(*converge_list);
+    if($isC == 1) {
+      $returnMe = &get_base_concrete_class(@myList[0]);
+    }
+    else {
+      $returnMe = @myList[0];
+    }
+  }
+  elsif($max == 1) {
+    $returnMe = @myList[0];
+  }
+  else {
+    $returnMe = $UNDETERMINED_CLASS;
+  }
+  $returnMe;
+
+}
+
+#
+# get_concrete_list
+#
+sub get_concrete_list() {
+  local($class_name) = @_[0];
+  local(*concrete_list) = @_[1];
+  local($base_index) = &get_index_for_class($class_name);
+
+  local($concrete_index);
+  $concrete_index = &concrete_start_index($class_name);
+  if($concrete_index != $UNKNOWN_INDEX) {
+
+    for(local($i) = 0; $i < @num_inherit_concrete[$base_index]; $i++) {
+      @concrete_list[$i] = @inherit_concrete[$concrete_index+$i];
+    }
+#for(local($i) = 0; $i < @num_inherit_concrete[$base_index]; $i++) {
+#print "conc : @concrete_list[$i]\n";
+#}
+
+  }
+}
+
+#
+# get_virtual_list
+#
+sub get_virtual_list() {
+  local($class_name) = @_[0];
+  local(*virtual_list) = @_[1];
+  local($base_index) = &get_index_for_class($class_name);
+  local($virtual_index);
+  $virtual_index = &virtual_start_index($class_name);
+
+  if($debug_virtual_list) {
+    print "CLASS : $class_name\n";
+    print "  index in class list : $base_index\n";
+    print "  index into virtual list : $virtual_index\n";
+  }
+
+  if($virtual_index != $UNKNOWN_INDEX) {
+
+    for(local($i) = 0; $i < @num_inherit_virtual[$base_index]; $i++) {
+      @virtual_list[$i] = @inherit_virtual[$virtual_index+$i];
+
+      if($debug_virtual_list) {
+        print "    direct virtual class : @inherit_virutal[$virtual_index+$i]\n";
+      }
+    }
+#for(local($i) = 0; $i < @num_inherit_virtual[$base_index]; $i++) {
+#print "virt : @virtual_list[$i]\n";
+#}
+
+  }
+
+}
+
+#
+# concrete_start_index
+#
+sub concrete_start_index() {
+  local($class_name) = @_[0];
+  local($base_index) = &get_index_for_class($class_name);
+#  local($concrete_index) = 0;
+#
+#  local($index) = 0;
+#  while($index < $base_index) {
+#    $concrete_index = $concrete_index + @num_inherit_concrete[$index];
+#    $index++;
+#  }
+#
+#  $concrete_index;
+   @inherit_concrete_idx[$base_index];
+}
+
+#
+# virtual_start_index
+#
+sub virtual_start_index() {
+  local($class_name) = @_[0];
+  local($base_index) = &get_index_for_class($class_name);
+#  local($virtual_index) = 0;
+#
+#  local($index) = 0;
+#  while($index < $base_index) {
+#    $virtual_index = $virtual_index + @num_inherit_virtual[$index];
+#    $index++;
+#  }
+#print "VIRTUAL INDEX RETURNED $virtual_index  cls -> @inherit_virtual[$virtual_index]\n";
+#  $virtual_index;
+   @inherit_virtual_idx[$base_index];
+}
+
+#
+# print_inheritance
+#
+sub print_inheritance() {
+
+  local($index);
+  local($virtual_index);
+  local($concrete_index);
+  $index = 0;
+  $virtual_index = 0;
+  $concrete_index = 0;
+
+  while($index < $num_classes) {
+    print "CLASS : @classname[$index]\n";
+
+    local($virtual_ctr);
+    $virtual_ctr = 0;
+    local($concrete_ctr);
+    $concrete_ctr = 0;
+    while($virtual_ctr < @num_inherit_virtual[$index]) {
+      print "    V> @inherit_virtual[$virtual_index] (index : $virtual_index)\n";
+      $virtual_index++;
+      $virtual_ctr++;
+    }
+    while($concrete_ctr < @num_inherit_concrete[$index]) {
+      print "    C> @inherit_concrete[$concrete_index] (index : $concrete_index)\n";
+      $concrete_index++;
+      $concrete_ctr++;
+    }
+
+    $index++;
+  }
+
+}
+
+#
+# print_virtual
+#
+sub print_virtual() {
+
+  local($max);
+  $max = @inherit_virtual;
+
+  print "VIRTUAL CLASSES\n";
+
+  for(local($i) = 0; $i < $max; $i++) {
+    print "  @inherit_virtual[$i]\n";
+  }
+}
+
+#
+# print_concrete
+#
+sub print_concrete() {
+
+  local($max);
+  $max = @inherit_concrete;
+
+  print "CONCRETE CLASSES\n";
+  for(local($i) = 0; $i < $max; $i++) {
+    print "  @inherit_concrete[$i]\n";
+  }
+}
+
+#
+# check_convergence
+#
+sub check_convergence() {
+  local(*converge_list) = @_;
+
+  local($len) = $#converge_list;
+  local($converged) = 1;
+
+  for(local($i) = 0; $i < $len;  $i++) {
+    for(local($j) = $i+1; $j <= $len;  $j++) {
+      if($converge_list[$i] ne $converge_list[$j]) {
+        $converged = 0;
+      }
+    }
+  }
+  $converged;
+}
+
+#
+# print_single_inheritance
+#
+sub print_single_inheritance() {
+
+  local($class_name) = @_;
+  local($index) = &get_index_for_class($class_name);
+  local($virtual_index);
+  local($concrete_index);
+
+  print "------------------------------------------\n";
+  print "CLASS : $class_name\n";
+  print "  Concrete inheritance count : @num_inherit_concrete[$index]\n";
+  local($virtual_ctr);
+  $virtual_ctr = 0;
+  local($concrete_ctr);
+  $concrete_ctr = 0;
+  $concrete_index = &concrete_start_index($class_name);
+  while($concrete_ctr < @num_inherit_concrete[$index]) {
+    print "    -> @inherit_concrete[$concrete_index]\n";
+    $concrete_index++;
+    $concrete_ctr++;
+  }
+  print "  Virtual inheritance count  : @num_inherit_virtual[$index]\n";
+  $virtual_index = &virtual_start_index($class_name);
+  while($virtual_ctr < @num_inherit_virtual[$index]) {
+    print "    -> @inherit_virtual[$virtual_index]\n";
+    $virtual_index++;
+    $virtual_ctr++;
+  }
+  print "------------------------------------------\n";
+
+}
+
