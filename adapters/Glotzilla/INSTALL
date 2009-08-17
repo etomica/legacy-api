@@ -33,11 +33,81 @@ may remove or edit it.
 `configure.ac' if you want to change it or regenerate `configure' using
 a newer version of `autoconf'.
 
+----------------------------------------
+-- Building the Java Glotzilla Adapter --
+----------------------------------------
+
+  The API include files must be installed  before the Glotzilla
+  Adapter library can be built.  Simply download the specification
+  files found on the website.
+
+  1. `cd' to the directory containing the package's source code and run SWIG.
+     
+    EXAMPLE (where source code is contained in
+             /usr/home/me/adapters/Glotzilla/src/Glue) :
+
+    1. cd /usr/home/me/adapters/Glotzilla/src/Glue
+    2. swig -Wall -I/usr/home/me/api/C++ -java -c++ -package glotz.wrapper
+       -outdir /usr/home/me/adapters/Glotzilla/src/java
+       /usr/home/me/adapters/Glotzilla/src/Glue/apisim.i
+
+      WHERE :  
+       -I/usr/home/me/api/C++ : Specifies the location of the API include files
+       -package glotz.wrapper : Naming the package of new java files
+       -outdir /usr/home/me/adapters/Glotzilla/src/java : Location where new
+              java files are written to.
+       /usr/home/me/adapters/Glotzilla/src/Glue/apisim.i : Name of SWIG
+              input file (which is provided).
+
+  2. Run the post_swig_parser program with the following options :
+     -dn : C++ Glotzilla Adapter source code directory
+     -da : C++ include file directory
+     -pa : Prefix of Interface class names (use IAPI)
+     -pn : Prefix of Native class names (use Glotzilla)
+     -i  : SWIG input file (name of file, not full path) (use apisim.i)
+     -jp : package name of java adapter classes (same as -package when running
+           SWIG)
+     -nn : Native code namespace (use glotzwrappers)
+     -na : Include code namespace (use molesimAPI)
+
+  3. Build the C++ Glotzilla Adapter (as defined later in this document)
+
+  4. Run the api_parser program with the following options:
+     -dn : C++ Glotzilla Adapter source code directory
+     -da : C++ include file directory
+     -pa : Prefix of Interface class names (use IAPI)
+     -pn : Prefix of Native class names (use Glotzilla)
+     -i  : SWIG input file (name of file, not full path) (use apisim.i)
+
+  5. If you want to add documentation to the java adapter code, run the
+     comment_generator program with the following options :
+     -dn : C++ Glotzilla Adapter source code directory
+     -da : C++ include file directory
+     -pa : Prefix of Interface class names (use IAPI)
+     -pn : Prefix of Native class names (use Glotzilla)
+
+  6. Use the java compiler to compile the java adapter
+
+    EXAMPLE :
+       javac /usr/home/me/adapters/Glotzilla/src/java/*.java
+
+  7. Create a jar file containing the code for the Java adapter
+
+    EXAMPLE :
+       jar cf glotzilla_adapter.jar -C/usr/home/me/adapters/Glotzilla/src/java/ .
+
+----------------------------------------
+-- Building the C++ Glotzilla Adapter --
+----------------------------------------
 
   The Glotzilla simulation engine software must be installed and built
 into a shared object library (libglotzilla.so) before the Glotzilla
-Adapter library can be built.  It is beyond the scope of this install
-to detail how Glotzilla itself is built.
+Adapter library can be built.  It is beyond the scope of this
+install to detail how Glotzilla itself is built.
+
+  The API include files must be installed  before the Glotzilla Adapter
+library can be built.  Simply download the specification files found on the
+website.
 
 The simplest way to compile this package is (after Glotzilla is built):
 
@@ -73,20 +143,11 @@ The simplest way to compile this package is (after Glotzilla is built):
 
   2. Type `make' to compile the package.
 
-  3. Optionally, type `make check' to run any self-tests that come with
-     the package.
-
-  4. Type `make install' to install the programs and any data files and
+  3. Type `make install' to install the programs and any data files and
      documentation.
 
-  5. You can remove the program binaries and object files from the
-     source code directory by typing `make clean'.  To also remove the
-     files that `configure' created (so you can compile the package for
-     a different kind of computer), type `make distclean'.  There is
-     also a `make maintainer-clean' target, but that is intended mainly
-     for the package's developers.  If you use it, you may have to get
-     all sorts of other programs in order to regenerate files that came
-     with the distribution.
+  4. You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.
 
 Compilers and Options
 =====================
@@ -102,46 +163,6 @@ is an example:
      ./configure CC=c89 CFLAGS=-O2 LIBS=-lposix
 
    *Note Defining Variables::, for more details.
-
-Compiling For Multiple Architectures
-====================================
-
-You can compile the package for more than one kind of computer at the
-same time, by placing the object files for each architecture in their
-own directory.  To do this, you must use a version of `make' that
-supports the `VPATH' variable, such as GNU `make'.  `cd' to the
-directory where you want the object files and executables to go and run
-the `configure' script.  `configure' automatically checks for the
-source code in the directory that `configure' is in and in `..'.
-
-   If you have to use a `make' that does not support the `VPATH'
-variable, you have to compile the package for one architecture at a
-time in the source code directory.  After you have installed the
-package for one architecture, use `make distclean' before reconfiguring
-for another architecture.
-
-Installation Names
-==================
-
-By default, `make install' installs the package's library under
-the installation `lib' directory.  You
-can specify an installation prefix other than ...`lib' by giving
-`configure' the option `--prefix=PREFIX'.
-
-   You can specify separate installation prefixes for
-architecture-specific files and architecture-independent files.  If you
-pass the option `--exec-prefix=PREFIX' to `configure', the package uses
-PREFIX as the prefix for installing programs and libraries.
-Documentation and other data files still use the regular prefix.
-
-   In addition, if you use an unusual directory layout you can give
-options like `--bindir=DIR' to specify different values for particular
-kinds of files.  Run `configure --help' for a list of the directories
-you can set and what kinds of files go in them.
-
-   If the package supports it, you can cause programs to be installed
-with an extra prefix or suffix on their names by giving `configure' the
-option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
 
 Optional Features
 =================
