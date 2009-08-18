@@ -5,7 +5,8 @@ TOWHEE_LIB = @TOWHEE_LIB@
 LIBFLAG = @LIBFLAG@
 TOWHEE_INSTALL_DIR = @TOWHEE_INSTALL_DIR@
 
-SRC =  TowheeRandom.cpp
+SRC =  TowheeRandom.cpp \
+	towhee_wrap.cpp
 
 LIB = libtowhee_adapter.so
 INCLUDES = $(USER_INCLUDES)
