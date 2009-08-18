@@ -34,83 +34,83 @@ may remove or edit it.
 a newer version of `autoconf'.
 
 ----------------------------------------
--- Building the Java Glotzilla Adapter --
+-- Building the Java Lammps Adapter --
 ----------------------------------------
 
-  The API include files must be installed  before the Glotzilla
+  The API include files must be installed  before the Lammps
   Adapter library can be built.  Simply download the specification
   files found on the website.
 
   1. `cd' to the directory containing the package's source code and run SWIG.
      
     EXAMPLE (where source code is contained in
-             /usr/home/me/adapters/Glotzilla/src/Glue) :
+             /usr/home/me/adapters/Lammps/src/Glue) :
 
-    1. cd /usr/home/me/adapters/Glotzilla/src/Glue
-    2. swig -Wall -I/usr/home/me/api/C++ -java -c++ -package glotz.wrapper
-       -outdir /usr/home/me/adapters/Glotzilla/src/java
-       /usr/home/me/adapters/Glotzilla/src/Glue/apisim.i
+    1. cd /usr/home/me/adapters/Lammps/src/Glue
+    2. swig -Wall -I/usr/home/me/api/C++ -java -c++ -package lammps.wrapper
+       -outdir /usr/home/me/adapters/Lammps/src/java
+       /usr/home/me/adapters/Lammps/src/Glue/apisim.i
 
       WHERE :  
        -I/usr/home/me/api/C++ : Specifies the location of the API include files
-       -package glotz.wrapper : Naming the package of new java files
-       -outdir /usr/home/me/adapters/Glotzilla/src/java : Location where new
+       -package lammps.wrapper : Naming the package of new java files
+       -outdir /usr/home/me/adapters/Lammps/src/java : Location where new
               java files are written to.  Already contains pre-built java
               files required for Lammps adapter.
-       /usr/home/me/adapters/Glotzilla/src/Glue/apisim.i : Name of SWIG
+       /usr/home/me/adapters/Lammps/src/Glue/apisim.i : Name of SWIG
               input file (which is provided).
 
   2. Run the post_swig_parser program with the following options :
-     -dn : C++ Glotzilla Adapter source code directory
+     -dn : C++ Lammps Adapter source code directory
      -da : C++ API include file directory
      -pa : Prefix of Interface class names (use IAPI)
-     -pn : Prefix of Native class names (use Glotzilla)
+     -pn : Prefix of Native class names (use Lammps)
      -i  : SWIG input file (name of file, not full path) (use apisim.i)
      -jp : package name of java adapter classes (same as -package when running
            SWIG)
-     -nn : Native code namespace (use glotzwrappers)
+     -nn : Native code namespace (use lammpswrappers)
      -na : Include code namespace (use molesimAPI)
 
-  3. Build the C++ Glotzilla Adapter (as defined later in this document)
+  3. Build the C++ Lammpps Adapter (as defined later in this document)
 
   4. Run the api_parser program with the following options:
-     -dn : C++ Glotzilla Adapter source code directory
-     -da : C++ include file directory
+     -dn : C++ Lammps Adapter source code directory
+     -da : C++ API include file directory
      -pa : Prefix of Interface class names (use IAPI)
-     -pn : Prefix of Native class names (use Glotzilla)
+     -pn : Prefix of Native class names (use Lammps)
      -i  : SWIG input file (name of file, not full path) (use apisim.i)
 
   5. If you want to add documentation to the java adapter code, run the
      comment_generator program with the following options :
-     -dn : C++ Glotzilla Adapter source code directory
-     -da : C++ include file directory
+     -dn : C++ Lammps Adapter source code directory
+     -da : C++ API include file directory
      -pa : Prefix of Interface class names (use IAPI)
-     -pn : Prefix of Native class names (use Glotzilla)
+     -pn : Prefix of Native class names (use Lammps)
 
   6. Use the java compiler to compile the java adapter
 
     EXAMPLE :
-       javac /usr/home/me/adapters/Glotzilla/src/java/*.java
+       javac /usr/home/me/adapters/Lammps/src/java/*.java
 
   7. Create a jar file containing the code for the Java adapter
 
     EXAMPLE :
-       jar cf glotzilla_adapter.jar -C/usr/home/me/adapters/Glotzilla/src/java/ .
+       jar cf lammps_adapter.jar -C/usr/home/me/adapters/Lammps/src/java/ .
 
 ----------------------------------------
--- Building the C++ Glotzilla Adapter --
+-- Building the C++ Lammps Adapter --
 ----------------------------------------
 
-  The Glotzilla simulation engine software must be installed and built
-into a shared object library (libglotzilla.so) before the Glotzilla
-Adapter library can be built.  It is beyond the scope of this
-install to detail how Glotzilla itself is built.
+  The Lammps simulation engine software must be installed and built
+into a shared object library before the Lammps Adapter library can be built.
+It is beyond the scope of this install to detail how Lammps itself is
+built.
 
-  The API include files must be installed  before the Glotzilla Adapter
+  The API include files must be installed  before the Lammps Adapter
 library can be built.  Simply download the specification files found on the
 website.
 
-The simplest way to compile this package is (after Glotzilla is built):
+The simplest way to compile this package is (after Lammps is built):
 
   1. `cd' to the directory containing the package's source code and type
      `./configure' (with the options listed below) to configure the package
@@ -131,15 +131,21 @@ The simplest way to compile this package is (after Glotzilla is built):
                                       option to specify where java is insalled.
      --with-api-include   (required)  The direcory where the C++ interface
                                       header files reside.
-     --with-glotz-install (required)  The directory where Glotzilla is
-                                      installed.  This should be the directory
-                                      where the make command would be issued
-                                      to build Glotzilla.  It must contain the
-                                      'include' and 'lib' directories.
-     --with-install-dir (optional)    The directory where the Glotzilla adapters
-                                      library should be installed.  The default
-                                      is the directory where the adapter source
-                                      code resides.
+     --with-lammps-install (required) The directory where Lammps source code
+                                      is installed.  This should be the
+                                      directory where the make command would
+                                      be issued to build Lammps.  The lammps
+                                      library should also reside in this
+                                      directory.
+     --with-lammps-lib (required)     The name of the Lammps library.  ex.
+                                      The lammps library name is
+                                      liblmp_mymachine.so.  Use lmp_mymachine
+                                      as the argument to this command line
+                                      option.
+     --with-install-dir (optional)    The directory where the Lammps adapter
+                                      library should be installed.  The
+                                      default is the directory where the
+                                      adapter source code resides.
 
   2. Type `make' to compile the package.
 
