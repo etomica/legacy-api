@@ -1,0 +1,38 @@
+@SET_MAKE@
+
+USER_INCLUDES = @USER_INCLUDES@
+TOWHEE_LIB = @TOWHEE_LIB@
+LIBFLAG = @LIBFLAG@
+TOWHEE_INSTALL_DIR = @TOWHEE_INSTALL_DIR@
+
+SRC =  TowheeRandom.cpp
+
+LIB = libtowhee_adapter.so
+INCLUDES = $(USER_INCLUDES)
+OBJ =	$(SRC:.cpp=.o)
+
+CCFLAGS =	-O1 -fPIC -g -v
+ARCHIVE =	ar
+ARCHFLAG =	-rc
+DEPFLAGS =	-M
+LINK =		g++
+LINKFLAGS =	-O1
+USRLIBS =	$(TOWHEE_LIB)
+
+all:	lib
+
+lib:	$(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
+
+clean:
+	rm *.o *.so
+
+install: lib
+	mv *.so $(TOWHEE_INSTALL_DIR)
+
+%.o:%.cpp
+	$(CXX) $(CCFLAGS) $(INCLUDES) -c $<
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

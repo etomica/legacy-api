@@ -8,9 +8,9 @@ AC_PROG_INSTALL
 AM_PROG_LIBTOOL
 
 API_INCLUDE_DIR=
-LAMMPS_SRC_DIR=
-LAMMPS_LIB=
-LAMMPS_INSTALL_DIR="."
+TOWHEE_SRC_DIR=
+TOWHEE_LIB=
+TOWHEE_INSTALL_DIR="."
 JAVA_INSTALL_DIR=
 USER_INCLUDES=
 
@@ -42,35 +42,33 @@ a valid directory.])
 fi
 USER_INCLUDES="$USER_INCLUDES -I$API_INCLUDE_DIR"
 
-AC_ARG_WITH(lammps-install,
-[  --with-lammps-install=dir  Location of the Lammps source directory],
-  LAMMPS_SRC_DIR=$withval)
-if test ! -d "$LAMMPS_SRC_DIR"; then
-  AC_MSG_ERROR([Must use the --with-lammps-install directive with
+AC_ARG_WITH(towhee-install,
+[  --with-towhee-install=dir  Location of the Towhee source directory],
+  TOWHEE_SRC_DIR=$withval)
+if test ! -d "$TOWHEE_SRC_DIR"; then
+  AC_MSG_ERROR([Must use the --with-towhee-install directive with
 a valid directory.])
 fi
-USER_INCLUDES="$USER_INCLUDES -I$LAMMPS_SRC_DIR"
+USER_INCLUDES="$USER_INCLUDES -I$TOWHEE_SRC_DIR"
 
-AC_ARG_WITH(lammps-lib,
-[  --with-lammps-lib=dir  Name of the lammps shared object library],
-  LAMMPS_LIB=$withval)
-# THIS TEST IS NOT WORKING
-if test !  "lib$LAMMPS_LIB.so"; then
-  AC_MSG_ERROR([Must use the --with-lammps-lib directive with
-a valid library name.])
+AC_ARG_WITH(towhee-lib-dir,
+[  --with-towhee-lib-dir=dir  Location of the towhee shared object library],
+  TOWHEE_LIB=$withval)
+# THIS NEXT TEST IS NOT WORKING
+if test !  "$TOWHEE_LIB/libtowhee.so"; then
+  AC_MSG_ERROR([Must use the --with-towhee-lib-dir directive with
+a directory that has a valid libtowhee.so.])
 fi
-LAMMPS_LIB="-L$LAMMPS_SRC_DIR -l$LAMMPS_LIB"
+TOWHEE_LIB="-L$TOWHEE_LIB -ltowhee"
 
 AC_ARG_WITH(install-dir,
-[  --with-install=dir  Location to install lammps adapter library],
-  LAMMPS_INSTALL_DIR=$withval)
-
-echo "INSTALL DIR : $LAMMPS_INSTALL_DIR"
+[  --with-install=dir  Location to install towhee adapter library],
+  TOWHEE_INSTALL_DIR=$withval)
 
 AC_SUBST(USER_INCLUDES)
-AC_SUBST(LAMMPS_LIB)
+AC_SUBST(TOWHEE_LIB)
 AC_SUBST(LIBFLAG)
-AC_SUBST(LAMMPS_INSTALL_DIR)
+AC_SUBST(TOWHEE_INSTALL_DIR)
 
 AC_PREFIX_DEFAULT([${PWD}])
 AC_CONFIG_FILES([
