@@ -17,9 +17,9 @@ namespace towheewrappers
     class TowheeRandom : public virtual IAPIRandom {
 
         public:
-            TowheeRandom();
-            TowheeRandom(long seed);
-            TowheeRandom(long seed, int luxLevel);
+            TowheeRandom(bool allowRestart);
+            TowheeRandom(bool allowRestart, long seed);
+            TowheeRandom(bool allowRestart, long seed, int luxLevel);
 
             // API Compliance
             double nextDouble();

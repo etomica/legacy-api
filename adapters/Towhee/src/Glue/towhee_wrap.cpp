@@ -3466,43 +3466,49 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1IAPISimulation(JNIE
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jboolean jarg1) {
   jlong jresult = 0 ;
+  bool arg1 ;
   towheewrappers::TowheeRandom *result = 0 ;
   
   (void)jenv;
   (void)jcls;
-  result = (towheewrappers::TowheeRandom *)new towheewrappers::TowheeRandom();
-  *(towheewrappers::TowheeRandom **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jint jarg1) {
-  jlong jresult = 0 ;
-  long arg1 ;
-  towheewrappers::TowheeRandom *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = (long)jarg1; 
+  arg1 = jarg1 ? true : false; 
   result = (towheewrappers::TowheeRandom *)new towheewrappers::TowheeRandom(arg1);
   *(towheewrappers::TowheeRandom **)&jresult = result; 
   return jresult;
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jint jarg1, jint jarg2) {
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jboolean jarg1, jint jarg2) {
   jlong jresult = 0 ;
-  long arg1 ;
-  int arg2 ;
+  bool arg1 ;
+  long arg2 ;
   towheewrappers::TowheeRandom *result = 0 ;
   
   (void)jenv;
   (void)jcls;
-  arg1 = (long)jarg1; 
-  arg2 = (int)jarg2; 
+  arg1 = jarg1 ? true : false; 
+  arg2 = (long)jarg2; 
   result = (towheewrappers::TowheeRandom *)new towheewrappers::TowheeRandom(arg1,arg2);
+  *(towheewrappers::TowheeRandom **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeRandom_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jboolean jarg1, jint jarg2, jint jarg3) {
+  jlong jresult = 0 ;
+  bool arg1 ;
+  long arg2 ;
+  int arg3 ;
+  towheewrappers::TowheeRandom *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = jarg1 ? true : false; 
+  arg2 = (long)jarg2; 
+  arg3 = (int)jarg3; 
+  result = (towheewrappers::TowheeRandom *)new towheewrappers::TowheeRandom(arg1,arg2,arg3);
   *(towheewrappers::TowheeRandom **)&jresult = result; 
   return jresult;
 }
