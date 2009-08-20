@@ -1047,7 +1047,7 @@ Optional Packages:
   --with-api-include=dir  Location of the C++ include files
   --with-towhee-install=dir  Location of the Towhee source directory
   --with-towhee-lib-dir=dir  Location of the towhee shared object library
-  --with-install=dir  Location to install towhee adapter library
+  --with-install-dir=dir  Location to install towhee adapter library
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -18779,6 +18779,8 @@ if test "${with_install_dir+set}" = set; then
   withval="$with_install_dir"
   TOWHEE_INSTALL_DIR=$withval
 fi;
+echo "with : $withval"
+echo "TOWHEE INSTALL : $TOWHEE_INSTALL_DIR"
 
 
 

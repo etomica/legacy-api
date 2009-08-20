@@ -1,0 +1,458 @@
+/*
+ *  TowheeSimulation.cpp
+ *  API Glue
+ *
+ */
+
+#include "stdio.h"
+#include "string.h"
+#include "math.h"
+
+#include "preproc.h"
+
+#include "TowheeBox.h"
+#include "TowheeSimulation.h"
+#include "TowheeRandom.h"
+#include "TowheeSpeciesManager.h"
+
+extern "C" { void twh_initialize_(int *); }
+extern "C" { void twh_nmolty_(int *, int *); }
+extern "C" { void twh_allocate_maxmolty_(int *); }
+extern "C" { void twh_ensemble_(int *, int *); }
+extern "C" { void twh_nmolectyp_(int *, int *, int *); }
+extern "C" { void twh_nchain_(int *, int *); }
+extern "C" { void twh_allocate_maxchain_(int *); }
+extern "C" { void twh_numboxes_(int *, int *); }
+extern "C" { void twh_allocate_numboxes_(int *); }
+extern "C" { void twh_stepstyle_(int *, char *); }
+extern "C" { void twh_controlstyle_(int *, char *); }
+extern "C" { void twh_printfreq_(int *, int *); }
+extern "C" { void twh_weight_freq_(int *, int *); }
+extern "C" { void twh_c_matrix_freq_(int *, int *); }
+extern "C" { void twh_tmmc_flag_(int *, int *); }
+extern "C" { void twh_blocksize_(int *, int *); }
+extern "C" { void twh_moviefreq_(int *, int *); }
+extern "C" { void twh_backupfreq_(int *, int *); }
+extern "C" { void twh_restartfreq_(int *, int *); }
+extern "C" { void twh_runoutput_(int *, char *); }
+extern "C" { void twh_pdb_output_freq_(int *, int *); }
+extern "C" { void twh_pressurefreq_(int *, int *); }
+extern "C" { void twh_trmaxdispfreq_(int *, int *); }
+extern "C" { void twh_volmaxdispfreq_(int *, int *); }
+extern "C" { void twh_scalecut_(int *, double *); }
+extern "C" { void twh_scalelolog_(int *, double *); }
+extern "C" { void twh_scalehilog_(int *, double *); }
+extern "C" { void twh_temperature_(int *, double *); }
+extern "C" { void twh_vequiv_(int *, double *); }
+extern "C" { void twh_potentialstyle_(int *, int *); }
+extern "C" { void twh_solvation_style_(int *, char *); }
+extern "C" { void twh_set_isolvtype_(int *, char *, char *); }
+extern "C" { void twh_isolvtype_(int *, int *); }
+extern "C" { void twh_linit_(int *, int *); }
+extern "C" { void twh_initboxtype_(int *, char *); }
+extern "C" { void twh_initstyle_(int *, int *, int *, char *); }
+extern "C" { void twh_initlattice_(int *, int *, int *, char *); }
+extern "C" { void twh_initmol_(int *, int *, int *, int *); }
+extern "C" { void twh_inixyz_(int *, int *, int *, int *, int *); }
+extern "C" { void twh_hmatrix_(int *, int *, int *, int *, double *); }
+extern "C" { void twh_nboxpair_(int *, int *); }
+extern "C" { void twh_nvmove_(int *, int *); }
+extern "C" { void twh_allocate_nvmove_(int *); }
+extern "C" { void twh_pairbox_(int *, int *, int *, int *); }
+
+extern "C" { void twh_pmrotate_(int *, double *); }
+
+namespace towheewrappers
+{
+
+    TowheeSimulation::TowheeSimulation() {
+
+        int set = GLB_SET;
+
+        // Create the random number generator
+        mRand = new TowheeRandom(true);
+//        mRand = new TowheeRandom(false);
+        mSpeciesManager = new TowheeSpeciesManager();
+
+        int lfailure;
+        twh_initialize_(&lfailure);
+
+
+    }
+
+    /*
+     * addBox()
+     */
+    void TowheeSimulation::addBox(IAPIBox *box) {
+       mBox.push_back(box);
+    }
+
+    /*
+     * removeBox()
+     */
+    void TowheeSimulation::removeBox(IAPIBox *box) {
+printf("WARNING : TowheeSimulation::removeBox() is NOT implemented.\n");
+    }
+
+    /*
+     * getRandom()
+     */
+    IAPIRandom *TowheeSimulation::getRandom() {
+        return mRand;
+    }
+
+    /*
+     * getEventManager()
+     */
+    IAPISimulationEventManager *TowheeSimulation::getEventManager() {
+printf("WARNING : TowheeSimulation::getEventManager() is NOT implemented.\n");
+    }
+
+    /*
+     * getSpeciesManager()
+     */
+    IAPISpeciesManager *TowheeSimulation::getSpeciesManager() {
+        return mSpeciesManager;
+    }
+
+    /*
+     * getBoxCount()
+     */
+    int TowheeSimulation::getBoxCount() {
+        return mBox.size();
+    }
+
+    /*
+     * getBox()
+     */
+    IAPIBox *TowheeSimulation::getBox(int index) {
+        return mBox.at(index);
+    }
+
+    /*
+     * isDynamic()
+     */
+    bool TowheeSimulation::isDynamic() {
+printf("WARNING : TowheeSimulation::isDynamic() is NOT implemented.\n");
+    }
+
+    /*
+     * setup()
+     */
+    void TowheeSimulation::setup() {
+
+printf("TowheeSimulation::setup()\n"); fflush(stdout);
+        int set = GLB_SET;
+        int get = GLB_GET;
+
+        int ensemble;
+        twh_ensemble_(&get, &ensemble);
+
+        // Set number of molecule types (species)
+        int speciesCount = mSpeciesManager->getSpeciesCount();
+        if(speciesCount > NTMAX) {
+            printf("The number of species (%d) in the simulation exceeds the maximum allowed value (%d)\n",
+                   speciesCount, NTMAX);
+            printf("You are doomed, my friend! (or change NTMAX in preproc.h and recompile towhee)\n");
+            fflush(stdout);
+        }
+        twh_nmolty_(&set, &speciesCount);
+        twh_allocate_maxmolty_(&speciesCount);
+
+        // Set the number of molecules for each species
+        int nchain = 0;
+        for(int i = 1; i <= speciesCount; i++) {
+            int moleculeCount =
+                mBox.at(0)->getNMolecules(mSpeciesManager->getSpecies(i-1));
+            twh_nmolectyp_(&set, &i, &moleculeCount);
+            nchain += moleculeCount;
+        }
+
+        // Set the total number of molecules
+        twh_nchain_(&set, &nchain);
+        int maxChain = nchain + 1;
+        twh_allocate_maxchain_(&maxChain);
+
+        if(nchain >= NMAX) {
+            printf("The number of molecules (%d) in the simulation equals or exceeds the maximum allowed value (%d)\n",
+                   nchain, NMAX);
+            printf("You are doomed, my friend! (or change NMAX in preproc.h and recompile towhee)\n");
+            fflush(stdout);
+        }
+
+        // Set the number of boxes
+        int numBoxes = mBox.size();
+        twh_numboxes_(&set, &numBoxes);
+        twh_allocate_numboxes_(&numBoxes);
+        if(numBoxes > MAXBOX) {
+            printf("The number of boxes (%d) in the simulation exceeds the maximum allowed value (%d)\n",
+                   numBoxes, MAXBOX);
+            printf("You are doomed, my friend! (or change MAXBOX in preproc.h and recompile towhee)\n");
+            fflush(stdout);
+        }
+
+        // Set step style
+//        char *stepStyle = (char *) malloc ((strlen("moves") + 1) * sizeof(char));
+//        strcpy(stepStyle, "moves");
+        char stepStyle[8] = "moves";
+printf("calling twh_stepstyle_ -> %s\n", stepStyle); fflush(stdout);
+        twh_stepstyle_(&set, stepStyle);
+printf("back from twh_stepstyle_\n"); fflush(stdout);
+//        free(stepStyle);
+
+        // Set control style
+//        char *controlStyle = (char *) malloc ((strlen("manual") + 1) * sizeof(char));
+//        strcpy(controlStyle, "manual");
+        char controlStyle[20] = "manual";
+        twh_controlstyle_(&set, controlStyle);
+
+        if(strcmp(controlStyle, "manual") == 0) {
+            int zero = 0;
+            twh_printfreq_(&set, &zero);
+            twh_weight_freq_(&set, &zero);
+            twh_c_matrix_freq_(&set, &zero);
+
+            int tmmcFlag;
+            twh_tmmc_flag_(&get, &tmmcFlag);
+            if(tmmcFlag) {
+printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdout);
+            }
+
+            // Set blocksize (to zero).  If set to a non-zero value, some
+            // error checking needs to be performed.
+            twh_blocksize_(&set, &zero);
+
+            // Set movie frequency (to zero)
+            twh_moviefreq_(&set, &zero);
+            // Set backup frequency (to zero)
+            twh_backupfreq_(&set, &zero);
+            // Set restart save frequency (to zero)
+            twh_restartfreq_(&set, &zero);
+
+            // Set run output style
+//            char *runoutputStyle = (char *) malloc ((strlen("none") + 1) * sizeof(char));
+//            strcpy(runoutputStyle, "none");
+            char runoutputStyle[20] = "none";
+            twh_runoutput_(&set, runoutputStyle);
+//            free(runoutputStyle);
+
+            // Set PDB output frequency
+            twh_pdb_output_freq_(&set, &zero);
+
+            // Set steps between pressure calculation (to zero)
+            twh_pressurefreq_(&set, &zero);
+
+            // Set the number of steps between update of translational and
+            // rotational maximum displacements
+            twh_trmaxdispfreq_(&set, &zero);
+
+            // Set the number of steps between update of volume move
+            // maximum displacements
+            twh_volmaxdispfreq_(&set, &zero);
+
+        }
+
+//        free(controlStyle);
+
+        // set up some safety features, these are now hardwired after
+        // running some tests to find good values
+        double scalecut = 50.0;
+        twh_scalecut_(&set, &scalecut);
+        double scalelolog = powl(10.0, (-scalecut));
+        twh_scalelolog_(&set, &scalelolog);
+        double scalehilog = powl(10.0, scalecut);
+        twh_scalehilog_(&set, &scalehilog);
+        double temperature;
+        twh_temperature_(&get, &temperature);
+        double vequiv = -logl(scalelolog)*temperature;
+        twh_vequiv_(&set, &vequiv);
+
+        // Set potential style (to internal)
+        int potStyle = POT_INTERNAL;
+        twh_potentialstyle_(&set, &potStyle);
+
+        if(potStyle == POT_INTERNAL) {
+            printf("ERROR : initializatin code for internal potential styles not implemented.\n");
+            fflush(stdout);
+        }
+        else if(potStyle == POT_EXTERNAL) {
+            printf("ERROR : initializatin code for external potential styles not implemented.\n");
+            fflush(stdout);
+        }
+
+        // Set the solvation style to none
+//        char *solvationStyle = (char *) malloc ((strlen("none") + 1) * sizeof(char));
+//        strcpy(solvationStyle, "none");
+        char solvationStyle[20] = "none";
+        twh_solvation_style_(&set, solvationStyle);
+        int failFlag;
+//        char *solvationType = (char *) malloc ((strlen("") + 1) * sizeof(char));
+//        strcpy(solvationType, "");
+        char solvationType[20];
+printf("Calling twh_set_isolvtype()\n"); fflush(stdout);
+        twh_set_isolvtype_(&failFlag, solvationStyle, solvationType);
+printf("Complete twh_set_isolvtype()\n"); fflush(stdout);
+//        free(solvationStyle);
+//        free(solvationType);
+
+        int solvType;
+        twh_isolvtype_(&get, &solvType);
+
+        if(solvType == SOLV_SASA) {
+            printf("ERROR : initialization code for solvation style not implemented.\n");
+            fflush(stdout);
+        }
+        else if(solvType == SOLV_EEF1) {
+            printf("ERROR : initialization code for solvation style not implemented.\n");
+            fflush(stdout);
+        }
+        else if(solvType == SOLV_TRAMONTO) {
+            printf("ERROR : initialization code for solvation style not implemented.\n");
+            fflush(stdout);
+        }
+
+        if(solvType != SOLV_NONE) {
+            printf("ERROR : error checking code for solvation style not implemented.\n");
+            fflush(stdout);
+        }
+
+        // Set linit (to true)
+        int linit = 1;
+        twh_linit_(&set, &linit);
+
+        // Set initboxtype (to dimensions)
+//        char *initBoxType = (char *) malloc ((strlen("dimensions") + 1) * sizeof(char));
+//        strcpy(initBoxType, "dimensions");
+        char initBoxType[20] = "dimensions";
+        twh_initboxtype_(&set, initBoxType);
+
+        if(strcmp(initBoxType, "unit cell") == 0) {
+            printf("ERROR : initialization code for initboxtype of 'unit cell' not implemented.\n");
+            fflush(stdout);
+        }
+
+        if(strcmp(initBoxType, "dimensions") == 0 ||
+           strcmp(initBoxType, "number density") == 0) {
+
+            // Set init style (to full cbmc)
+//            char *initStyle = (char *) malloc ((strlen("full cbmc") + 1) * sizeof(char));
+//            strcpy(initStyle, "full cbmc");
+            char initStyle[20] = "full cbmc";
+            for(int i = 1; i <= mBox.size(); i++) {
+                for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
+                    twh_initstyle_(&set, &i, &j, initStyle);
+                } // species loop
+            } // box loop
+
+            // Additional information required if init style is 'helix cbmc'
+            // This initialization is not coded.
+
+            // Set init lattice (to 'simple cubic')
+//            char *initLattice = (char *) malloc ((strlen("simple cubic") + 1) * sizeof(char));
+//            strcpy(initLattice, "simple cubic");
+            char initLattice[20] = "simple cubic";
+            for(int i = 1; i <= mBox.size(); i++) {
+                for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
+                    twh_initlattice_(&set, &i, &j, initLattice);
+                } // species loop
+            } // box loop
+
+            // Set number of species per box
+            for(int i = 1; i <= mBox.size(); i++) {
+                for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
+                    int numSpecies = mBox.at(i-1)->getNMolecules(mSpeciesManager->getSpecies(j-1));
+                    twh_initmol_(&set, &i, &j, &numSpecies);
+                } // species loop
+            } // box loop
+
+        }
+
+        printf("ERROR : inix, iniy, iniz initialization not completed.\n"); fflush(stdout);
+        for(int i = 1; i <= mBox.size(); i++) {
+            int inix;
+            int iniy;
+            int iniz;
+            twh_inixyz_(&set, &i, &inix, &iniy,&iniz);
+        }
+
+        if(strcmp(initBoxType, "dimensions") == 0) {
+printf("WARNING : setting hmatrix using hardcoded space dimension(3).\n"); fflush(stdout);
+            for(int ibox = 1; ibox <= mBox.size(); ibox++) {
+                IAPIBoundary *boundary = mBox.at(ibox-1)->getBoundary();
+                double boundaryDim;
+                for(int i = 1; i <= 3; i++) {
+                    for(int j = 1; j <= 3; j++) {
+                        if(i == j) boundaryDim = boundary->getBoxSize()->getX(j-1);
+                        else boundaryDim = 0.0;
+                        twh_hmatrix_(&set, &ibox, &i, &j, &boundaryDim);
+                    }
+                }
+            }
+        }
+        else if(strcmp(initBoxType, "number density") == 0) {
+            printf("ERROR : initialization code for initBoxType 'number density' not implemented.\n");
+            fflush(stdout);
+        }
+
+//        free(initBoxType);
+
+        // determine the number of possible box pairs
+        int boxPairs = numBoxes*(numBoxes-1)/2;
+        twh_nboxpair_(&set, &boxPairs);
+        if(ensemble == ENS_NPT) twh_nvmove_(&set, &numBoxes);
+        else twh_nvmove_(&set, &boxPairs);
+
+        int numMoves;
+        twh_nvmove_(&get, &numMoves);
+        twh_allocate_nvmove_(&numMoves);
+
+        // set up pairbox array (used for volume and swap moves)
+        int itest = 0;
+        int one = 1;
+        int two = 2;
+        for(int ibox = 1; ibox <= numBoxes-1; ibox++) {
+            for(int jbox = ibox+1; jbox <= numBoxes; jbox++) {
+                itest++;
+                twh_pairbox_(&set, &itest, &one, &ibox);
+                twh_pairbox_(&set, &itest, &two, &jbox);
+            }
+        }
+
+        if((ensemble == ENS_NVT && numBoxes > 1) ||
+           (ensemble == ENS_NPT)) {
+            printf("ERROR : pmvol initialization not implemented.\n");
+            fflush(stdout);
+        }
+
+        if((ensemble == ENS_NVT && numBoxes > 1) ||
+           (ensemble == ENS_NPT)) {
+            printf("ERROR : pmcell initialization not implemented.\n");
+            fflush(stdout);
+        }
+
+        if(numBoxes > 1) {
+            printf("ERROR : initialization for simulation with more than one box not implemented.\n");
+            fflush(stdout);
+        }
+
+        if(ensemble == ENS_UVT) {
+            printf("ERROR : initialization for  grand canonical insertion/deletion for UVT ensemble not implemented.\n");
+            fflush(stdout);
+        }
+
+printf("ERROR : initialization for  MOVE STUFF not implemented.\n");
+fflush(stdout);
+
+printf("ERROR : initialization for  POTENTIALS not implemented.\n");
+fflush(stdout);
+
+
+        // set pmrotate to 1.0
+//       double onePointZero = 1.0;
+//       twh_pmrotate_(&set, &onePointZero);
+
+    }
+
+
+}
+

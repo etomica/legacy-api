@@ -62,7 +62,7 @@ fi
 TOWHEE_LIB="-L$TOWHEE_LIB -ltowhee"
 
 AC_ARG_WITH(install-dir,
-[  --with-install=dir  Location to install towhee adapter library],
+[  --with-install-dir=dir  Location to install towhee adapter library],
   TOWHEE_INSTALL_DIR=$withval)
 
 AC_SUBST(USER_INCLUDES)
