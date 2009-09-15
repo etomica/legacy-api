@@ -5,7 +5,9 @@ TOWHEE_LIB = @TOWHEE_LIB@
 LIBFLAG = @LIBFLAG@
 TOWHEE_INSTALL_DIR = @TOWHEE_INSTALL_DIR@
 
-SRC =  TowheeBoundary.cpp \
+SRC =  TowheeAtomType.cpp \
+	TowheeAtomTypeSphere.cpp \
+	TowheeBoundary.cpp \
 	TowheeBoundaryRectangularPeriodic.cpp \
 	TowheeBox.cpp \
 	TowheeIntegrator.cpp \
@@ -17,7 +19,9 @@ SRC =  TowheeBoundary.cpp \
 	TowheeRandom.cpp \
 	TowheeSimulation.cpp \
 	TowheeSpace.cpp \
+	TowheeSpecies.cpp \
 	TowheeSpeciesManager.cpp \
+	TowheeSpeciesSpheresMono.cpp \
 	TowheeVector.cpp \
 	TowheeVector2D.cpp \
 	TowheeVector3D.cpp \

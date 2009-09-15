@@ -11,12 +11,14 @@
 namespace towheewrappers
 {
 
+    TowheeIntegratorEventManager::TowheeIntegratorEventManager() {
+    }
+
     /*
      * addListener
      */
     void TowheeIntegratorEventManager::addListener(IAPIIntegratorListener *newListener) {
-printf("TowheeIntegratorEventManager::addListener() NOT implemented yet.\n"); fflush(stdout);
-//        mListeners.push_back(dynamic_cast<TowheeIntegratorListenerNative *>(newListener));
+        mListeners.push_back(newListener);
     }
 
     /*
@@ -30,19 +32,18 @@ printf("TowheeIntegratorEventManager::removeListener() NOT implemented yet.\n");
      * stepStartedNotify()
      */
     void TowheeIntegratorEventManager::stepStartedNotify() {
-printf("TowheeIntegratorEventManager::stepStartedNotify() NOT implemented yet.\n"); fflush(stdout);
-//        for(int i = 0; i < mListeners.size(); i++) {
-//            mListeners.at(i)->integratorStepStarted(NULL);
-//        }
+
+        for(int i = 0; i < mListeners.size(); i++) {
+            mListeners.at(i)->integratorStepStarted(NULL);
+        }
     }
     /*
      * stepCompletedNotify()
      */
     void TowheeIntegratorEventManager::stepCompletedNotify() {
-printf("TowheeIntegratorEventManager::stepCompletedNotify() NOT implemented yet.\n"); fflush(stdout);
-//        for(int i = 0; i < mListeners.size(); i++) {
-//            mListeners.at(i)->integratorStepFinished(NULL);
-//        }
+        for(int i = 0; i < mListeners.size(); i++) {
+            mListeners.at(i)->integratorStepFinished(NULL);
+        }
     }
 
 }

@@ -239,17 +239,29 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "TowheeVector2D.h"
 #include "TowheeVector3D.h"
 #include "TowheeSpace.h"
+#include "TowheeAtomList.h"
+#include "TowheeMolecule.h"
+#include "TowheeMonatomicMolecule.h"
+#include "TowheeMoleculeList.h"
 #include "TowheeBoundary.h"
 #include "TowheeBoundaryRectangularPeriodic.h"
+#include "TowheeBoxEventManager.h"
 #include "TowheeBox.h"
 #include "TowheeSpeciesManager.h"
+#include "TowheeSimulationEventManager.h"
 #include "TowheeSimulation.h"
+#include "TowheeIntegratorListenerNative.h"
 #include "TowheeIntegratorEventManager.h"
 #include "TowheeIntegrator.h"
 #include "TowheeIntegratorNPT.h"
 #include "TowheeIntegratorNVT.h"
 #include "TowheeIntegratorPseudoBubble.h"
 #include "TowheeIntegratorUVT.h"
+#include "TowheeAtom.h"
+#include "TowheeAtomType.h"
+#include "TowheeAtomTypeSphere.h"
+#include "TowheeSpecies.h"
+#include "TowheeSpeciesSpheresMono.h"
 
 using namespace towheewrappers;
 using namespace molesimAPI;
@@ -4774,6 +4786,334 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSpace(JNIEnv 
 }
 
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomList(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtomList *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeAtomList *)new towheewrappers::TowheeAtomList();
+  *(towheewrappers::TowheeAtomList **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomList_1getAtomCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  result = (int)(arg1)->getAtomCount();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomList_1getAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  int arg2 ;
+  molesimAPI::IAPIAtom *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (molesimAPI::IAPIAtom *)(arg1)->getAtom(arg2);
+  *(molesimAPI::IAPIAtom **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomList_1addAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->addAtom(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomList_1removeAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->removeAtom(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomList_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeAtomList(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeAtomList *arg1 = (towheewrappers::TowheeAtomList *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomList **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1getIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  result = (int)(arg1)->getIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1setIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setIndex(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1addChildAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->addChildAtom(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1removeChildAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->removeChildAtom(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1getChildList(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  molesimAPI::IAPIAtomList *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  result = (molesimAPI::IAPIAtomList *)(arg1)->getChildList();
+  *(molesimAPI::IAPIAtomList **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1getType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  molesimAPI::IAPISpecies *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  result = (molesimAPI::IAPISpecies *)(arg1)->getType();
+  *(molesimAPI::IAPISpecies **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMolecule *arg1 = (towheewrappers::TowheeMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMolecule **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeMonatomicMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPISpecies *arg1 = (molesimAPI::IAPISpecies *) 0 ;
+  int arg2 ;
+  towheewrappers::TowheeMonatomicMolecule *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISpecies **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (towheewrappers::TowheeMonatomicMolecule *)new towheewrappers::TowheeMonatomicMolecule(arg1,arg2);
+  *(towheewrappers::TowheeMonatomicMolecule **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMonatomicMolecule_1addChildAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMonatomicMolecule *arg1 = (towheewrappers::TowheeMonatomicMolecule *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMonatomicMolecule **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->addChildAtom(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMonatomicMolecule_1removeChildAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMonatomicMolecule *arg1 = (towheewrappers::TowheeMonatomicMolecule *) 0 ;
+  molesimAPI::IAPIAtom *arg2 = (molesimAPI::IAPIAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMonatomicMolecule **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtom **)&jarg2; 
+  (arg1)->removeChildAtom(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeMonatomicMolecule_1getChildList(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeMonatomicMolecule *arg1 = (towheewrappers::TowheeMonatomicMolecule *) 0 ;
+  molesimAPI::IAPIAtomList *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMonatomicMolecule **)&jarg1; 
+  result = (molesimAPI::IAPIAtomList *)(arg1)->getChildList();
+  *(molesimAPI::IAPIAtomList **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeMonatomicMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMonatomicMolecule *arg1 = (towheewrappers::TowheeMonatomicMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMonatomicMolecule **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeMoleculeList(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeMoleculeList *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeMoleculeList *)new towheewrappers::TowheeMoleculeList();
+  *(towheewrappers::TowheeMoleculeList **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeMoleculeList_1getMoleculeCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  result = (int)(arg1)->getMoleculeCount();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeMoleculeList_1getMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  int arg2 ;
+  molesimAPI::IAPIMolecule *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (molesimAPI::IAPIMolecule *)(arg1)->getMolecule(arg2);
+  *(molesimAPI::IAPIMolecule **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMoleculeList_1addMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->addMolecule(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMoleculeList_1removeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->removeMolecule(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMoleculeList_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  (arg1)->clear();
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeMoleculeList(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMoleculeList *arg1 = (towheewrappers::TowheeMoleculeList *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMoleculeList **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundary_1setBoxSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   towheewrappers::TowheeBoundary *arg1 = (towheewrappers::TowheeBoundary *) 0 ;
   molesimAPI::IAPIVector *arg2 = (molesimAPI::IAPIVector *) 0 ;
@@ -5019,6 +5359,53 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeBoundaryRecta
   (void)jenv;
   (void)jcls;
   arg1 = *(towheewrappers::TowheeBoundaryRectangularPeriodic **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoxEventManager_1addListener(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeBoxEventManager *arg1 = (towheewrappers::TowheeBoxEventManager *) 0 ;
+  molesimAPI::IAPIBoxListener *arg2 = (molesimAPI::IAPIBoxListener *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeBoxEventManager **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIBoxListener **)&jarg2; 
+  (arg1)->addListener(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoxEventManager_1removeListener(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeBoxEventManager *arg1 = (towheewrappers::TowheeBoxEventManager *) 0 ;
+  molesimAPI::IAPIBoxListener *arg2 = (molesimAPI::IAPIBoxListener *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeBoxEventManager **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIBoxListener **)&jarg2; 
+  (arg1)->removeListener(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeBoxEventManager(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeBoxEventManager *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeBoxEventManager *)new towheewrappers::TowheeBoxEventManager();
+  *(towheewrappers::TowheeBoxEventManager **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeBoxEventManager(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeBoxEventManager *arg1 = (towheewrappers::TowheeBoxEventManager *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeBoxEventManager **)&jarg1; 
   delete arg1;
   
 }
@@ -5324,6 +5711,53 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSpeciesManage
 }
 
 
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulationEventManager_1addListener(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeSimulationEventManager *arg1 = (towheewrappers::TowheeSimulationEventManager *) 0 ;
+  molesimAPI::IAPISimulationListener *arg2 = (molesimAPI::IAPISimulationListener *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulationEventManager **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISimulationListener **)&jarg2; 
+  (arg1)->addListener(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulationEventManager_1removeListener(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeSimulationEventManager *arg1 = (towheewrappers::TowheeSimulationEventManager *) 0 ;
+  molesimAPI::IAPISimulationListener *arg2 = (molesimAPI::IAPISimulationListener *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulationEventManager **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISimulationListener **)&jarg2; 
+  (arg1)->removeListener(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeSimulationEventManager(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSimulationEventManager *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeSimulationEventManager *)new towheewrappers::TowheeSimulationEventManager();
+  *(towheewrappers::TowheeSimulationEventManager **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSimulationEventManager(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeSimulationEventManager *arg1 = (towheewrappers::TowheeSimulationEventManager *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulationEventManager **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeSimulation(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   towheewrappers::TowheeSimulation *result = 0 ;
@@ -5446,13 +5880,79 @@ JNIEXPORT jboolean JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1isDyn
 }
 
 
-JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1setup(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1setup(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  molesimAPI::IAPIVector *arg2 = (molesimAPI::IAPIVector *) 0 ;
   
   (void)jenv;
   (void)jcls;
   arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
-  (arg1)->setup();
+  arg2 = *(molesimAPI::IAPIVector **)&jarg2; 
+  (arg1)->setup(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getState(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (int)towheewrappers::TowheeSimulation::getState();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getAtomIDMgr(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  IndexManager *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
+  result = (IndexManager *)(arg1)->getAtomIDMgr();
+  *(IndexManager **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getMoleculeIDMgr(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  IndexManager *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
+  result = (IndexManager *)(arg1)->getMoleculeIDMgr();
+  *(IndexManager **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1UNINITIALIZED_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (int)(int)towheewrappers::TowheeSimulation::UNINITIALIZED;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1INITIALIZED_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (int)(int)towheewrappers::TowheeSimulation::INITIALIZED;
+  jresult = (jint)result; 
+  return jresult;
 }
 
 
@@ -5464,6 +5964,81 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSimulation(JN
   arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
   delete arg1;
   
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeIntegratorListenerNative(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg2) {
+  jlong jresult = 0 ;
+  JNIEnv *arg1 = (JNIEnv *) 0 ;
+  jobject arg2 ;
+  towheewrappers::TowheeIntegratorListenerNative *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(JNIEnv **)&jarg1; 
+  arg2 = jarg2; 
+  result = (towheewrappers::TowheeIntegratorListenerNative *)new towheewrappers::TowheeIntegratorListenerNative(arg1,arg2);
+  *(towheewrappers::TowheeIntegratorListenerNative **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorListenerNative_1integratorInitialized(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeIntegratorListenerNative *arg1 = (towheewrappers::TowheeIntegratorListenerNative *) 0 ;
+  molesimAPI::IAPIIntegratorEvent *arg2 = (molesimAPI::IAPIIntegratorEvent *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorListenerNative **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIIntegratorEvent **)&jarg2; 
+  (arg1)->integratorInitialized(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorListenerNative_1integratorStepStarted(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeIntegratorListenerNative *arg1 = (towheewrappers::TowheeIntegratorListenerNative *) 0 ;
+  molesimAPI::IAPIIntegratorEvent *arg2 = (molesimAPI::IAPIIntegratorEvent *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorListenerNative **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIIntegratorEvent **)&jarg2; 
+  (arg1)->integratorStepStarted(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorListenerNative_1integratorStepFinished(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeIntegratorListenerNative *arg1 = (towheewrappers::TowheeIntegratorListenerNative *) 0 ;
+  molesimAPI::IAPIIntegratorEvent *arg2 = (molesimAPI::IAPIIntegratorEvent *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorListenerNative **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIIntegratorEvent **)&jarg2; 
+  (arg1)->integratorStepFinished(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeIntegratorListenerNative(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeIntegratorListenerNative *arg1 = (towheewrappers::TowheeIntegratorListenerNative *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorListenerNative **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeIntegratorEventManager(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeIntegratorEventManager *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeIntegratorEventManager *)new towheewrappers::TowheeIntegratorEventManager();
+  *(towheewrappers::TowheeIntegratorEventManager **)&jresult = result; 
+  return jresult;
 }
 
 
@@ -5508,18 +6083,6 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorEventManage
   (void)jcls;
   arg1 = *(towheewrappers::TowheeIntegratorEventManager **)&jarg1; 
   (arg1)->stepCompletedNotify();
-}
-
-
-JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeIntegratorEventManager(JNIEnv *jenv, jclass jcls) {
-  jlong jresult = 0 ;
-  towheewrappers::TowheeIntegratorEventManager *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  result = (towheewrappers::TowheeIntegratorEventManager *)new towheewrappers::TowheeIntegratorEventManager();
-  *(towheewrappers::TowheeIntegratorEventManager **)&jresult = result; 
-  return jresult;
 }
 
 
@@ -5731,6 +6294,469 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeIntegratorUVT
 }
 
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtom(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0 ;
+  int arg2 ;
+  towheewrappers::TowheeAtom *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIAtomType **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (towheewrappers::TowheeAtom *)new towheewrappers::TowheeAtom(arg1,arg2);
+  *(towheewrappers::TowheeAtom **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (int)(arg1)->getIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1setIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setIndex(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1setLeafIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setLeafIndex(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getLeafIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (int)(arg1)->getLeafIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getPosition(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIVectorMutable *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (molesimAPI::IAPIVectorMutable *)(arg1)->getPosition();
+  *(molesimAPI::IAPIVectorMutable **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getVelocity(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIVectorMutable *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (molesimAPI::IAPIVectorMutable *)(arg1)->getVelocity();
+  *(molesimAPI::IAPIVectorMutable **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1setParent(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->setParent(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getParentGroup(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIMolecule *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (molesimAPI::IAPIMolecule *)(arg1)->getParentGroup();
+  *(molesimAPI::IAPIMolecule **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtom_1getType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIAtomType *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  result = (molesimAPI::IAPIAtomType *)(arg1)->getType();
+  *(molesimAPI::IAPIAtomType **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeAtom(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeAtom *arg1 = (towheewrappers::TowheeAtom *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtom **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomType(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jlong jresult = 0 ;
+  int arg1 ;
+  towheewrappers::TowheeAtomType *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  result = (towheewrappers::TowheeAtomType *)new towheewrappers::TowheeAtomType(arg1);
+  *(towheewrappers::TowheeAtomType **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1setIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setIndex(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1getIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  result = (int)(arg1)->getIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1setSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->setSpecies(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1getSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  molesimAPI::IAPISpecies *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  result = (molesimAPI::IAPISpecies *)(arg1)->getSpecies();
+  *(molesimAPI::IAPISpecies **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1setChildIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setChildIndex(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1getChildIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  result = (int)(arg1)->getChildIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1getMass(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  result = (double)(arg1)->getMass();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1rm(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  result = (double)(arg1)->rm();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeAtomType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeAtomType *arg1 = (towheewrappers::TowheeAtomType *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomType **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomTypeSphere(JNIEnv *jenv, jclass jcls, jint jarg1) {
+  jlong jresult = 0 ;
+  int arg1 ;
+  towheewrappers::TowheeAtomTypeSphere *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  result = (towheewrappers::TowheeAtomTypeSphere *)new towheewrappers::TowheeAtomTypeSphere(arg1);
+  *(towheewrappers::TowheeAtomTypeSphere **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomTypeSphere_1setDiameter(JNIEnv *jenv, jclass jcls, jlong jarg1, jdouble jarg2) {
+  towheewrappers::TowheeAtomTypeSphere *arg1 = (towheewrappers::TowheeAtomTypeSphere *) 0 ;
+  double arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomTypeSphere **)&jarg1; 
+  arg2 = (double)jarg2; 
+  (arg1)->setDiameter(arg2);
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomTypeSphere_1getDiameter(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeAtomTypeSphere *arg1 = (towheewrappers::TowheeAtomTypeSphere *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomTypeSphere **)&jarg1; 
+  result = (double)(arg1)->getDiameter();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeAtomTypeSphere(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeAtomTypeSphere *arg1 = (towheewrappers::TowheeAtomTypeSphere *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeAtomTypeSphere **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1getIndex(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  result = (int)(arg1)->getIndex();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1setIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->setIndex(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1makeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  molesimAPI::IAPIMolecule *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule();
+  *(molesimAPI::IAPIMolecule **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1getAtomTypeCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  result = (int)(arg1)->getAtomTypeCount();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1getAtomType(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  int arg2 ;
+  molesimAPI::IAPIAtomType *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (molesimAPI::IAPIAtomType *)(arg1)->getAtomType(arg2);
+  *(molesimAPI::IAPIAtomType **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1initializeConformation(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->initializeConformation(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeSpecies *arg1 = (towheewrappers::TowheeSpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpecies **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeSpeciesSpheresMono(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  molesimAPI::IAPIAtomType *arg2 = (molesimAPI::IAPIAtomType *) 0 ;
+  towheewrappers::TowheeSpeciesSpheresMono *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtomType **)&jarg2; 
+  result = (towheewrappers::TowheeSpeciesSpheresMono *)new towheewrappers::TowheeSpeciesSpheresMono(arg1,arg2);
+  *(towheewrappers::TowheeSpeciesSpheresMono **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpeciesSpheresMono_1makeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeSpeciesSpheresMono *arg1 = (towheewrappers::TowheeSpeciesSpheresMono *) 0 ;
+  molesimAPI::IAPIMolecule *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpeciesSpheresMono **)&jarg1; 
+  result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule();
+  *(molesimAPI::IAPIMolecule **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeSpeciesSpheresMono(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeSpeciesSpheresMono *arg1 = (towheewrappers::TowheeSpeciesSpheresMono *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSpeciesSpheresMono **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGIAPIVectorMutableUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
@@ -5891,6 +6917,38 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeVector3DUpcast(J
     return baseptr;
 }
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeAtomListUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIAtomList **)&baseptr = *(towheewrappers::TowheeAtomList **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeMoleculeUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIMolecule **)&baseptr = *(towheewrappers::TowheeMolecule **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeMonatomicMoleculeUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheewrappers::TowheeMolecule **)&baseptr = *(towheewrappers::TowheeMonatomicMolecule **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeMoleculeListUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIMoleculeList **)&baseptr = *(towheewrappers::TowheeMoleculeList **)&jarg1;
+    return baseptr;
+}
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeBoundaryUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
@@ -5904,6 +6962,14 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeBoundaryRectangu
     (void)jenv;
     (void)jcls;
     *(towheewrappers::TowheeBoundary **)&baseptr = *(towheewrappers::TowheeBoundaryRectangularPeriodic **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeBoxEventManagerUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIBoxEventManager **)&baseptr = *(towheewrappers::TowheeBoxEventManager **)&jarg1;
     return baseptr;
 }
 
@@ -5923,11 +6989,27 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeSpeciesManagerUp
     return baseptr;
 }
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeSimulationEventManagerUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPISimulationEventManager **)&baseptr = *(towheewrappers::TowheeSimulationEventManager **)&jarg1;
+    return baseptr;
+}
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeSimulationUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
     *(molesimAPI::IAPISimulation **)&baseptr = *(towheewrappers::TowheeSimulation **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorListenerNativeUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIIntegratorListener **)&baseptr = *(towheewrappers::TowheeIntegratorListenerNative **)&jarg1;
     return baseptr;
 }
 
@@ -5979,6 +7061,76 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorUVTUpc
     return baseptr;
 }
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeAtomUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIAtom **)&baseptr = *(towheewrappers::TowheeAtom **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeAtomTypeUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPIAtomType **)&baseptr = *(towheewrappers::TowheeAtomType **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeAtomTypeSphereUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheewrappers::TowheeAtomType **)&baseptr = *(towheewrappers::TowheeAtomTypeSphere **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeSpeciesUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(molesimAPI::IAPISpecies **)&baseptr = *(towheewrappers::TowheeSpecies **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeSpeciesSpheresMonoUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheewrappers::TowheeSpecies **)&baseptr = *(towheewrappers::TowheeSpeciesSpheresMono **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_create_1TowheeIntegratorListenerNative(JNIEnv *jenv, jclass jcls, jobject jobj) {
+
+
+  jlong jresult = 0;
+  towheewrappers::TowheeIntegratorListenerNative *result = 0 ;
+
+  result = (towheewrappers::TowheeIntegratorListenerNative *)new towheewrappers::TowheeIntegratorListenerNative(jenv, jobj);
+  *(towheewrappers::TowheeIntegratorListenerNative **)&jresult = result;
+
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIAtomType **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeAtomType)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeAtomTypeSphere)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
 JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundary_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jint jresult = 0;
   molesimAPI::IAPIBoundary *arg1 = (molesimAPI::IAPIBoundary *) 0;
@@ -6018,6 +7170,42 @@ JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegrator_1instanceT
   }
   else if(typeid(*arg1) == typeid(TowheeIntegratorUVT)) {
     instanceType = 4;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIMolecule *arg1 = (molesimAPI::IAPIMolecule *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIMolecule **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeMolecule)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeMonatomicMolecule)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPISpecies *arg1 = (molesimAPI::IAPISpecies *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPISpecies **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeSpecies)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeSpeciesSpheresMono)) {
+    instanceType = 1;
   }
 
   jresult = (jint)instanceType;

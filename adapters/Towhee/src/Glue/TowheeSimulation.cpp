@@ -13,6 +13,7 @@
 #include "TowheeBox.h"
 #include "TowheeSimulation.h"
 #include "TowheeRandom.h"
+#include "TowheeSimulationEventManager.h"
 #include "TowheeSpeciesManager.h"
 
 extern "C" { void twh_initialize_(int *); }
@@ -59,11 +60,21 @@ extern "C" { void twh_nboxpair_(int *, int *); }
 extern "C" { void twh_nvmove_(int *, int *); }
 extern "C" { void twh_allocate_nvmove_(int *); }
 extern "C" { void twh_pairbox_(int *, int *, int *, int *); }
+extern "C" { void twh_nunit_(int *, int *, int *); }
+extern "C" { void twh_allocate_maxunit_(int *); }
+extern "C" { void twh_nmolectyp_(int *, int *, int *); }
+extern "C" { void twh_allocate_coords_(int *, int *); }
+extern "C" { void twh_initconf_(int *, int *); }
 
 extern "C" { void twh_pmrotate_(int *, double *); }
 
 namespace towheewrappers
 {
+
+    const int TowheeSimulation::UNINITIALIZED = 0;
+    const int TowheeSimulation::INITIALIZED = 1;
+
+    int TowheeSimulation::mState = TowheeSimulation::UNINITIALIZED;
 
     TowheeSimulation::TowheeSimulation() {
 
@@ -73,6 +84,9 @@ namespace towheewrappers
         mRand = new TowheeRandom(true);
 //        mRand = new TowheeRandom(false);
         mSpeciesManager = new TowheeSpeciesManager();
+        mEventManager = new TowheeSimulationEventManager();
+        mAtomIDMgr = new IndexManager(1);
+        mMoleIDMgr = new IndexManager(1);
 
         int lfailure;
         twh_initialize_(&lfailure);
@@ -85,6 +99,7 @@ namespace towheewrappers
      */
     void TowheeSimulation::addBox(IAPIBox *box) {
        mBox.push_back(box);
+       mSpeciesManager->boxAddedNotify(box);
     }
 
     /*
@@ -105,7 +120,7 @@ printf("WARNING : TowheeSimulation::removeBox() is NOT implemented.\n");
      * getEventManager()
      */
     IAPISimulationEventManager *TowheeSimulation::getEventManager() {
-printf("WARNING : TowheeSimulation::getEventManager() is NOT implemented.\n");
+        return mEventManager;
     }
 
     /*
@@ -139,7 +154,7 @@ printf("WARNING : TowheeSimulation::isDynamic() is NOT implemented.\n");
     /*
      * setup()
      */
-    void TowheeSimulation::setup() {
+    void TowheeSimulation::setup(IAPIVector *config) {
 
 printf("TowheeSimulation::setup()\n"); fflush(stdout);
         int set = GLB_SET;
@@ -147,9 +162,11 @@ printf("TowheeSimulation::setup()\n"); fflush(stdout);
 
         int ensemble;
         twh_ensemble_(&get, &ensemble);
+printf("SETUP : ensemble -> %d\n", ensemble); fflush(stdout);
 
         // Set number of molecule types (species)
         int speciesCount = mSpeciesManager->getSpeciesCount();
+printf("SETUP : species count -> %d\n", mSpeciesManager->getSpeciesCount()); fflush(stdout);
         if(speciesCount > NTMAX) {
             printf("The number of species (%d) in the simulation exceeds the maximum allowed value (%d)\n",
                    speciesCount, NTMAX);
@@ -162,8 +179,12 @@ printf("TowheeSimulation::setup()\n"); fflush(stdout);
         // Set the number of molecules for each species
         int nchain = 0;
         for(int i = 1; i <= speciesCount; i++) {
-            int moleculeCount =
-                mBox.at(0)->getNMolecules(mSpeciesManager->getSpecies(i-1));
+            int moleculeCount = 0;
+            IAPISpecies *species = mSpeciesManager->getSpecies(i-1);
+            for(int j = 0; j < mBox.size(); j++) {
+                moleculeCount += mBox.at(j)->getNMolecules(species);
+            }
+printf("SETUP : molecule count for species(%d) -> %d\n", i, moleculeCount); fflush(stdout);
             twh_nmolectyp_(&set, &i, &moleculeCount);
             nchain += moleculeCount;
         }
@@ -182,6 +203,7 @@ printf("TowheeSimulation::setup()\n"); fflush(stdout);
 
         // Set the number of boxes
         int numBoxes = mBox.size();
+printf("SETUP : box count -> %d\n", numBoxes); fflush(stdout);
         twh_numboxes_(&set, &numBoxes);
         twh_allocate_numboxes_(&numBoxes);
         if(numBoxes > MAXBOX) {
@@ -195,9 +217,7 @@ printf("TowheeSimulation::setup()\n"); fflush(stdout);
 //        char *stepStyle = (char *) malloc ((strlen("moves") + 1) * sizeof(char));
 //        strcpy(stepStyle, "moves");
         char stepStyle[8] = "moves";
-printf("calling twh_stepstyle_ -> %s\n", stepStyle); fflush(stdout);
         twh_stepstyle_(&set, stepStyle);
-printf("back from twh_stepstyle_\n"); fflush(stdout);
 //        free(stepStyle);
 
         // Set control style
@@ -289,9 +309,7 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
 //        char *solvationType = (char *) malloc ((strlen("") + 1) * sizeof(char));
 //        strcpy(solvationType, "");
         char solvationType[20];
-printf("Calling twh_set_isolvtype()\n"); fflush(stdout);
         twh_set_isolvtype_(&failFlag, solvationStyle, solvationType);
-printf("Complete twh_set_isolvtype()\n"); fflush(stdout);
 //        free(solvationStyle);
 //        free(solvationType);
 
@@ -357,11 +375,19 @@ printf("Complete twh_set_isolvtype()\n"); fflush(stdout);
                 } // species loop
             } // box loop
 
-            // Set number of species per box
+            // Set number of molcules per species for each box
             for(int i = 1; i <= mBox.size(); i++) {
                 for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
                     int numSpecies = mBox.at(i-1)->getNMolecules(mSpeciesManager->getSpecies(j-1));
+printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
                     twh_initmol_(&set, &i, &j, &numSpecies);
+
+                    int numAtoms =
+                      mBox.at(i-1)->getMoleculeList(mSpeciesManager->
+                      getSpecies(j-1))->getMolecule(0)->getChildList()->getAtomCount();
+
+                    // Set number of atoms for the molecule
+                    twh_nunit_(&set, &j, &numAtoms);
                 } // species loop
             } // box loop
 
@@ -369,10 +395,10 @@ printf("Complete twh_set_isolvtype()\n"); fflush(stdout);
 
         printf("ERROR : inix, iniy, iniz initialization not completed.\n"); fflush(stdout);
         for(int i = 1; i <= mBox.size(); i++) {
-            int inix;
-            int iniy;
-            int iniz;
-            twh_inixyz_(&set, &i, &inix, &iniy,&iniz);
+            int inix = config->getX(0);
+            int iniy = config->getX(1);
+            int iniz = config->getX(2);
+            twh_inixyz_(&set, &i, &inix, &iniy, &iniz);
         }
 
         if(strcmp(initBoxType, "dimensions") == 0) {
@@ -451,8 +477,72 @@ fflush(stdout);
 //       double onePointZero = 1.0;
 //       twh_pmrotate_(&set, &onePointZero);
 
+
+
+        // finished reading input from towhee_input
+        // determine the largest value of nunit
+        int maxunit = 0;
+        int numunits;
+        for(int i = 1; i <= speciesCount; i++) {
+            twh_nunit_(&get, &i, &numunits);
+            if (numunits > maxunit) maxunit = numunits;
+        }
+//printf("maxunit : %d\n", maxunit); fflush(stdout);
+        // allocate arrays based maxunit
+        twh_allocate_maxunit_(&maxunit);
+
+        // compute the total number of atoms
+        int natoms = 0;
+        int numMoles;
+        for(int i = 1; i <= speciesCount; i++) {
+            twh_nmolectyp_(&get, &i, &numMoles);
+//printf("numMoles : %d\n", numMoles); fflush(stdout);
+            twh_nunit_(&get, &i, &numunits);
+//printf("  numunits : %d\n", numunits); fflush(stdout);
+            natoms +=  numMoles * numunits;
+//printf("    natoms : %d\n", natoms); fflush(stdout);
+        }
+
+//printf("natoms : %d  maxunit : %d\n", natoms, maxunit); fflush(stdout);
+        // allocate arrays for coords
+        twh_allocate_coords_(&natoms, &maxunit);
+
+        // SKIPPED STUFF IN readtowhee.F
+
+        // get or generate the initial configuration of the system
+        if (linit) {
+            int confFail;
+            int atomCount;
+            twh_initconf_(&confFail, &atomCount);
+printf("ATOM COUNT : %d\n", atomCount); fflush(stdout);
+        }
+        else {
+            printf("Cannot read initial configuration from file.\n"); fflush(stdout);
+        }
+
+        mState = INITIALIZED;
     }
 
+    /*
+     * getState()
+     */
+    int TowheeSimulation::getState() {
+        return mState;
+    }
+
+    /*
+     * getAtomIDMgr()
+     */
+    IndexManager *TowheeSimulation::getAtomIDMgr() {
+        return mAtomIDMgr;
+    }
+
+    /*
+     * getMoleculeIDMgr()
+     */
+    IndexManager *TowheeSimulation::getMoleculeIDMgr() {
+        return mMoleIDMgr;
+    }
 
 }
 

@@ -31,6 +31,7 @@ namespace towheewrappers
 
         private:
             std::vector<IAPISpecies *>mSpecies;
+            std::vector<IAPIBox *>mBoxList;
 
     };
 }

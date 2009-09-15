@@ -18,6 +18,7 @@ namespace towheewrappers
 {
 
     TowheeIntegrator::TowheeIntegrator() {
+printf("TowheeIntegrator ctor ...\n"); fflush(stdout);
         mEventManager = new TowheeIntegratorEventManager();
     }
 

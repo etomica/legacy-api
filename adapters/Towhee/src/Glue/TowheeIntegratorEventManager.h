@@ -5,8 +5,10 @@
  */
 
 
-#ifndef TOWHEE_INTEGERATOR_EVENT_MANAGER_WRAPPER_H
-#define TOWHEE_INTEGERATOR_EVENT_MANAGER_WRAPPER_H
+#ifndef TOWHEE_INTEGRATOR_EVENT_MANAGER_WRAPPER_H
+#define TOWHEE_INTEGRATOR_EVENT_MANAGER_WRAPPER_H
+
+#include <vector>
 
 #include "IAPIIntegratorEventManager.h"
 #include "IAPIIntegratorListener.h"
@@ -21,6 +23,8 @@ namespace towheewrappers
 
         public:
 
+            TowheeIntegratorEventManager();
+
             // API Compliance
             void addListener(IAPIIntegratorListener *newListener);
             void removeListener(IAPIIntegratorListener *listener);
@@ -28,6 +32,9 @@ namespace towheewrappers
             // Non-API methods
             void stepStartedNotify();
             void stepCompletedNotify();
+
+        private:
+            std::vector<IAPIIntegratorListener *>mListeners;
 
     };
 }

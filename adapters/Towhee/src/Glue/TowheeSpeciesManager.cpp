@@ -24,13 +24,17 @@ printf("WARNING : TowheeSpeciesManager::removeSpecies() not implemented.\n"); ff
      */
     void TowheeSpeciesManager::addSpecies(IAPISpecies *species) {
         mSpecies.push_back(species);
+        species->setIndex(mSpecies.size()-1);
+        // perform for all boxs in simulation
+        for(int i = 0; i < mBoxList.size(); i++)
+            mBoxList.at(i)->addSpeciesNotify(species);
     }
 
     /*
      * boxAddedNotify()
      */
     void TowheeSpeciesManager::boxAddedNotify(IAPIBox *box) {
-printf("WARNING : TowheeSpeciesManager::boxAddedNotify() not implemented.\n"); fflush(stdout);
+        mBoxList.push_back(box);
     }
 
     /*

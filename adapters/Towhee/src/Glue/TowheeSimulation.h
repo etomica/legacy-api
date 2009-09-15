@@ -16,6 +16,7 @@
 #include "IAPISimulationEventManager.h"
 #include "IAPISpeciesManager.h"
 #include "IAPIPotentialMaster.h"
+#include "IndexManager.h"
 
 using namespace molesimAPI;
 
@@ -38,12 +39,23 @@ namespace towheewrappers
             bool isDynamic();
 
             // Non-API methods
-            void setup();
+            void setup(IAPIVector *config);
+            static int getState();
+            IndexManager *getAtomIDMgr();
+            IndexManager *getMoleculeIDMgr();
+
+            static const int UNINITIALIZED;
+            static const int INITIALIZED;
 
         private:
             IAPIRandom *mRand;
             IAPISpeciesManager *mSpeciesManager;
+            IAPISimulationEventManager *mEventManager;
             std::vector<IAPIBox *>mBox;
+            static int mState;
+            IndexManager *mAtomIDMgr;
+            IndexManager *mMoleIDMgr;
+
     };
 }
 
