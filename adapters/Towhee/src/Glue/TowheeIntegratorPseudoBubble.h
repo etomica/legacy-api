@@ -14,7 +14,7 @@ using namespace molesimAPI;
 namespace towheewrappers
 {
 
-    class TowheeIntegratorPseudoBubble : public TowheeIntegrator {
+    class TowheeIntegratorPseudoBubble : public TowheeIntegratorMC {
 
         public:
 

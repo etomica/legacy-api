@@ -7,14 +7,14 @@
 #ifndef TOWHEE_INTEGRATOR_NVT_WRAPPER_H
 #define TOWHEE_INTEGRATOR_NVT_WRAPPER_H
 
-#include "TowheeIntegrator.h"
+#include "TowheeIntegratorMC.h"
 
 using namespace molesimAPI;
 
 namespace towheewrappers
 {
 
-    class TowheeIntegratorNVT : public TowheeIntegrator {
+    class TowheeIntegratorNVT : public TowheeIntegratorMC {
 
         public:
 

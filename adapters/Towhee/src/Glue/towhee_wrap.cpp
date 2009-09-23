@@ -253,6 +253,9 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "TowheeIntegratorListenerNative.h"
 #include "TowheeIntegratorEventManager.h"
 #include "TowheeIntegrator.h"
+#include "TowheeMCMove.h"
+#include "TowheeMCMoveCOMTranslation.h"
+#include "TowheeIntegratorMC.h"
 #include "TowheeIntegratorNPT.h"
 #include "TowheeIntegratorNVT.h"
 #include "TowheeIntegratorPseudoBubble.h"
@@ -6190,6 +6193,152 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeIntegrator(JN
 }
 
 
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMove_1getProbability(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeMCMove *arg1 = (towheewrappers::TowheeMCMove *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMove **)&jarg1; 
+  result = (double)(arg1)->getProbability();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMove_1setup(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMCMove *arg1 = (towheewrappers::TowheeMCMove *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMove **)&jarg1; 
+  (arg1)->setup();
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeMCMove(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMCMove *arg1 = (towheewrappers::TowheeMCMove *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMove **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeMCMoveCOMTranslation(JNIEnv *jenv, jclass jcls, jlong jarg1, jdouble jarg2) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
+  double arg2 ;
+  towheewrappers::TowheeMCMoveCOMTranslation *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
+  arg2 = (double)jarg2; 
+  result = (towheewrappers::TowheeMCMoveCOMTranslation *)new towheewrappers::TowheeMCMoveCOMTranslation(arg1,arg2);
+  *(towheewrappers::TowheeMCMoveCOMTranslation **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMoveCOMTranslation_1setPmtcmt(JNIEnv *jenv, jclass jcls, jlong jarg1, jdoubleArray jarg2) {
+  towheewrappers::TowheeMCMoveCOMTranslation *arg1 = (towheewrappers::TowheeMCMoveCOMTranslation *) 0 ;
+  double *arg2 ;
+  jdouble *jarr2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1; 
+  if (!SWIG_JavaArrayInDouble(jenv, &jarr2, &arg2, jarg2)) return ; 
+  (arg1)->setPmtcmt(arg2);
+  SWIG_JavaArrayArgoutDouble(jenv, jarr2, arg2, jarg2); 
+  delete [] arg2; 
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMoveCOMTranslation_1setRmtrac(JNIEnv *jenv, jclass jcls, jlong jarg1, jdouble jarg2) {
+  towheewrappers::TowheeMCMoveCOMTranslation *arg1 = (towheewrappers::TowheeMCMoveCOMTranslation *) 0 ;
+  double arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1; 
+  arg2 = (double)jarg2; 
+  (arg1)->setRmtrac(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMoveCOMTranslation_1setTatrac(JNIEnv *jenv, jclass jcls, jlong jarg1, jdouble jarg2) {
+  towheewrappers::TowheeMCMoveCOMTranslation *arg1 = (towheewrappers::TowheeMCMoveCOMTranslation *) 0 ;
+  double arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1; 
+  arg2 = (double)jarg2; 
+  (arg1)->setTatrac(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeMCMoveCOMTranslation_1setup(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMCMoveCOMTranslation *arg1 = (towheewrappers::TowheeMCMoveCOMTranslation *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1; 
+  (arg1)->setup();
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeMCMoveCOMTranslation(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeMCMoveCOMTranslation *arg1 = (towheewrappers::TowheeMCMoveCOMTranslation *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1; 
+  delete arg1;
+  
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorMC_1addMove(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheewrappers::TowheeIntegratorMC *arg1 = (towheewrappers::TowheeIntegratorMC *) 0 ;
+  towheewrappers::TowheeMCMove *arg2 = (towheewrappers::TowheeMCMove *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorMC **)&jarg1; 
+  arg2 = *(towheewrappers::TowheeMCMove **)&jarg2; 
+  (arg1)->addMove(arg2);
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeIntegratorMC(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  towheewrappers::TowheeIntegratorMC *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (towheewrappers::TowheeIntegratorMC *)new towheewrappers::TowheeIntegratorMC();
+  *(towheewrappers::TowheeIntegratorMC **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeIntegratorMC(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheewrappers::TowheeIntegratorMC *arg1 = (towheewrappers::TowheeIntegratorMC *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeIntegratorMC **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeIntegratorNPT(JNIEnv *jenv, jclass jcls, jdouble jarg1, jdouble jarg2) {
   jlong jresult = 0 ;
   double arg1 ;
@@ -7029,11 +7178,27 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorUpcast
     return baseptr;
 }
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeMCMoveCOMTranslationUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheewrappers::TowheeMCMove **)&baseptr = *(towheewrappers::TowheeMCMoveCOMTranslation **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorMCUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheewrappers::TowheeIntegrator **)&baseptr = *(towheewrappers::TowheeIntegratorMC **)&jarg1;
+    return baseptr;
+}
+
 JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorNPTUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
-    *(towheewrappers::TowheeIntegrator **)&baseptr = *(towheewrappers::TowheeIntegratorNPT **)&jarg1;
+    *(towheewrappers::TowheeIntegratorMC **)&baseptr = *(towheewrappers::TowheeIntegratorNPT **)&jarg1;
     return baseptr;
 }
 
@@ -7041,7 +7206,7 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorNVTUpc
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
-    *(towheewrappers::TowheeIntegrator **)&baseptr = *(towheewrappers::TowheeIntegratorNVT **)&jarg1;
+    *(towheewrappers::TowheeIntegratorMC **)&baseptr = *(towheewrappers::TowheeIntegratorNVT **)&jarg1;
     return baseptr;
 }
 
@@ -7049,7 +7214,7 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorPseudo
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
-    *(towheewrappers::TowheeIntegrator **)&baseptr = *(towheewrappers::TowheeIntegratorPseudoBubble **)&jarg1;
+    *(towheewrappers::TowheeIntegratorMC **)&baseptr = *(towheewrappers::TowheeIntegratorPseudoBubble **)&jarg1;
     return baseptr;
 }
 
@@ -7057,7 +7222,7 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_SWIGTowheeIntegratorUVTUpc
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
-    *(towheewrappers::TowheeIntegrator **)&baseptr = *(towheewrappers::TowheeIntegratorUVT **)&jarg1;
+    *(towheewrappers::TowheeIntegratorMC **)&baseptr = *(towheewrappers::TowheeIntegratorUVT **)&jarg1;
     return baseptr;
 }
 
@@ -7159,17 +7324,20 @@ JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegrator_1instanceT
   if(typeid(*arg1) == typeid(TowheeIntegrator)) {
     instanceType = 0;
   }
-  else if(typeid(*arg1) == typeid(TowheeIntegratorNPT)) {
+  else if(typeid(*arg1) == typeid(TowheeIntegratorMC)) {
     instanceType = 1;
   }
-  else if(typeid(*arg1) == typeid(TowheeIntegratorNVT)) {
+  else if(typeid(*arg1) == typeid(TowheeIntegratorNPT)) {
     instanceType = 2;
   }
-  else if(typeid(*arg1) == typeid(TowheeIntegratorPseudoBubble)) {
+  else if(typeid(*arg1) == typeid(TowheeIntegratorNVT)) {
     instanceType = 3;
   }
-  else if(typeid(*arg1) == typeid(TowheeIntegratorUVT)) {
+  else if(typeid(*arg1) == typeid(TowheeIntegratorPseudoBubble)) {
     instanceType = 4;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorUVT)) {
+    instanceType = 5;
   }
 
   jresult = (jint)instanceType;

@@ -65,6 +65,11 @@ extern "C" { void twh_allocate_maxunit_(int *); }
 extern "C" { void twh_nmolectyp_(int *, int *, int *); }
 extern "C" { void twh_allocate_coords_(int *, int *); }
 extern "C" { void twh_initconf_(int *, int *); }
+extern "C" { int twh_get_nboxi_(int *); }
+extern "C" { void twh_chainlist_(int *, int *, int *, int *, int *); }
+extern "C" { void twh_ctrmas_(int *, int *, int *, int *, int *); }
+extern "C" { void twh_moltyp_(int *, int *, int *); }
+extern "C" { void twh_parall_(int *, int *, int *, int *); }
 
 extern "C" { void twh_pmrotate_(int *, double *); }
 
@@ -159,6 +164,7 @@ printf("WARNING : TowheeSimulation::isDynamic() is NOT implemented.\n");
 printf("TowheeSimulation::setup()\n"); fflush(stdout);
         int set = GLB_SET;
         int get = GLB_GET;
+        int zero = 0;
 
         int ensemble;
         twh_ensemble_(&get, &ensemble);
@@ -227,7 +233,6 @@ printf("SETUP : box count -> %d\n", numBoxes); fflush(stdout);
         twh_controlstyle_(&set, controlStyle);
 
         if(strcmp(controlStyle, "manual") == 0) {
-            int zero = 0;
             twh_printfreq_(&set, &zero);
             twh_weight_freq_(&set, &zero);
             twh_c_matrix_freq_(&set, &zero);
@@ -284,6 +289,7 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
         twh_scalehilog_(&set, &scalehilog);
         double temperature;
         twh_temperature_(&get, &temperature);
+printf("TEMPERATURE : %f\n", temperature); fflush(stdout);
         double vequiv = -logl(scalelolog)*temperature;
         twh_vequiv_(&set, &vequiv);
 
@@ -292,29 +298,30 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
         twh_potentialstyle_(&set, &potStyle);
 
         if(potStyle == POT_INTERNAL) {
-            printf("ERROR : initializatin code for internal potential styles not implemented.\n");
+            printf("ERROR : initialization code for internal potential styles not implemented.\n");
             fflush(stdout);
         }
         else if(potStyle == POT_EXTERNAL) {
-            printf("ERROR : initializatin code for external potential styles not implemented.\n");
+            printf("ERROR : initialization code for external potential styles not implemented.\n");
             fflush(stdout);
         }
 
         // Set the solvation style to none
 //        char *solvationStyle = (char *) malloc ((strlen("none") + 1) * sizeof(char));
 //        strcpy(solvationStyle, "none");
-        char solvationStyle[20] = "none";
+        char solvationStyle[20];
+        strcpy(solvationStyle, "none");
         twh_solvation_style_(&set, solvationStyle);
-        int failFlag;
+//        int failFlag;
 //        char *solvationType = (char *) malloc ((strlen("") + 1) * sizeof(char));
 //        strcpy(solvationType, "");
-        char solvationType[20];
-        twh_set_isolvtype_(&failFlag, solvationStyle, solvationType);
+//        char solvationType[20];
+//        twh_set_isolvtype_(&failFlag, solvationStyle, solvationType);
 //        free(solvationStyle);
 //        free(solvationType);
 
-        int solvType;
-        twh_isolvtype_(&get, &solvType);
+        int solvType = SOLV_NONE;
+        twh_isolvtype_(&set, &solvType);
 
         if(solvType == SOLV_SASA) {
             printf("ERROR : initialization code for solvation style not implemented.\n");
@@ -487,7 +494,7 @@ fflush(stdout);
             twh_nunit_(&get, &i, &numunits);
             if (numunits > maxunit) maxunit = numunits;
         }
-//printf("maxunit : %d\n", maxunit); fflush(stdout);
+printf("maxunit : %d\n", maxunit); fflush(stdout);
         // allocate arrays based maxunit
         twh_allocate_maxunit_(&maxunit);
 
@@ -498,7 +505,7 @@ fflush(stdout);
             twh_nmolectyp_(&get, &i, &numMoles);
 //printf("numMoles : %d\n", numMoles); fflush(stdout);
             twh_nunit_(&get, &i, &numunits);
-//printf("  numunits : %d\n", numunits); fflush(stdout);
+printf("  numunits : %d\n", numunits); fflush(stdout);
             natoms +=  numMoles * numunits;
 //printf("    natoms : %d\n", natoms); fflush(stdout);
         }
@@ -518,6 +525,35 @@ printf("ATOM COUNT : %d\n", atomCount); fflush(stdout);
         }
         else {
             printf("Cannot read initial configuration from file.\n"); fflush(stdout);
+        }
+
+        int moleType;
+        int *counter = (int *) calloc (speciesCount, sizeof(int));
+        for(int ibox = 1; ibox <= getBoxCount(); ibox++) {
+
+            for(int i = 1; i <= nchain; i++) {
+                if(twh_get_nboxi_(&i) == ibox) {
+                    twh_moltyp_(&get, &i, &moleType);
+                }
+                counter[moleType]++;
+                twh_chainlist_(&set, &counter[moleType], &i, &moleType, &i);
+            }
+        }
+        free(counter);
+
+        counter = (int *) calloc (speciesCount, sizeof(int));
+
+        for(int i = 1; i <= nchain; i++) {
+            twh_moltyp_(&get, &i, &moleType);
+            counter[moleType]++;
+            twh_parall_(&set, &moleType, &counter[moleType], &i);
+        }
+        free(counter);
+
+        int ctrInitial = CTR_INITIAL;
+        int failFlag;
+        for(int ibox = 1; ibox <= getBoxCount(); ibox++) {
+            twh_ctrmas_(&failFlag, &zero, &ibox, &zero, &ctrInitial);
         }
 
         mState = INITIALIZED;
