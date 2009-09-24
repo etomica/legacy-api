@@ -90,5 +90,12 @@ printf("WARNING : LammpsAtomType::getChildIndex() is NOT implemented yet.\n");
 printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
     }
 
+    /*
+     * getElement()
+     */
+    IAPIElement *LammpsAtomType::getElement() {
+        return mElement;
+    }
+
 }
 

@@ -8,6 +8,7 @@
 #define LAMMPS_ATOMTYPE_WRAPPER_H
 
 #include "IAPIAtomType.h"
+#include "IAPIElement.h"
 #include "IAPISpecies.h"
 
 using namespace molesimAPI;
@@ -32,6 +33,10 @@ namespace lammpswrappers
             int getChildIndex();
             double getMass();
             double rm();
+            IAPIElement *getElement();
+
+        protected:
+            IAPIElement *mElement;
 
         private:
             IAPISpecies *mSpecies;
