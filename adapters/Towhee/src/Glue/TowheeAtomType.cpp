@@ -63,5 +63,12 @@ namespace towheewrappers
     double TowheeAtomType::rm() {
     }
 
+    /*
+     * getElement()
+     */
+    IAPIElement *TowheeAtomType::getElement() {
+        return mElement;
+    }
+
 }
 

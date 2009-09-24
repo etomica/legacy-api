@@ -7,7 +7,7 @@
 #ifndef TOWHEE_INTEGRATOR_PSEUDOBUBBLE_WRAPPER_H
 #define TOWHEE_INTEGRATOR_PSEUDOBUBBLE_WRAPPER_H
 
-#include "TowheeIntegrator.h"
+#include "TowheeIntegratorMC.h"
 
 using namespace molesimAPI;
 
