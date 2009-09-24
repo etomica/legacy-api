@@ -86,5 +86,12 @@ namespace glotzwrappers
         return 1.0 / mMass;
     }
 
+    /*
+     * getElement()
+     */
+    IAPIElement *GlotzillaAtomType::getElement() {
+        return mElement;
+    }
+
 }
 

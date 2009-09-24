@@ -7,6 +7,8 @@
 #ifndef API_IATOMTYPE_WRAPPER_H
 #define API_IATOMTYPE_WRAPPER_H
 
+#include "IAPIElement.h"
+
 namespace molesimAPI
 {
 
@@ -23,7 +25,7 @@ namespace molesimAPI
             virtual IAPISpecies *getSpecies() = 0;
             virtual double getMass() = 0;
             virtual double rm() = 0;
-
+            virtual IAPIElement *getElement() = 0;
     };
 }
 #endif

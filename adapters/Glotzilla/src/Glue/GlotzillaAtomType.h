@@ -8,6 +8,7 @@
 #define GLOTZ_ATOMTYPE_WRAPPER_H
 
 #include "IAPIAtomType.h"
+#include "IAPIElement.h"
 #include "IAPISpecies.h"
 
 using namespace molesimAPI;
@@ -95,10 +96,15 @@ namespace glotzwrappers
               *         atom type.
               */
             double rm();
+            /**
+              * @return Returns the element type for the atom type.
+              */
+            IAPIElement *getElement();
 
         protected:
             int mAtomType;
             int childIndex;
+            IAPIElement *mElement;
 
         private:
             IAPISpecies *species;

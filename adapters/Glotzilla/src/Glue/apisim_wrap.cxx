@@ -217,6 +217,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPIBoundary.h"
 #include "IAPIAtomList.h"
 #include "IAPIMoleculeList.h"
+#include "IAPIElement.h"
 #include "IAPIAtomType.h"
 #include "IAPIAtomTypeSphere.h"
 #include "IAPISimulationEvent.h"
@@ -1794,6 +1795,59 @@ JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIMoleculeList(JNIEn
 }
 
 
+JNIEXPORT jdouble JNICALL Java_glotz_wrapper_testJNI_IAPIElement_1getMass(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  molesimAPI::IAPIElement *arg1 = (molesimAPI::IAPIElement *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIElement **)&jarg1; 
+  result = (double)(arg1)->getMass();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jdouble JNICALL Java_glotz_wrapper_testJNI_IAPIElement_1rm(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  molesimAPI::IAPIElement *arg1 = (molesimAPI::IAPIElement *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIElement **)&jarg1; 
+  result = (double)(arg1)->rm();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jstring JNICALL Java_glotz_wrapper_testJNI_IAPIElement_1getSymbol(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jstring jresult = 0 ;
+  molesimAPI::IAPIElement *arg1 = (molesimAPI::IAPIElement *) 0 ;
+  char *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIElement **)&jarg1; 
+  result = (char *)(arg1)->getSymbol();
+  if(result) jresult = jenv->NewStringUTF(result);
+  return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIElement(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  molesimAPI::IAPIElement *arg1 = (molesimAPI::IAPIElement *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIElement **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPIAtomType_1setIndex(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
   molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0 ;
   int arg2 ;
@@ -1896,6 +1950,20 @@ JNIEXPORT jdouble JNICALL Java_glotz_wrapper_testJNI_IAPIAtomType_1rm(JNIEnv *je
   arg1 = *(molesimAPI::IAPIAtomType **)&jarg1; 
   result = (double)(arg1)->rm();
   jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPIAtomType_1getElement(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0 ;
+  molesimAPI::IAPIElement *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIAtomType **)&jarg1; 
+  result = (molesimAPI::IAPIElement *)(arg1)->getElement();
+  *(molesimAPI::IAPIElement **)&jresult = result; 
   return jresult;
 }
 
@@ -4157,6 +4225,20 @@ JNIEXPORT jdouble JNICALL Java_glotz_wrapper_testJNI_GlotzillaAtomType_1rm(JNIEn
   arg1 = *(glotzwrappers::GlotzillaAtomType **)&jarg1; 
   result = (double)(arg1)->rm();
   jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaAtomType_1getElement(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  glotzwrappers::GlotzillaAtomType *arg1 = (glotzwrappers::GlotzillaAtomType *) 0 ;
+  molesimAPI::IAPIElement *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaAtomType **)&jarg1; 
+  result = (molesimAPI::IAPIElement *)(arg1)->getElement();
+  *(molesimAPI::IAPIElement **)&jresult = result; 
   return jresult;
 }
 
