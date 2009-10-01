@@ -8,6 +8,7 @@
 #define TOWHEE_SPECIESMONO_WRAPPER_H
 
 #include "IAPIAtomType.h"
+#include "IAPIBoundary.h"
 #include "IAPIMolecule.h"
 #include "TowheeSimulation.h"
 #include "TowheeSpecies.h"
@@ -20,7 +21,8 @@ namespace towheewrappers
     class TowheeSpeciesSpheresMono : public TowheeSpecies {
 
         public:
-            TowheeSpeciesSpheresMono(TowheeSimulation *sim, IAPIAtomType *aType);
+            TowheeSpeciesSpheresMono(TowheeSimulation *sim, IAPIAtomType *aType,
+                                     IAPIBoundary *boundary);
 
             // API compliant methods
             virtual IAPIMolecule *makeMolecule();
@@ -29,6 +31,7 @@ namespace towheewrappers
             IAPIAtomType *mAtomType;
             IndexManager *mAtomIDMgr;
             IndexManager *mMoleIDMgr;
+            IAPIBoundary *mBoundary;
     };
 }
 

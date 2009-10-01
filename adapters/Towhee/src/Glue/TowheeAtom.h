@@ -11,9 +11,11 @@
 #include "IAPIAtomPositioned.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtomType.h"
+#include "IAPIBoundary.h"
 #include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "IAPIVectorMutable.h"
+#include "TowheeVector3DAtom.h"
 
 using namespace molesimAPI;
 
@@ -26,7 +28,7 @@ namespace towheewrappers
 
         public:
 
-            TowheeAtom(IAPIAtomType *at, int tIndex);
+            TowheeAtom(IAPIAtomType *at, int tIndex, IAPIBoundary *boundary);
 
             int getIndex();
             void setIndex(int index);
@@ -44,8 +46,7 @@ namespace towheewrappers
             int mLeafIndex;
             int mIndex;
             int mTowheeIndex;
-            IAPIVectorMutable *mPosition;
-            IAPIVectorMutable *mVelocity;
+            TowheeVector3DAtom *mPosition;
     };
 }
 #endif

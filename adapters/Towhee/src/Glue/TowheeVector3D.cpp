@@ -112,6 +112,9 @@ namespace towheewrappers
      * TE
      */
     void TowheeVector3D::TE(IAPIVector *v) {
+        vecPos[0] *= v->getX(0);
+        vecPos[1] *= v->getX(1);
+        vecPos[2] *= v->getX(2);
     }
 
     /*
@@ -127,42 +130,72 @@ namespace towheewrappers
      * DE
      */
     void TowheeVector3D::DE(IAPIVector *v) {
+        vecPos[0] /= v->getX(0);
+        vecPos[1] /= v->getX(1);
+        vecPos[2] /= v->getX(2);
     }
 
     /*
      * Ea1Tv1
      */
     void TowheeVector3D::Ea1Tv1(double d, IAPIVector *v) {
+        vecPos[0] = d * v->getX(0);
+        vecPos[1] = d * v->getX(1);
+        vecPos[2] = d * v->getX(2);
     }
 
     /*
      * PEa1Tv1
      */
     void TowheeVector3D::PEa1Tv1(double d, IAPIVector *v) {
+        vecPos[0] += d * v->getX(0);
+        vecPos[1] += d * v->getX(1);
+        vecPos[2] += d * v->getX(2);
     }
 
     /*
      * Ev1Pv2
      */
     void TowheeVector3D::Ev1Pv2(IAPIVector *v1, IAPIVector *v2) {
+        vecPos[0] = v1->getX(0) + v2->getX(0);
+        vecPos[1] = v1->getX(1) + v2->getX(1);
+        vecPos[2] = v1->getX(2) + v2->getX(2);
     }
 
     /*
      * Ev1Mv2
      */
     void TowheeVector3D::Ev1Mv2(IAPIVector *v1, IAPIVector *v2) {
+        vecPos[0] = v1->getX(0) - v2->getX(0);
+        vecPos[1] = v1->getX(1) - v2->getX(1);
+        vecPos[2] = v1->getX(2) - v2->getX(2);
     }
 
     /*
      * mod
      */
     void TowheeVector3D::mod(IAPIVector *v) {
+        while (vecPos[0] > v->getX(0))
+            vecPos[0] -= v->getX(0);
+        while (vecPos[0] < 0.0)
+            vecPos[0] += v->getX(0);
+        while (vecPos[1] > v->getX(1))
+            vecPos[1] -= v->getX(1);
+        while (vecPos[1] < 0.0)
+            vecPos[1] += v->getX(1);
+        while (vecPos[2] > v->getX(2))
+            vecPos[2] -= v->getX(2);
+        while (vecPos[2] < 0.0)
+            vecPos[2] += v->getX(2);
     }
 
     /*
      * squared
      */
     double TowheeVector3D::squared() {
+        return (vecPos[0] * vecPos[0] +
+                vecPos[1] * vecPos[1] +
+                vecPos[2] * vecPos[2]);
     }
 
     /*

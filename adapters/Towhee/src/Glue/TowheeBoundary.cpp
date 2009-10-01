@@ -13,8 +13,10 @@ namespace towheewrappers
 {
 
     TowheeBoundary::TowheeBoundary(TowheeSpace *space) {
+        mSpace = space;
         mDimensions = space->makeVector();
         mCenter = space->makeVector();
+        mEdgeVector = space->makeVector();
     }
 
     /*
@@ -23,6 +25,7 @@ namespace towheewrappers
     void TowheeBoundary::setBoxSize(IAPIVector *v) {
         for(int i = 0; i < v->getD(); i++) {
             mDimensions->setX(i, v->getX(i));
+            mCenter->setX(i, v->getX(i) / 2.0);
         }
     }
 

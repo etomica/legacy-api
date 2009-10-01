@@ -494,7 +494,7 @@ fflush(stdout);
             twh_nunit_(&get, &i, &numunits);
             if (numunits > maxunit) maxunit = numunits;
         }
-printf("maxunit : %d\n", maxunit); fflush(stdout);
+//printf("maxunit : %d\n", maxunit); fflush(stdout);
         // allocate arrays based maxunit
         twh_allocate_maxunit_(&maxunit);
 
@@ -505,7 +505,7 @@ printf("maxunit : %d\n", maxunit); fflush(stdout);
             twh_nmolectyp_(&get, &i, &numMoles);
 //printf("numMoles : %d\n", numMoles); fflush(stdout);
             twh_nunit_(&get, &i, &numunits);
-printf("  numunits : %d\n", numunits); fflush(stdout);
+//printf("  numunits : %d\n", numunits); fflush(stdout);
             natoms +=  numMoles * numunits;
 //printf("    natoms : %d\n", natoms); fflush(stdout);
         }

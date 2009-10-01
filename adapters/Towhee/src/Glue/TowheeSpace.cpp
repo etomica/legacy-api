@@ -18,7 +18,7 @@ namespace towheewrappers
     }
 
     /*
-     * getPosition()
+     * getD()
      */
     int TowheeSpace::getD() {
         return D;

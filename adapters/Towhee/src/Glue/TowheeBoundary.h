@@ -41,7 +41,9 @@ namespace towheewrappers
 
         protected:
             IAPIVectorMutable *mDimensions;
-            IAPIVector *mCenter;
+            IAPIVectorMutable *mCenter;
+            IAPIVectorMutable *mEdgeVector;
+            TowheeSpace *mSpace;
     };
 }
 

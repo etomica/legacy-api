@@ -18,12 +18,18 @@ extern "C" { void twh_coordinates_(int *, int *, int *, int *, double *, double 
 namespace towheewrappers
 {
 
-    TowheeAtom::TowheeAtom(IAPIAtomType *at, int tIndex) {
+    TowheeAtom::TowheeAtom(IAPIAtomType *at, int tIndex, IAPIBoundary *boundary) {
         mAtomType = at;
         mLeafIndex = -1;
         mTowheeIndex = tIndex;
-        mPosition = new TowheeVector3D();
-        mVelocity = new TowheeVector3D();
+        int get = GLB_GET;
+        int tCoord = CRD_REAL;
+        int one = 1;
+        IAPIVectorMutable *offsetVector = new TowheeVector3D(boundary->getCenter()->getX(0),
+                                                             boundary->getCenter()->getX(1),
+                                                             boundary->getCenter()->getX(2));
+        mPosition = new TowheeVector3DAtom(&twh_coordinates_, tCoord, mTowheeIndex, one,
+                                               offsetVector);
     }
 
     /*
@@ -59,28 +65,8 @@ namespace towheewrappers
      */
     IAPIVectorMutable *TowheeAtom::getPosition() {
 
-/*
-        int getTriple = GLB_GET_TRIPLE;
-        double values[3];
-printf("  ATOM TYPE INDEX : %d\n", mAtomType->getIndex()); fflush(stdout);
-printf("    TOWHEE ATOM INDEX : %d\n", mTowheeIndex); fflush(stdout);
-        twh_coordstorage_(&getTriple, &mTowheeIndex, values);
-        mPosition->setX(0, values[0]-15.0);
-        mPosition->setX(1, values[1]-15.0);
-        mPosition->setX(2, values[2]-15.0);
-*/
-        int get = GLB_GET;
-        int tCoord = CRD_REAL;
-        int one = 1;
-        double values[3];
-//printf("  ATOM TYPE INDEX : %d\n", mAtomType->getIndex()); fflush(stdout);
-//printf("    TOWHEE ATOM INDEX : %d\n", mTowheeIndex); fflush(stdout);
-        twh_coordinates_(&get, &tCoord, &mTowheeIndex, &one, &values[0], &values[1], &values[2]);
-        mPosition->setX(0, values[0]-15.0);
-        mPosition->setX(1, values[1]-15.0);
-        mPosition->setX(2, values[2]-15.0);
+        mPosition->update();
 
-//printf("      %f %f %f\n", mPosition->x(0), mPosition->x(1), mPosition->x(2)); fflush(stdout);
         return mPosition;
     }
 
@@ -88,7 +74,7 @@ printf("    TOWHEE ATOM INDEX : %d\n", mTowheeIndex); fflush(stdout);
      * getVelocity()
      */
     IAPIVectorMutable *TowheeAtom::getVelocity() {
-        return mVelocity;
+        return NULL;
     }
 
     /*

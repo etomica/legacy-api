@@ -1,34 +1,29 @@
 /*
- *  TowheeVector3D.h
+ *  TowheeVector3DAtom.h
  *  API Glue
  *
  */
 
-#ifndef TOWHEE_VECTOR3D_WRAPPER_H
-#define TOWHEE_VECTOR3D_WRAPPER_H
+#ifndef TOWHEE_VECTOR3D_ATOM_WRAPPER_H
+#define TOWHEE_VECTOR3D_ATOM_WRAPPER_H
 
 #include "IAPIVectorMutable.h"
-#include "IAPIFunction.h"
-#include "TowheeVector.h"
+#include "IAPIAtom.h"
+#include "TowheeVector3D.h"
 
 using namespace molesimAPI;
 
 namespace towheewrappers
 {
 
-    /**
-      * TowheeVector3D implements a vector in three dimensional space.
-      */
-    class TowheeVector3D : public TowheeVector,
-                              public virtual IAPIVectorMutable {
+    class TowheeVector3DAtom : public TowheeVector3D {
         public:
 
-            TowheeVector3D();
-            TowheeVector3D(double x, double y, double z);
+            TowheeVector3DAtom(void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
+                                   int ia1, int ia2, int ia3, IAPIVector *offsetVector);
 
             // API Compliance
             void assignTo(double values[]);
-            bool equals(IAPIVector *v);
             double getX(int index);
             void setX(int index, double value);
             void E(IAPIVector *v);
@@ -45,18 +40,19 @@ namespace towheewrappers
             void Ev1Pv2(IAPIVector *v1, IAPIVector *v2);
             void Ev1Mv2(IAPIVector *v1, IAPIVector *v2);
             void mod(IAPIVector *v);
-            double squared();
-            bool isZero();
-            double dot(IAPIVector *v);
-            bool isNaN();
-            double Mv1Squared(IAPIVector *v);
-            void normalize();
-            void map(IAPIFunction *f);
             void XE(IAPIVector *v);
             void E(double a, double b, double c);
 
-        protected:
-            double vecPos[3];
+            // Non-API methods
+            void update();
+
+        private:
+            void setAll();
+            void (*mFunction)(int *, int *, int *, int *, double *, double *, double *);
+            int iArg1;
+            int iArg2;
+            int iArg3;
+            IAPIVector *offset;
     };
 }
 
