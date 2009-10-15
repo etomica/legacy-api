@@ -70,6 +70,7 @@ extern "C" { void twh_chainlist_(int *, int *, int *, int *, int *); }
 extern "C" { void twh_ctrmas_(int *, int *, int *, int *, int *); }
 extern "C" { void twh_moltyp_(int *, int *, int *); }
 extern "C" { void twh_parall_(int *, int *, int *, int *); }
+extern "C" { void twh_masstotal_(int *, int *, double *); }
 
 extern "C" { void twh_pmrotate_(int *, double *); }
 
@@ -397,12 +398,25 @@ printf("TEMPERATURE : %f\n", temperature); fflush(stdout);
 printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
                     twh_initmol_(&set, &i, &j, &numSpecies);
 
-                    int numAtoms =
-                      mBox.at(i-1)->getMoleculeList(mSpeciesManager->
-                      getSpecies(j-1))->getMolecule(0)->getChildList()->getAtomCount();
+                    IAPIMoleculeList *moleList = mBox.at(i-1)->getMoleculeList(mSpeciesManager->getSpecies(j-1));
+
+                    int numAtoms = moleList->getMolecule(0)->getChildList()->getAtomCount();
 
                     // Set number of atoms for the molecule
                     twh_nunit_(&set, &j, &numAtoms);
+
+                    // Set the mass for the molecule (sum of its atom's mass)
+                    for(int k = 0; k < moleList->getMoleculeCount(); k++) {
+                        double mass = 0.0;
+                        int idx = moleList->getMolecule(k)->getIndex() + 1;
+                        for(int l = 0;
+                            l < moleList->getMolecule(k)->getChildList()->getAtomCount();
+                            l++) {
+                            mass += moleList->getMolecule(k)->getChildList()->getAtom(l)->getType()->getMass();
+                        }
+                        twh_masstotal_(&set, &idx, &mass);
+                    }
+
                 } // species loop
             } // box loop
 
