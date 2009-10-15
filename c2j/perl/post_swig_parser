@@ -220,6 +220,12 @@ while(<IN_FILE>) {
             $declerations = $declerations . "  l$arg_name = *($API_NAMESPACE\:\:$j_type **)&$arg_name;\n";
             last;
           }
+          elsif(/$NATIVE_PREFIX/) {
+            print OUT_FILE "$j_type *$arg_name";
+            $arg_list = $arg_list . $arg_name;
+            $found = 1;
+            last;
+          }
         }
         if($found == 0) {
             print OUT_FILE "$j_type $arg_name";
