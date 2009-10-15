@@ -21,6 +21,7 @@ namespace towheewrappers
         public:
 
             TowheeAtomType(int index);
+            TowheeAtomType(int index, double mass);
 
             void setIndex(int newIndex);
             int getIndex();
@@ -35,7 +36,8 @@ namespace towheewrappers
         protected:
             IAPIElement *mElement;
 
-        private:
+        private :
+            void setup(int index, double m);
             int mIndex;
     };
 }

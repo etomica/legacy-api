@@ -4,13 +4,32 @@
  *
  */
 
+#include "preproc.h"
+
 #include "TowheeAtomType.h"
+
+extern "C" { void twh_mass_(int *, int *, double *); }
 
 namespace towheewrappers
 {
 
     TowheeAtomType::TowheeAtomType(int index) {
+        setup(index, 1.0);
+    }
+
+    TowheeAtomType::TowheeAtomType(int index, double mass) {
+        setup(index, mass);
+    }
+
+    /*
+     * setup()
+     */
+    void TowheeAtomType::setup(int index, double m) {
         mIndex = index;
+        int set = GLB_SET;
+        int idx = mIndex + 1;
+        double mass = m;
+        twh_mass_(&set, &idx, &mass);
     }
 
     /*
@@ -55,7 +74,13 @@ namespace towheewrappers
      * getMass()
      */
     double TowheeAtomType::getMass() {
-return 1.0;
+        int get = GLB_GET;
+        int index = mIndex + 1;
+        double mass;
+        twh_mass_(&get, &index, &mass);
+
+        return mass;
+
     }
 
     /*

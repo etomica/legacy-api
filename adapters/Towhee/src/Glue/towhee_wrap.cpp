@@ -7150,7 +7150,7 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeAtom(JNIEnv *
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomType(JNIEnv *jenv, jclass jcls, jint jarg1) {
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomType_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jint jarg1) {
   jlong jresult = 0 ;
   int arg1 ;
   towheewrappers::TowheeAtomType *result = 0 ;
@@ -7159,6 +7159,22 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomType(JNIEnv
   (void)jcls;
   arg1 = (int)jarg1; 
   result = (towheewrappers::TowheeAtomType *)new towheewrappers::TowheeAtomType(arg1);
+  *(towheewrappers::TowheeAtomType **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_new_1TowheeAtomType_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jint jarg1, jdouble jarg2) {
+  jlong jresult = 0 ;
+  int arg1 ;
+  double arg2 ;
+  towheewrappers::TowheeAtomType *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = (int)jarg1; 
+  arg2 = (double)jarg2; 
+  result = (towheewrappers::TowheeAtomType *)new towheewrappers::TowheeAtomType(arg1,arg2);
   *(towheewrappers::TowheeAtomType **)&jresult = result; 
   return jresult;
 }
