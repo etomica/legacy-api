@@ -7,6 +7,7 @@ TOWHEE_INSTALL_DIR = /usr/users/rrassler/API/lib
 
 SRC =  TowheeAtom.cpp \
 	TowheeAtomList.cpp \
+	TowheeAtomPositionDefinitionNative.cpp \
 	TowheeAtomType.cpp \
 	TowheeAtomTypeSphere.cpp \
 	TowheeBoundary.cpp \

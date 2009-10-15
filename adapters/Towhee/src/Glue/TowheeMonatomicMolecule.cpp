@@ -12,7 +12,7 @@ namespace towheewrappers
 
     TowheeMonatomicMolecule:: TowheeMonatomicMolecule(IAPISpecies *species, int mID) {
         mSpecies = species;
-        mTowheeIndex = mID;
+        setIndex(mID -1);
         mAtoms = new TowheeAtomList();
     }
 

@@ -103,8 +103,13 @@ namespace towheewrappers
      * addBox()
      */
     void TowheeSimulation::addBox(IAPIBox *box) {
-       mBox.push_back(box);
-       mSpeciesManager->boxAddedNotify(box);
+        if(mState == UNINITIALIZED) {
+            mBox.push_back(box);
+            mSpeciesManager->boxAddedNotify(box);
+        }
+        else {
+printf("Cannot add a box after the simulation is initialized.\n"); fflush(stdout);
+        }
     }
 
     /*
@@ -212,6 +217,9 @@ printf("SETUP : molecule count for species(%d) -> %d\n", i, moleculeCount); fflu
 printf("SETUP : box count -> %d\n", numBoxes); fflush(stdout);
         twh_numboxes_(&set, &numBoxes);
         twh_allocate_numboxes_(&numBoxes);
+        for(int i = 0; i < numBoxes; i++) {
+            mBox.at(i)->setIndex(i);
+        }
         if(numBoxes > MAXBOX) {
             printf("The number of boxes (%d) in the simulation exceeds the maximum allowed value (%d)\n",
                    numBoxes, MAXBOX);
@@ -558,6 +566,16 @@ printf("ATOM COUNT : %d\n", atomCount); fflush(stdout);
 
         mState = INITIALIZED;
     }
+
+void TowheeSimulation::resetCOM() {
+        int ctrInitial = CTR_INITIAL;
+        int failFlag;
+        int zero = 0;
+        for(int ibox = 1; ibox <= getBoxCount(); ibox++) {
+            twh_ctrmas_(&failFlag, &zero, &ibox, &zero, &ctrInitial);
+        }
+
+}
 
     /*
      * getState()

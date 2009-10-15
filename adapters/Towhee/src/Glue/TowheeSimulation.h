@@ -43,6 +43,7 @@ namespace towheewrappers
             static int getState();
             IndexManager *getAtomIDMgr();
             IndexManager *getMoleculeIDMgr();
+            void resetCOM();
 
             static const int UNINITIALIZED;
             static const int INITIALIZED;

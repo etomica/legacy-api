@@ -28,7 +28,7 @@ namespace towheewrappers
 
         public:
 
-            TowheeAtom(IAPIAtomType *at, int tIndex, IAPIBoundary *boundary);
+            TowheeAtom(IAPIAtomType *at, int tIndex);
 
             int getIndex();
             void setIndex(int index);

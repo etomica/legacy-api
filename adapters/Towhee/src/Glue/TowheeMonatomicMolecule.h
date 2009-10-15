@@ -31,7 +31,6 @@ namespace towheewrappers
 
         private:
             TowheeAtomList *mAtoms;
-            int mTowheeIndex;
     };
 }
 #endif

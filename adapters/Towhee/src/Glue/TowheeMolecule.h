@@ -9,6 +9,7 @@
 
 #include "IAPIAtom.h"
 #include "IAPIAtomList.h"
+#include "IAPIBox.h"
 #include "IAPISimulation.h"
 #include "IAPISpecies.h"
 #include "IAPIMolecule.h"
@@ -30,8 +31,15 @@ namespace towheewrappers
             virtual IAPIAtomList *getChildList() = 0;
             virtual IAPISpecies *getType();
 
+            // Non-API
+            void setBox(IAPIBox *box);
+            IAPIBox *getBox();
+
         protected:
             IAPISpecies *mSpecies;
+            int mIndex;
+            IAPIBox *mBox;
+
     };
 }
 #endif

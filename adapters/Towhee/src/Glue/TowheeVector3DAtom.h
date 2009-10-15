@@ -10,17 +10,21 @@
 #include "IAPIVectorMutable.h"
 #include "IAPIAtom.h"
 #include "TowheeVector3D.h"
+//#include "TowheeAtom.h"
 
 using namespace molesimAPI;
 
 namespace towheewrappers
 {
 
+    class TowheeAtom;
+
     class TowheeVector3DAtom : public TowheeVector3D {
         public:
 
-            TowheeVector3DAtom(void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
-                                   int ia1, int ia2, int ia3, IAPIVector *offsetVector);
+            TowheeVector3DAtom(TowheeAtom *atom,
+                               void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
+                                   int ia1, int ia2, int ia3);
 
             // API Compliance
             void assignTo(double values[]);
@@ -48,11 +52,12 @@ namespace towheewrappers
 
         private:
             void setAll();
+            IAPIVector *getOffset();
             void (*mFunction)(int *, int *, int *, int *, double *, double *, double *);
             int iArg1;
             int iArg2;
             int iArg3;
-            IAPIVector *offset;
+            TowheeAtom *mAtom;
     };
 }
 

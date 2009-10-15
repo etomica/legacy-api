@@ -24,7 +24,7 @@ namespace towheewrappers
      * makeMolecule()
      */
     IAPIMolecule *TowheeSpeciesSpheresMono::makeMolecule() {
-        IAPIAtom *atom = new TowheeAtom(mAtomType, mAtomIDMgr->getNextIndex(), mBoundary);
+        IAPIAtom *atom = new TowheeAtom(mAtomType, mAtomIDMgr->getNextIndex()/*, mBoundary*/);
         IAPIMolecule *mole = new TowheeMonatomicMolecule(this, mMoleIDMgr->getNextIndex());
         atom->setParent(mole);
         mole->addChildAtom(atom);

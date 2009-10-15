@@ -15,6 +15,7 @@
 #include "IAPIVector.h"
 #include "IAPIMolecule.h"
 #include "TowheeBox.h"
+#include "TowheeMolecule.h"
 #include "TowheeSimulation.h"
 
 extern "C" { void twh_initmol_(int *, int *, int *, int *); }
@@ -181,6 +182,7 @@ printf("WARNING : TowheeBox::removeSpeciesNotify() not implemented.\n"); fflush(
     void TowheeBox::addNewMolecule(IAPISpecies *species) {
         if(TowheeSimulation::getState() == TowheeSimulation::UNINITIALIZED) {
             IAPIMolecule *mole = species->makeMolecule();
+            dynamic_cast<TowheeMolecule *>(mole)->setBox(this);
             addMolecule(mole);
         }
         else {

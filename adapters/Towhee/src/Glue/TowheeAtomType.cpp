@@ -55,12 +55,14 @@ namespace towheewrappers
      * getMass()
      */
     double TowheeAtomType::getMass() {
+return 1.0;
     }
 
     /*
      * rm()
      */
     double TowheeAtomType::rm() {
+        return 1.0 / getMass();
     }
 
     /*
