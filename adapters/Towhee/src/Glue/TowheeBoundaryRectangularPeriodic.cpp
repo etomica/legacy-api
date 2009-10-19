@@ -51,5 +51,20 @@ namespace towheewrappers
         return true;
     }
 
+    /*
+     * volume()
+     */
+    double TowheeBoundaryRectangularPeriodic::volume() {
+
+        double volume = 0.0;
+
+        if(mSpace->getD() == 2)
+            volume = getBoxSize()->getX(0) * getBoxSize()->getX(1);
+        else if(mSpace->getD() == 3)
+            volume = getBoxSize()->getX(0) * getBoxSize()->getX(1) * getBoxSize()->getX(2);
+
+        return volume;        
+    }
+
 }
 

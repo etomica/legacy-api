@@ -28,6 +28,7 @@ namespace towheewrappers
             virtual IAPIVector *centralImage(IAPIVector *v);
             virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
+            virtual double volume();
 
     };
 }

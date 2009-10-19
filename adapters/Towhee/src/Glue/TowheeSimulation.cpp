@@ -71,6 +71,7 @@ extern "C" { void twh_ctrmas_(int *, int *, int *, int *, int *); }
 extern "C" { void twh_moltyp_(int *, int *, int *); }
 extern "C" { void twh_parall_(int *, int *, int *, int *); }
 extern "C" { void twh_masstotal_(int *, int *, double *); }
+extern "C" { void twh_boxvclassic_(int *, int *, double *); }
 
 extern "C" { void twh_pmrotate_(int *, double *); }
 
@@ -296,9 +297,8 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
         twh_scalelolog_(&set, &scalelolog);
         double scalehilog = powl(10.0, scalecut);
         twh_scalehilog_(&set, &scalehilog);
-        double temperature;
-        twh_temperature_(&get, &temperature);
-printf("TEMPERATURE : %f\n", temperature); fflush(stdout);
+        double temperature = getTemp();
+
         double vequiv = -logl(scalelolog)*temperature;
         twh_vequiv_(&set, &vequiv);
 
@@ -610,6 +610,31 @@ void TowheeSimulation::resetCOM() {
      */
     IndexManager *TowheeSimulation::getMoleculeIDMgr() {
         return mMoleIDMgr;
+    }
+
+    /*
+     * getTemp()
+     */
+    double TowheeSimulation::getTemp() {
+        double temp;
+        int get = GLB_GET;
+
+        twh_temperature_(&get, &temp);
+
+        return temp;
+    }
+
+    /*
+     * getTotalEnergy()
+     */
+    double TowheeSimulation::getTotalEnergy(IAPIBox *box) {
+        double energy;
+        int ibox = box->getIndex() + 1;
+        int get = GLB_GET;
+
+        twh_boxvclassic_(&get, &ibox, &energy);
+
+        return energy;
     }
 
 }

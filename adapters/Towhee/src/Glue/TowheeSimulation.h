@@ -44,6 +44,8 @@ namespace towheewrappers
             IndexManager *getAtomIDMgr();
             IndexManager *getMoleculeIDMgr();
             void resetCOM();
+            double getTemp();
+            double getTotalEnergy(IAPIBox *box);
 
             static const int UNINITIALIZED;
             static const int INITIALIZED;

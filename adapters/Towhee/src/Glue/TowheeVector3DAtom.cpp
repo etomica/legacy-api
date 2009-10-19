@@ -44,8 +44,6 @@ namespace towheewrappers
      * getX
      */
     double TowheeVector3DAtom::getX(int index) {
-//printf("TowheeVector3DAtom::getX : %f  ", vecPos[index]);
-//printf("  offset : %f  %f  %f\n", offset->getX(0), offset->getX(1), offset->getX(2)); fflush(stdout);
         update();
         IAPIVector *offset = getOffset();
         return vecPos[index]-offset->getX(index);
@@ -55,7 +53,6 @@ namespace towheewrappers
      * setX
      */
     void TowheeVector3DAtom::setX(int index, double value) {
-printf("TowheeVector3DAtom::setX\n"); fflush(stdout);
         TowheeVector3D::setX(index, value);
         IAPIVector *offset = getOffset();
         vecPos[index] += offset->getX(index);
@@ -92,7 +89,6 @@ printf("TowheeVector3DAtom::setX\n"); fflush(stdout);
      * E
      */
     void TowheeVector3DAtom::E(IAPIVector *v) {
-printf("TowheeVector3DAtom::E(v)\n"); fflush(stdout);
         update();
         TowheeVector3D::E(v);
         setAll();
@@ -102,7 +98,6 @@ printf("TowheeVector3DAtom::E(v)\n"); fflush(stdout);
      * E
      */
     void TowheeVector3DAtom::E(double d) {
-printf("TowheeVector3DAtom::E(d)\n"); fflush(stdout);
         update();
         TowheeVector3D::E(d);
         setAll();
@@ -112,7 +107,6 @@ printf("TowheeVector3DAtom::E(d)\n"); fflush(stdout);
      * E
      */
     void TowheeVector3DAtom::E(double d[]) {
-printf("TowheeVector3DAtom::E(d[])\n"); fflush(stdout);
         update();
         TowheeVector3D::E(d);
         setAll();
@@ -122,7 +116,6 @@ printf("TowheeVector3DAtom::E(d[])\n"); fflush(stdout);
      * PE
      */
     void TowheeVector3DAtom::PE(IAPIVector *v) {
-printf("TowheeVector3DAtom::PE(v) : %f  %f  %f\n", v->getX(0), v->getX(1), v->getX(2)); fflush(stdout);
         update();
         TowheeVector3D::PE(v);
         setAll();
@@ -132,7 +125,6 @@ printf("TowheeVector3DAtom::PE(v) : %f  %f  %f\n", v->getX(0), v->getX(1), v->ge
      * PE
      */
     void TowheeVector3DAtom::PE(double d) {
-printf("TowheeVector3DAtom::PE(d)\n"); fflush(stdout);
         update();
         TowheeVector3D::PE(d);
         setAll();
@@ -142,7 +134,6 @@ printf("TowheeVector3DAtom::PE(d)\n"); fflush(stdout);
      * ME
      */
     void TowheeVector3DAtom::ME(IAPIVector *v) {
-printf("TowheeVector3DAtom::ME(v)\n"); fflush(stdout);
         update();
         TowheeVector3D::ME(v);
         setAll();
@@ -152,7 +143,6 @@ printf("TowheeVector3DAtom::ME(v)\n"); fflush(stdout);
      * TE
      */
     void TowheeVector3DAtom::TE(IAPIVector *v) {
-printf("TowheeVector3DAtom::TE(v)\n"); fflush(stdout);
         update();
         TowheeVector3D::TE(v);
         setAll();
@@ -162,7 +152,6 @@ printf("TowheeVector3DAtom::TE(v)\n"); fflush(stdout);
      * TE
      */
     void TowheeVector3DAtom::TE(double d) {
-printf("TowheeVector3DAtom::TE(d)\n"); fflush(stdout);
         update();
         TowheeVector3D::TE(d);
         setAll();
@@ -172,7 +161,6 @@ printf("TowheeVector3DAtom::TE(d)\n"); fflush(stdout);
      * DE
      */
     void TowheeVector3DAtom::DE(IAPIVector *v) {
-printf("TowheeVector3DAtom::DE(v)\n"); fflush(stdout);
         update();
         TowheeVector3D::DE(v);
         setAll();
@@ -182,7 +170,6 @@ printf("TowheeVector3DAtom::DE(v)\n"); fflush(stdout);
      * Ea1Tv1
      */
     void TowheeVector3DAtom::Ea1Tv1(double d, IAPIVector *v) {
-printf("TowheeVector3DAtom::Ea1Tv1(d, v)\n"); fflush(stdout);
         update();
         TowheeVector3D::Ea1Tv1(d, v);
         setAll();
@@ -192,7 +179,6 @@ printf("TowheeVector3DAtom::Ea1Tv1(d, v)\n"); fflush(stdout);
      * PEa1Tv1
      */
     void TowheeVector3DAtom::PEa1Tv1(double d, IAPIVector *v) {
-printf("TowheeVector3DAtom::PEa1Tv1(d, v)\n"); fflush(stdout);
         update();
         TowheeVector3D::PEa1Tv1(d, v);
         setAll();
@@ -202,7 +188,6 @@ printf("TowheeVector3DAtom::PEa1Tv1(d, v)\n"); fflush(stdout);
      * Ev1Pv2
      */
     void TowheeVector3DAtom::Ev1Pv2(IAPIVector *v1, IAPIVector *v2) {
-printf("TowheeVector3DAtom::Ev1Pv2(d, v)\n"); fflush(stdout);
         update();
         TowheeVector3D::Ev1Pv2(v1, v2);
         setAll();
@@ -212,7 +197,6 @@ printf("TowheeVector3DAtom::Ev1Pv2(d, v)\n"); fflush(stdout);
      * Ev1Mv2
      */
     void TowheeVector3DAtom::Ev1Mv2(IAPIVector *v1, IAPIVector *v2) {
-printf("TowheeVector3DAtom::Ev1Mv2(d, v)\n"); fflush(stdout);
         update();
         TowheeVector3D::Ev1Mv2(v1, v2);
         setAll();
@@ -222,7 +206,6 @@ printf("TowheeVector3DAtom::Ev1Mv2(d, v)\n"); fflush(stdout);
      * mod
      */
     void TowheeVector3DAtom::mod(IAPIVector *v) {
-printf("TowheeVector3DAtom::mod()\n"); fflush(stdout);
         update();
         TowheeVector3D::mod(v);
         setAll();
@@ -232,7 +215,6 @@ printf("TowheeVector3DAtom::mod()\n"); fflush(stdout);
      * XE
      */
    void TowheeVector3DAtom::XE(IAPIVector *v) {
-printf("TowheeVector3DAtom::XE()\n"); fflush(stdout);
         update();
         TowheeVector3D::XE(v);
         setAll();
@@ -242,7 +224,6 @@ printf("TowheeVector3DAtom::XE()\n"); fflush(stdout);
      * E
      */
    void TowheeVector3DAtom::E(double a, double b, double c) {
-printf("TowheeVector3DAtom::E(a, b, c)\n"); fflush(stdout);
         update();
         TowheeVector3D::E(a, b, c);
         setAll();

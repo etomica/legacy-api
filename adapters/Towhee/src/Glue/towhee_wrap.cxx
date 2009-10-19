@@ -5876,6 +5876,20 @@ JNIEXPORT jboolean JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundaryRectangul
 }
 
 
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundaryRectangularPeriodic_1volume(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeBoundaryRectangularPeriodic *arg1 = (towheewrappers::TowheeBoundaryRectangularPeriodic *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeBoundaryRectangularPeriodic **)&jarg1; 
+  result = (double)(arg1)->volume();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
 JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1TowheeBoundaryRectangularPeriodic(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   towheewrappers::TowheeBoundaryRectangularPeriodic *arg1 = (towheewrappers::TowheeBoundaryRectangularPeriodic *) 0 ;
   
@@ -6462,6 +6476,36 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1resetCOM(
   (void)jcls;
   arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
   (arg1)->resetCOM();
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getTemp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
+  result = (double)(arg1)->getTemp();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getTotalEnergy(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jdouble jresult = 0 ;
+  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
+  molesimAPI::IAPIBox *arg2 = (molesimAPI::IAPIBox *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIBox **)&jarg2; 
+  result = (double)(arg1)->getTotalEnergy(arg2);
+  jresult = (jdouble)result; 
+  return jresult;
 }
 
 
