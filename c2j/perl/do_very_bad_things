@@ -107,6 +107,7 @@ while($file_list_index < $file_list_len) {
   while(<JAVA_FILE>) {
 
     if(m/^public class/) {
+      print OUT_FILE "import etomica.api.IAtomType;\n";
       print OUT_FILE "import etomica.api.IBox;\n";
       print OUT_FILE "import etomica.api.ISpecies;\n";
       print OUT_FILE "import etomica.api.IPotentialAtomic;\n";

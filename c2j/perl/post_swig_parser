@@ -466,7 +466,10 @@ sub parse_package_name() {
 
   local($pkg) = $JAVA_PACKAGE;
   $_ = $pkg;
-  s/\./_/;
+  while(m/\./) {
+    s/\./_/;
+  }
+
   $parse_package = $_;
 
   $parse_package;
