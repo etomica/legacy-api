@@ -1,7 +1,6 @@
 package etomica.lammpslib;
 
 import etomica.EtomicaInfo;
-import etomica.api.IAtomPositioned;
 import etomica.api.IBox;
 import etomica.api.IMoleculeList;
 import etomica.api.IVectorMutable;
@@ -28,9 +27,6 @@ public class MeterStructureFactor extends DataSourceScalar {
     protected IVectorMutable [] waveVec;
     protected IMoleculeList moleculeList;
 
-    
-    
-	
 	/**
 	 * Creates meter with default to compute the structure factor
 	 * for all atoms in the box.
@@ -76,7 +72,7 @@ public class MeterStructureFactor extends DataSourceScalar {
 			term2 = 0;
 			dotprod = 0;
 			for(int i=0; i<numAtoms; i++){
-				workvector.E(((IAtomPositioned)moleculeList.getMolecule(i).getChildList().getAtom(0)).getPosition());
+				workvector.E(moleculeList.getMolecule(i).getChildList().getAtom(0).getPosition());
 				dotprod = waveVec[k].dot(workvector);
 				term1 += Math.cos(dotprod); 
 				term2 += Math.sin(dotprod);
