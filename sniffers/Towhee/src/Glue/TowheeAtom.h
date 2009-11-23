@@ -8,12 +8,12 @@
 #define TOWHEE_ATOM_WRAPPER_H
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtomType.h"
 #include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "IAPIVectorMutable.h"
+#include "TowheeVector3DAtom.h"
 
 using namespace molesimAPI;
 
@@ -21,7 +21,6 @@ namespace towheesnifferwrappers
 {
 
     class TowheeAtom : public virtual IAPIAtom,
-                          public virtual IAPIAtomPositioned,
                           public virtual IAPIAtomKinetic {
 
         public:
@@ -43,8 +42,7 @@ namespace towheesnifferwrappers
             IAPIMolecule *mParent;
             int mLeafIndex;
             int mIndex;
-            int mTowheeIndex;
-            IAPIVectorMutable *mPosition;
+            TowheeVector3DAtom *mPosition;
     };
 }
 #endif

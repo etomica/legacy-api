@@ -10,7 +10,6 @@
 #include "IAPIBox.h"
 #include "IAPISpecies.h"
 #include "IAPIAtomType.h"
-#include "IAPISpeciesManager.h"
 
 #include <vector>
 
@@ -23,7 +22,7 @@ namespace towheesnifferwrappers
       *  TowheeSpeciesManager manages the species that are part of a
       *  simulation.
       */
-    class TowheeSpeciesManager : public virtual IAPISpeciesManager {
+    class TowheeSpeciesManager {
 
         public:
             /**

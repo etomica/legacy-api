@@ -45,6 +45,7 @@ SRC =	TowheeAtom.cpp \
 	TowheeSpace.cpp \
 	TowheeSpecies.cpp \
 	TowheeSpeciesManager.cpp \
+	TowheeSpeciesSpheresHetero.cpp \
 	TowheeSpeciesSpheresMono.cpp \
 	TowheeVector2D.cpp \
 	TowheeVector3D.cpp \
@@ -82,6 +83,12 @@ lib: 	$(OBJ)
 	$(CC) -shared -o$(LIB) $(INCDIR) $(USRLIB) $(OBJ)
 	cp $(LIB) /usr/users/rrassler/API/lib
 #	$(ARCHIVE) $(ARFLAGS) $(LIB) $(OBJ)
+
+clean:
+	rm *.o *.so
+
+install: lib
+	mv *.so $(TOWHEE_INSTALL_DIR)
 
 archive:	$(OBJ)
 	ar -r $(ALIB) $(OBJ)

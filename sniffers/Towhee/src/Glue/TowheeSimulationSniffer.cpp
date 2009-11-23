@@ -5,6 +5,7 @@
  */
 
 #include "stdlib.h"
+#include <typeinfo>
 
 #include "preproc.h"
 
@@ -13,6 +14,7 @@
 #include "TowheeBoundaryRectangularPeriodic.h"
 #include "TowheeMolecule.h"
 #include "TowheeSpeciesManager.h"
+#include "TowheeSpeciesSpheresHetero.h"
 #include "TowheeSpeciesSpheresMono.h"
 #include "TowheeAtomTypeSphere.h"
 #include "TowheeSimulationEventManager.h"
@@ -41,7 +43,7 @@ extern "C" { void twh_numboxes_(int *, int *); }
 //extern "C" { void twh_initmol_(int *, int *, int *, int *); }
 extern "C" { void twh_hmatrix_(int *, int *, int *, int *, double *); }
 extern "C" { void set_towhee_input_file(char *); }
-extern "C" { void twh_io_directory_(int *, char *); }
+extern "C" { void twh_io_directory_c_(int *, char *, int *); }
 extern "C" { void twh_initialize_(int *); }
 extern "C" { void twh_temperature_(int *, double *); }
 
@@ -59,9 +61,14 @@ namespace towheesnifferwrappers
         int lfinish = 0;
         int atomCount;
         twh_initialize_(&lfinish);
-        twh_io_directory_(&set, baseDir);
+printf("lfinish : %d\n", lfinish); fflush(stdout);
+printf("BASE DIRECTORY : %s\n", baseDir);
+        int len = strlen(baseDir);
+        twh_io_directory_c_(&set, baseDir, &len);
         set_towhee_input_file(inputFile);
+printf("INPUT FILE : %s\n", inputFile); fflush(stdout);
         twh_readinput_(&lfinish, &atomCount);
+printf("lfinish : %d\n", lfinish); fflush(stdout);
         sniff();
     }
 
@@ -93,13 +100,6 @@ namespace towheesnifferwrappers
     }
 
     /*
-     * getSpeciesManager()
-     */
-    IAPISpeciesManager *TowheeSimulationSniffer::getSpeciesManager() {
-        return mSpeciesMgr;
-    }
-
-    /*
      * getBox()
      */
     IAPIBox *TowheeSimulationSniffer::getBox(int index) {
@@ -114,9 +114,45 @@ namespace towheesnifferwrappers
     }
 
     /*
-     * isDynamic()
+     * addSpecies()
      */
-    bool TowheeSimulationSniffer::isDynamic() {
+    void TowheeSimulationSniffer::addSpecies(IAPISpecies *species) {
+        mSpeciesMgr->addSpecies(species);
+    }
+
+    /*
+     * removeSpecies()
+     */
+    void TowheeSimulationSniffer::removeSpecies(IAPISpecies *removedSpecies) {
+        mSpeciesMgr->removeSpecies(removedSpecies);
+    }
+
+    /*
+     * getSpeciesCount()
+     */
+    int TowheeSimulationSniffer::getSpeciesCount() {
+        return mSpeciesMgr->getSpeciesCount();
+    }
+
+    /*
+     * getSpecies()
+     */
+    IAPISpecies *TowheeSimulationSniffer::getSpecies(int index) {
+        return mSpeciesMgr->getSpecies(index);
+    }
+
+    /*
+     * getIntegrator()
+     */
+    IAPIIntegrator *TowheeSimulationSniffer::getIntegrator() {
+        return mIntegrator;
+    }
+
+    /*
+     * setIntegrator()
+     */
+    void TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *integrator) {
+        mIntegrator = integrator;
     }
 
     /*
@@ -157,15 +193,27 @@ printf("WARNING : ALL ATOM TYPES ARE OF TowheeAtomTypeSphere\n"); fflush(stdout)
         sniffBoxes();
 
         // Create the molecules by species
-printf("SPECIES COUNT : %d\n", getSpeciesManager()->getSpeciesCount()); fflush(stdout);
+printf("SPECIES COUNT : %d\n", getSpeciesCount()); fflush(stdout);
 printf("BOX COUNT     : %d\n", getBoxCount()); fflush(stdout);
-        for(int i = 0; i < getSpeciesManager()->getSpeciesCount(); i++) {
-            IAPISpecies *species = getSpeciesManager()->getSpecies(i);
+        for(int i = 0; i < getSpeciesCount(); i++) {
+            IAPISpecies *species = getSpecies(i);
             for(int j = 0; j < getBoxCount(); j++) {
                 IAPIBox *box = getBox(j);
+//printf("  number of molecules : %d\n", box->getNMolecules(species)); fflush(stdout);
+
                 for(int k = 0; k < box->getNMolecules(species); k++)  {
-                     IAPIMolecule *mole =
-                         dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule(k);
+                     IAPIMolecule *mole;
+                     if(typeid(*species) == typeid(TowheeSpeciesSpheresMono)) {
+//printf("    mono species\n"); fflush(stdout);
+                         mole =
+                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule(k);
+                     }
+                     else if(typeid(*species) == typeid(TowheeSpeciesSpheresHetero)) {
+//printf("    hetero species\n"); fflush(stdout);
+                         mole =
+                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule(k);
+                     }
+
                      box->addMolecule(mole);
                      dynamic_cast<TowheeMolecule *>(mole)->setBox(box);
                 }
@@ -244,21 +292,32 @@ printf("  species : %d   num atoms : %d\n", i, numAtoms); fflush(stdout);
 //            TowheeAtomTypeSphere *atomType = new TowheeAtomTypeSphere(i);
 
             IAPISpecies *species;
+            int typeIndex;
             if(numAtoms == 1) {
-                int typeIndex;
                 int one = 1;
                 twh_ntype_(&get, &i, &one, &typeIndex);
-                atomType[typeIndex-1]->setDiameter(1.5);
+                atomType[typeIndex-1]->setDiameter(1.0);
                 species = new TowheeSpeciesSpheresMono(this, atomType[typeIndex-1]);
                 atomType[typeIndex-1]->setSpecies(species);
                 species->setIndex(i-1);
             }
             else {
 printf("MULTI-ATOMIC SPECIES DOES NOT EXIST YET.\n"); fflush(stdout);
-//                species->setIndex(i-1);
+                species = new TowheeSpeciesSpheresHetero(this);
+
+                // Get atom types for the molecule
+                for(int j = 1; j <= numAtoms; j++) {
+                    twh_ntype_(&get, &i, &j, &typeIndex);
+                    atomType[typeIndex-1]->setDiameter(1.0);
+                    atomType[typeIndex-1]->setSpecies(species);
+                    dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->addAtomType(atomType[typeIndex-1]);
+printf("TYPE INDEX : %d\n", typeIndex); fflush(stdout);
+                }
+
+                species->setIndex(i-1);
             }
 
-            getSpeciesManager()->addSpecies(species);
+            addSpecies(species);
 
         }
 

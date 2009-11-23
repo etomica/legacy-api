@@ -68,13 +68,6 @@ namespace towheesnifferwrappers
     }
 
     /*
-     * getSpeciesManager()
-     */
-    IAPISpeciesManager *TowheeSimulation::getSpeciesManager() {
-        return mSpeciesMgr;
-    }
-
-    /*
      * getBox()
      */
     IAPIBox *TowheeSimulation::getBox(int index) {
@@ -87,9 +80,45 @@ namespace towheesnifferwrappers
     }
 
     /*
-     * isDynamic()
+     * addSpecies()
      */
-    bool TowheeSimulation::isDynamic() {
+    void TowheeSimulation::addSpecies(IAPISpecies *species) {
+        mSpeciesMgr->addSpecies(species);
+    }
+
+    /*
+     * removeSpecies()
+     */
+    void TowheeSimulation::removeSpecies(IAPISpecies *removedSpecies) {
+        mSpeciesMgr->removeSpecies(removedSpecies);
+    }
+
+    /*
+     * getSpeciesCount()
+     */
+    int TowheeSimulation::getSpeciesCount() {
+        return mSpeciesMgr->getSpeciesCount();
+    }
+
+    /*
+     * getSpecies()
+     */
+    IAPISpecies *TowheeSimulation::getSpecies(int index) {
+        return mSpeciesMgr->getSpecies(index);
+    }
+
+    /*
+     * getIntegrator()
+     */
+    IAPIIntegrator *TowheeSimulation::getIntegrator() {
+        return mIntegrator;
+    }
+
+    /*
+     * setIntegrator()
+     */
+    void TowheeSimulation::setIntegrator(IAPIIntegrator *integrator) {
+        mIntegrator = integrator;
     }
 
     /*
@@ -101,7 +130,7 @@ namespace towheesnifferwrappers
 
         // Need to set the number of molecule types
         // Is this the number of unique species?
-        int nmolty = getSpeciesManager()->getSpeciesCount();
+        int nmolty = getSpeciesCount();
         twh_nmolty_(&set, &nmolty);
 
         // The total number of molecules in the system
@@ -111,7 +140,7 @@ namespace towheesnifferwrappers
             // The total number of molecules for the looped species
             int moleCount = 0;
             for(int j = 0; j < getBoxCount(); j++) {
-                moleCount += getBox(j)->getMoleculeList(getSpeciesManager()->
+                moleCount += getBox(j)->getMoleculeList(
                              getSpecies(i))->getMoleculeCount();
                 numMolecules += moleCount;
             }
@@ -194,7 +223,7 @@ namespace towheesnifferwrappers
             int idx = i + 1;
             for(int j = 0; j < nmolty; j++) {
                 int idx2 = j+1;
-                int moleCount = getBox(i)->getNMolecules(getSpeciesManager()->getSpecies(j));
+                int moleCount = getBox(i)->getNMolecules(getSpecies(j));
                 twh_initmol_(&set, &idx, &idx2, &moleCount);
             }
         }

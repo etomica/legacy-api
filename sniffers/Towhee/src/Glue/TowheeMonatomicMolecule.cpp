@@ -20,13 +20,13 @@ namespace towheesnifferwrappers
      * addChildAtom()
      */
     void TowheeMonatomicMolecule::addChildAtom(IAPIAtom *atom) {
-        if(mAtoms->getAtomCount() == 0) {
+//        if(mAtoms->getAtomCount() == 0) {
             mAtoms->addChildAtom(atom);
-            atom->setIndex(0);
-        }
-        else {
-printf("TowheeMonatomicMolecule::addChildAtom -> The monatomic molecule already has a child atom.\n"); fflush(stdout);
-        }
+            atom->setIndex(mAtoms->getAtomCount()-1);
+//        }
+//        else {
+//printf("TowheeMonatomicMolecule::addChildAtom -> The monatomic molecule already has a child atom.\n"); fflush(stdout);
+//        }
     }
 
     /*

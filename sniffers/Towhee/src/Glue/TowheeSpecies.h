@@ -13,7 +13,6 @@
 #include "IAPIAtomType.h"
 #include "IAPIMolecule.h"
 #include "IAPISimulation.h"
-#include "IAPISpeciesManager.h"
 #include "TowheeSimulationSniffer.h"
 
 using namespace molesimAPI;

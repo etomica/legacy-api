@@ -19,10 +19,9 @@ namespace towheesnifferwrappers
 
     TowheeVector3DAtom::TowheeVector3DAtom(TowheeAtom *atom,
                                            void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
-                                           int ia1, int ia2, int ia3/*, IAPIVector *offsetVector*/) {
+                                           int ia1, int ia3/*, IAPIVector *offsetVector*/) {
         mFunction = fnct;
         iArg1 = ia1;
-        iArg2 = ia2;
         iArg3 = ia3;
 //        offset = offsetVector;
         mAtom = atom;
@@ -64,14 +63,17 @@ namespace towheesnifferwrappers
      */
     void TowheeVector3DAtom::setAll() {
         int set = GLB_SET;
-        (*mFunction)(&set, &iArg1, &iArg2, &iArg3, &vecPos[0], &vecPos[1], &vecPos[2]);
+        int moleIndex = mAtom->getParentGroup()->getIndex()+1;
+        int atomIndex = mAtom->getIndex()+1;
+printf("args : %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
 
-        // Need to change the center of mas of the molecule
+        (*mFunction)(&set, &iArg1, &moleIndex, &atomIndex, &vecPos[0], &vecPos[1], &vecPos[2]);
+
+        // Need to change the center of mass of the molecule
         // which this atom is a part of.
         int tCoord = CRD_REAL;
         int ctrInitial = CTR_INITIAL;
         int failFlag;
-        int moleIndex = mAtom->getParentGroup()->getIndex()+1;
         int ibox = dynamic_cast<TowheeMolecule *>(mAtom->getParentGroup())->getBox()->getIndex()+1;
 printf("ibox : %d  moleIndex : %d\n", ibox, moleIndex); fflush(stdout);
         twh_ctrmas_(&failFlag, &tCoord, &ibox, &moleIndex, &ctrInitial);
@@ -83,7 +85,13 @@ printf("ibox : %d  moleIndex : %d\n", ibox, moleIndex); fflush(stdout);
      */
     void TowheeVector3DAtom::update() {
         int get = GLB_GET;
-        (*mFunction)(&get, &iArg1, &iArg2, &iArg3, &vecPos[0], &vecPos[1], &vecPos[2]);
+        int moleIndex = mAtom->getParentGroup()->getIndex()+1;
+        int atomIndex = mAtom->getIndex()+1;
+//printf("UPDATE:: %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
+//printf("UPDATE:: %d  %d  %d\n", iArg1, iArg2, iArg3); fflush(stdout);
+        (*mFunction)(&get, &iArg1, &moleIndex, &atomIndex, &vecPos[0], &vecPos[1], &vecPos[2]);
+//        (*mFunction)(&get, &iArg1, &iArg2, &iArg3, &vecPos[0], &vecPos[1], &vecPos[2]);
+//printf("  POSITION : %f  %f  %f\n", vecPos[0], vecPos[1], vecPos[2]); fflush(stdout);
     }
 
     /*

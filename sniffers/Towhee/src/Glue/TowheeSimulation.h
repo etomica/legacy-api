@@ -12,7 +12,8 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPISpeciesManager.h"
+#include "IAPISpecies.h"
+#include "TowheeSpeciesManager.h"
 
 using namespace molesimAPI;
 
@@ -29,16 +30,21 @@ namespace towheesnifferwrappers
             void removeBox(IAPIBox *box);
             IAPIRandom *getRandom();
             IAPISimulationEventManager *getEventManager();
-            IAPISpeciesManager *getSpeciesManager();
             IAPIBox *getBox(int index);
             int getBoxCount();
-            bool isDynamic();
+            void addSpecies(IAPISpecies *species);
+            void removeSpecies(IAPISpecies *removedSpecies);
+            int getSpeciesCount();
+            IAPISpecies *getSpecies(int index);
+            IAPIIntegrator *getIntegrator();
 
             // Non-API methods
             void towheeSetup(double temperature);
+            void setIntegrator(IAPIIntegrator *integrator);
 
         private:
-            IAPISpeciesManager *mSpeciesMgr;
+            TowheeSpeciesManager *mSpeciesMgr;
+            IAPIIntegrator *mIntegrator;
     };
 }
 

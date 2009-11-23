@@ -24,6 +24,7 @@ namespace towheesnifferwrappers
         mIndex = -1;
         mEventManager = new TowheeBoxEventManager();
         mMoleList = new TowheeMoleculeList();
+        mMoleListBySpecies = new TowheeMoleculeList();
         mLeafList = new TowheeAtomList();
     }
 
@@ -87,8 +88,19 @@ namespace towheesnifferwrappers
      * getMoleculeList()
      */
     IAPIMoleculeList *TowheeBox::getMoleculeList(IAPISpecies *species) {
-// Get all the molecules for this box of the given species type
-        printf("TowheeBox::getMoleculeList(species) NOT implemented yet.\n"); fflush(stdout);
+printf("in getMoleculeList()\n"); fflush(stdout);
+printf("  before clear()\n"); fflush(stdout);
+        mMoleListBySpecies->clear();
+printf("  after clear : %d\n", mMoleList->getMoleculeCount()); fflush(stdout);
+        for(int i = 0; i < mMoleList->getMoleculeCount(); i++) {
+printf("  idx = %d\n", i); fflush(stdout);
+            if(mMoleList->getMolecule(i)->getType() == species) {
+printf("  before addMolecule()\n"); fflush(stdout);
+                mMoleListBySpecies->addMolecule(mMoleList->getMolecule(i));
+printf("  after addMolecule()\n"); fflush(stdout);
+            }
+        }
+        return mMoleListBySpecies;
     }
 
     /*

@@ -24,6 +24,7 @@ namespace towheesnifferwrappers
 
             // Non-API methods
             void addMolecule(IAPIMolecule *mole);
+            void clear();
 
         private:
             std::vector<IAPIMolecule *>mMole;

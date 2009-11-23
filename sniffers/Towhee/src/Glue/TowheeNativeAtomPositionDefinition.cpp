@@ -6,7 +6,6 @@
 
 #include "stdio.h"
 
-#include "IAPIAtomPositioned.h"
 #include "IAPIMolecule.h"
 
 #include "TowheeNativeAtomPositionDefinition.h"

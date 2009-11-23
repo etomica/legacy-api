@@ -8,7 +8,6 @@
 #define TOWHEE_BOX_WRAPPER_H
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIBoundary.h"
 #include "IAPIBox.h"
 #include "IAPIBoxEventManager.h"
@@ -51,6 +50,7 @@ namespace towheesnifferwrappers
             IAPIBoundary *mBoundary;
             int mIndex; // Add 1 to get towhee index
             TowheeMoleculeList *mMoleList;
+            TowheeMoleculeList *mMoleListBySpecies;
             TowheeAtomList *mLeafList;
     };
 }

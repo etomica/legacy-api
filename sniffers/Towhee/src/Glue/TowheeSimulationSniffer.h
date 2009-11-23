@@ -14,9 +14,10 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPISpeciesManager.h"
+#include "IAPISpecies.h"
 #include "TowheeAtomTypeSphere.h"
 #include "TowheeSpace.h"
+#include "TowheeSpeciesManager.h"
 #include "IndexManager.h"
 
 using namespace molesimAPI;
@@ -34,25 +35,30 @@ namespace towheesnifferwrappers
             void removeBox(IAPIBox *box);
             IAPIRandom *getRandom();
             IAPISimulationEventManager *getEventManager();
-            IAPISpeciesManager *getSpeciesManager();
             IAPIBox *getBox(int index);
             int getBoxCount();
-            bool isDynamic();
+            void addSpecies(IAPISpecies *species);
+            void removeSpecies(IAPISpecies *removedSpecies);
+            int getSpeciesCount();
+            IAPISpecies *getSpecies(int index);
+            IAPIIntegrator *getIntegrator();
 
             // Non-API methods
             IndexManager *getAtomIDMgr() { return atomIDMgr; };
             void sniff();
             double getTemp();
+            void setIntegrator(IAPIIntegrator *integrator);
 
         private:
             void sniffBoxes();
             void sniffSpecies(TowheeAtomTypeSphere **atomType);
             int sniffAtomTypes();
 
-            IAPISpeciesManager *mSpeciesMgr;
+            TowheeSpeciesManager *mSpeciesMgr;
             IAPISimulationEventManager *mEventMgr;
             IndexManager *atomIDMgr;
             TowheeSpace *mSpace;
+            IAPIIntegrator *mIntegrator;
             int numBoxes;
             std::vector<IAPIBox *>mBox;
     };

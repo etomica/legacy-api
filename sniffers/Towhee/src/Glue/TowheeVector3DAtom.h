@@ -23,7 +23,7 @@ namespace towheesnifferwrappers
 
             TowheeVector3DAtom(TowheeAtom *atom,
                                void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
-                                   int ia1, int ia2, int ia3);
+                                   int ia1, int ia3);
 
             // API Compliance
             void assignTo(double values[]);
@@ -54,7 +54,6 @@ namespace towheesnifferwrappers
             IAPIVector *getOffset();
             void (*mFunction)(int *, int *, int *, int *, double *, double *, double *);
             int iArg1;
-            int iArg2;
             int iArg3;
             TowheeAtom *mAtom;
     };
