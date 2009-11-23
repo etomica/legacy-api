@@ -9,6 +9,7 @@
 #include "TowheeIntegratorUVT.h"
 
 extern "C" { void twh_tmmc_flag_(int *, int *); }
+extern "C" { void twh_ensemble_(int *, int *); }
 
 namespace towheewrappers
 {

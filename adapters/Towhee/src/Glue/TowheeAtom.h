@@ -8,7 +8,6 @@
 #define TOWHEE_ATOM_WRAPPER_H
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtomType.h"
 #include "IAPIBoundary.h"
@@ -23,7 +22,6 @@ namespace towheewrappers
 {
 
     class TowheeAtom : public virtual IAPIAtom,
-                          public virtual IAPIAtomPositioned,
                           public virtual IAPIAtomKinetic {
 
         public:

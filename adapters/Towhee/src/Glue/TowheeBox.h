@@ -10,7 +10,6 @@
 #include <map>
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIBoundary.h"
 #include "IAPIBox.h"
 #include "IAPIBoxEventManager.h"

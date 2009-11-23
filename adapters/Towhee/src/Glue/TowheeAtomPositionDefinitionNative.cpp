@@ -4,7 +4,6 @@
  *
  */
 
-#include "IAPIAtomPositioned.h"
 #include "IAPIMolecule.h"
 
 #include "TowheeAtomPositionDefinitionNative.h"

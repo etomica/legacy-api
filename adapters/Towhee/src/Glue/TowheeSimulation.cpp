@@ -72,6 +72,8 @@ extern "C" { void twh_moltyp_(int *, int *, int *); }
 extern "C" { void twh_parall_(int *, int *, int *, int *); }
 extern "C" { void twh_masstotal_(int *, int *, double *); }
 extern "C" { void twh_boxvclassic_(int *, int *, double *); }
+extern "C" { void twh_ffnumber_(int *, int *); }
+extern "C" { void twh_ff_filename_(int *, int *, char *); }
 
 extern "C" { void twh_pmrotate_(int *, double *); }
 
@@ -136,13 +138,6 @@ printf("WARNING : TowheeSimulation::removeBox() is NOT implemented.\n");
     }
 
     /*
-     * getSpeciesManager()
-     */
-    IAPISpeciesManager *TowheeSimulation::getSpeciesManager() {
-        return mSpeciesManager;
-    }
-
-    /*
      * getBoxCount()
      */
     int TowheeSimulation::getBoxCount() {
@@ -157,16 +152,51 @@ printf("WARNING : TowheeSimulation::removeBox() is NOT implemented.\n");
     }
 
     /*
-     * isDynamic()
+     * addSpecies()
      */
-    bool TowheeSimulation::isDynamic() {
-printf("WARNING : TowheeSimulation::isDynamic() is NOT implemented.\n");
+    void TowheeSimulation::addSpecies(IAPISpecies *species) {
+        mSpeciesManager->addSpecies(species);
+    }
+
+    /*
+     * removeSpecies()
+     */
+    void TowheeSimulation::removeSpecies(IAPISpecies *removedSpecies) {
+        mSpeciesManager->removeSpecies(removedSpecies);
+    }
+
+    /*
+     * getSpeciesCount()
+     */
+    int TowheeSimulation::getSpeciesCount() {
+        return mSpeciesManager->getSpeciesCount();
+    }
+
+    /*
+     * getSpecies()
+     */
+    IAPISpecies *TowheeSimulation::getSpecies(int index) {
+        return mSpeciesManager->getSpecies(index);
+    }
+
+    /*
+     * getIntegrator()
+     */
+    IAPIIntegrator *TowheeSimulation::getIntegrator() {
+        return mIntegrator;
+    }
+
+    /*
+     * setIntegrator()
+     */
+    void TowheeSimulation::setIntegrator(IAPIIntegrator *integrator) {
+        mIntegrator = integrator;
     }
 
     /*
      * setup()
      */
-    void TowheeSimulation::setup(IAPIVector *config) {
+    void TowheeSimulation::setup(TowheePotentialMaster *pm, IAPIVector *config) {
 
 printf("TowheeSimulation::setup()\n"); fflush(stdout);
         int set = GLB_SET;
@@ -307,8 +337,19 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
         twh_potentialstyle_(&set, &potStyle);
 
         if(potStyle == POT_INTERNAL) {
-            printf("ERROR : initialization code for internal potential styles not implemented.\n");
+            printf("WARNING : initialization code for internal potential"
+                   " styles not COMPLETELY implemented.\n");
             fflush(stdout);
+
+            // Need to implement code from twh_readclassical()
+            int numFiles = pm->getForceFieldCount();
+            twh_ffnumber_(&set, &numFiles);
+
+            for(int i = 1; i <= numFiles; i++) {
+                twh_ff_filename_(&set, &i, pm->getForceField(i-1)->getFileName());
+            }
+
+
         }
         else if(potStyle == POT_EXTERNAL) {
             printf("ERROR : initialization code for external potential styles not implemented.\n");

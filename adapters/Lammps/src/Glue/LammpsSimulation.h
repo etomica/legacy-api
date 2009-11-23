@@ -17,10 +17,10 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPISpeciesManager.h"
 #include "IAPIPotentialMaster.h"
 #include "LammpsBox.h"
 #include "LammpsSpace.h"
+#include "LammpsSpeciesManager.h"
 
 #include "IDManager.h"
 
@@ -45,10 +45,13 @@ namespace lammpswrappers
             void removeBox(IAPIBox *);
             IAPIRandom *getRandom();
             IAPISimulationEventManager *getEventManager();
-            IAPISpeciesManager *getSpeciesManager();
             int getBoxCount();
             IAPIBox *getBox(int index);
-            bool isDynamic();
+            void addSpecies(IAPISpecies *species);
+            void removeSpecies(IAPISpecies *removedSpecies);
+            int getSpeciesCount();
+            IAPISpecies *getSpecies(int index);
+            IAPIIntegrator *getIntegrator();
 
             // Non-API methods
             void setUnitStyle(char *unitStyle);
@@ -59,6 +62,7 @@ namespace lammpswrappers
             double getTotalEnergy();
             LammpsSpace *getSpace();
             void addRegionWithAtoms(LammpsRegion *region);
+            void setIntegrator(IAPIIntegrator *integrator);
 
             LAMMPS *getLammpsSim() { return mLammpsSim; }
             void setState(int state);
@@ -76,7 +80,7 @@ namespace lammpswrappers
             LAMMPS *mLammpsSim;
             std::vector<IAPIBox *> mBox;
             IAPISimulationEventManager *mEventManager;
-            IAPISpeciesManager *mSpeciesManager;
+            LammpsSpeciesManager *mSpeciesManager;
 
         private:
             void init();
@@ -88,6 +92,7 @@ namespace lammpswrappers
             IDManager *regionIDManager;
             bool thermoInit;
             LammpsSpace *mSpace;
+            IAPIIntegrator *mIntegrator;
             std::vector<LammpsRegion *>atomRegionList;
     };
 }

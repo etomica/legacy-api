@@ -8,7 +8,6 @@
 #define GLOTZ_ATOM_WRAPPER_H
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtomType.h"
 #include "IAPISimulation.h"
@@ -27,7 +26,6 @@ namespace glotzwrappers
       * (glotzmd::Bead) where many of the atoms properties are stored.
       */
     class GlotzillaAtom : public virtual IAPIAtom,
-                          public virtual IAPIAtomPositioned,
                           public virtual IAPIAtomKinetic {
 
         public:

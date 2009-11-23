@@ -8,6 +8,8 @@
 
 #include "TowheeIntegratorPseudoBubble.h"
 
+extern "C" { void twh_ensemble_(int *, int *); }
+
 namespace towheewrappers
 {
 

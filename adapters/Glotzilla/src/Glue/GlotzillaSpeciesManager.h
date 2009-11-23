@@ -10,7 +10,6 @@
 #include "IAPIBox.h"
 #include "IAPISpecies.h"
 #include "IAPIAtomType.h"
-#include "IAPISpeciesManager.h"
 
 #include <vector>
 
@@ -23,7 +22,7 @@ namespace glotzwrappers
       *  GlotzillaSpeciesManager manages the species that are part of a
       *  simulation.
       */
-    class GlotzillaSpeciesManager : public virtual IAPISpeciesManager {
+    class GlotzillaSpeciesManager {
 
         public:
             /**

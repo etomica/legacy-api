@@ -19,7 +19,7 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
-    class LammpsSpeciesManager : public virtual IAPISpeciesManager {
+    class LammpsSpeciesManager {
 
         public:
 	    void removeSpecies(IAPISpecies *delSpecies);

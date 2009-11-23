@@ -287,10 +287,10 @@ printf("lammps_command : %s\n", command); fflush(stdout);
         int uniqueTypes = 0;
         std::vector<int> atomTypeList;
 
-        int specieCount = mSim->getSpeciesManager()->getSpeciesCount();
+        int specieCount = mSim->getSpeciesCount();
 
         for(int i = 0; i < specieCount; i++) {
-            IAPISpecies *specie = mSim->getSpeciesManager()->getSpecies(i);
+            IAPISpecies *specie = mSim->getSpecies(i);
             for(int j = 0; j < specie->getAtomTypeCount(); j++) {
                 IAPIAtomType *type = specie->getAtomType(j);
                 int atomType = type->getIndex();

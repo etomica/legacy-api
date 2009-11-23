@@ -10,10 +10,12 @@ SRC =  TowheeAtom.cpp \
 	TowheeAtomPositionDefinitionNative.cpp \
 	TowheeAtomType.cpp \
 	TowheeAtomTypeSphere.cpp \
+	TowheeBasicConnectivityMap.cpp \
 	TowheeBoundary.cpp \
 	TowheeBoundaryRectangularPeriodic.cpp \
 	TowheeBox.cpp \
 	TowheeBoxEventManager.cpp \
+	TowheeForceField.cpp \
 	TowheeIntegrator.cpp \
 	TowheeIntegratorEventManager.cpp \
 	TowheeIntegratorListenerNative.cpp \
@@ -27,6 +29,9 @@ SRC =  TowheeAtom.cpp \
 	TowheeMCMoveCOMTranslation.cpp \
 	TowheeMoleculeList.cpp \
 	TowheeMonatomicMolecule.cpp \
+	TowheePotential.cpp \
+	TowheePotentialLennardJones.cpp \
+	TowheePotentialMaster.cpp \
 	TowheeRandom.cpp \
 	TowheeSimulation.cpp \
 	TowheeSimulationEventManager.cpp \

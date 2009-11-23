@@ -11,14 +11,13 @@
 
 #include "IAPIBox.h"
 #include "IAPISpecies.h"
-#include "IAPISpeciesManager.h"
 
 using namespace molesimAPI;
 
 namespace towheewrappers
 {
 
-    class TowheeSpeciesManager : public virtual IAPISpeciesManager {
+    class TowheeSpeciesManager {
 
         public:
 

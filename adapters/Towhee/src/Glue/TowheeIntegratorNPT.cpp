@@ -9,6 +9,7 @@
 #include "TowheeIntegratorNPT.h"
 
 extern "C" { void twh_express_(int *, double *); }
+extern "C" { void twh_ensemble_(int *, int *); }
 
 namespace towheewrappers
 {

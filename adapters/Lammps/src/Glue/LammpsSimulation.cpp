@@ -150,13 +150,6 @@ printf("WARNING : LammpsSimulation::removeBox() does NOT remove box from simulat
     }
 
     /*
-     * getSpeciesManager()
-     */
-    IAPISpeciesManager *LammpsSimulation::getSpeciesManager() {
-        return mSpeciesManager;
-    }
-
-    /*
      * getBoxCount()
      */
     int LammpsSimulation::getBoxCount() {
@@ -171,10 +164,45 @@ printf("WARNING : LammpsSimulation::removeBox() does NOT remove box from simulat
     }
 
     /*
-     * isDynamic()
+     * addSpecies()
      */
-    bool LammpsSimulation::isDynamic() {
-printf("WARNING : LammpsSimulation::isDynamic() is NOT implemented.\n");
+    void LammpsSimulation::addSpecies(IAPISpecies *species) {
+        mSpeciesManager->addSpecies(species);
+    }
+
+    /*
+     * removeSpecies()
+     */
+    void LammpsSimulation::removeSpecies(IAPISpecies *removedSpecies) {
+        mSpeciesManager->removeSpecies(removedSpecies);
+    }
+
+    /*
+     * getSpeciesCount()
+     */
+    int LammpsSimulation::getSpeciesCount() {
+        return mSpeciesManager->getSpeciesCount();
+    }
+
+    /*
+     * getSpecies()
+     */
+    IAPISpecies *LammpsSimulation::getSpecies(int index) {
+        return mSpeciesManager->getSpecies(index);
+    }
+
+    /*
+     * getIntegrator()
+     */
+    IAPIIntegrator *LammpsSimulation::getIntegrator() {
+        return mIntegrator;
+    }
+
+    /*
+     * setIntegrator()
+     */
+    void LammpsSimulation::setIntegrator(IAPIIntegrator *integrator) {
+        mIntegrator = integrator;
     }
 
     /*

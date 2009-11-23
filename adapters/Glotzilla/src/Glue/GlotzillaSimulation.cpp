@@ -35,12 +35,13 @@ printf("WARNING : GlotzillaSimulation::~GlotzillaSimulation() is NOT implemented
      */
     void GlotzillaSimulation::init() {
         eventManager = new GlotzillaSimulationEventManager();
-        speciesManager = new GlotzillaSpeciesManager();
+        mSpeciesManager = new GlotzillaSpeciesManager();
         mRand = new GlotzillaRandom();
 
         // Create a box
         addBox(GlotzillaBox::instance(mGlotzSim));
 
+        mIntegrator = NULL;
     }
 
     /*
@@ -51,7 +52,7 @@ printf("WARNING : GlotzillaSimulation::~GlotzillaSimulation() is NOT implemented
             // Add box to list
             mBox.push_back(box);
             box->setIndex(mBox.size()-1);
-            speciesManager->boxAddedNotify(box);
+            mSpeciesManager->boxAddedNotify(box);
         }
         else {
             printf("The Simulation already contains a box.\n"); fflush(stdout);
@@ -93,13 +94,6 @@ printf("WARNING : GlotzillaSimulation::~GlotzillaSimulation() is NOT implemented
     }
 
     /*
-     * getSpeciesManager()
-     */
-    IAPISpeciesManager *GlotzillaSimulation::getSpeciesManager() {
-        return(speciesManager);
-    }
-
-    /*
      * getBox()
      */
     IAPIBox *GlotzillaSimulation::getBox(int index) {
@@ -114,10 +108,45 @@ printf("WARNING : GlotzillaSimulation::~GlotzillaSimulation() is NOT implemented
     }
 
     /*
-     * isDynamic()
+     * addSpecies()
      */
-    bool GlotzillaSimulation::isDynamic() {
-printf("WARNING : GlotzillaSimulation::isDynamic() is NOT implemented.\n");
+    void GlotzillaSimulation::addSpecies(IAPISpecies *species) {
+        mSpeciesManager->addSpecies(species);
+    }
+
+    /*
+     * removeSpecies()
+     */
+    void GlotzillaSimulation::removeSpecies(IAPISpecies *removedSpecies) {
+        mSpeciesManager->removeSpecies(removedSpecies);
+    }
+
+    /*
+     * getSpeciesCount()
+     */
+    int GlotzillaSimulation::getSpeciesCount() {
+        return mSpeciesManager->getSpeciesCount();
+    }
+
+    /*
+     * getSpecies()
+     */
+    IAPISpecies *GlotzillaSimulation::getSpecies(int index) {
+        return mSpeciesManager->getSpecies(index);
+    }
+
+    /*
+     * getIntegrator()
+     */
+    IAPIIntegrator *GlotzillaSimulation::getIntegrator() {
+        return mIntegrator;
+    }
+
+    /*
+     * setIntegrator()
+     */
+    void GlotzillaSimulation::setIntegrator(IAPIIntegrator *integrator) {
+        mIntegrator = integrator;
     }
 
     /*

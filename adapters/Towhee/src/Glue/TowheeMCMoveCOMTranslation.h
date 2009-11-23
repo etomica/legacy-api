@@ -7,7 +7,7 @@
 #ifndef TOWHEE_MC_MOVE_COM_TRANSLATION_WRAPPER_H
 #define TOWHEE_MC_MOVE_COM_TRANSLATION_WRAPPER_H
 
-#include "IAPISpeciesManager.h"
+#include "IAPISimulation.h"
 #include "TowheeMCMove.h"
 
 using namespace molesimAPI;
@@ -19,7 +19,7 @@ namespace towheewrappers
 
         public:
 
-            TowheeMCMoveCOMTranslation(IAPISpeciesManager *sm, double p);
+            TowheeMCMoveCOMTranslation(IAPISimulation *sm, double p);
 
             // Non-API methods
             void setPmtcmt(double values[]);
@@ -28,7 +28,7 @@ namespace towheewrappers
             virtual void setup();
 
         private:
-            IAPISpeciesManager *mSpeciesMgr;
+            IAPISimulation *mSimulation;
             double *pmtcmt;
             double rmtrac;
             double tatrac;

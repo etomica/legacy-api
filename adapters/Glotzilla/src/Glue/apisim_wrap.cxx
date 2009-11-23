@@ -230,7 +230,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPISimulationListener.h"
 #include "IAPISimulationEventManager.h"
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIMolecule.h"
 #include "IAPISpecies.h"
@@ -251,7 +250,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPIPotential.h"
 #include "IAPIPotentialAtomic.h"
 #include "IAPIPotentialMaster.h"
-#include "IAPISpeciesManager.h"
 #include "IAPISimulation.h"
 #include "GlotzillaInterfaceConformation.h"
 #include "GlotzillaInterfaceAtomPositionDefinition.h"
@@ -2425,37 +2423,26 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPIAtom_1getType(JNIEnv *jen
 }
 
 
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIAtom(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIAtom *arg1 = (molesimAPI::IAPIAtom *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIAtom **)&jarg1; 
-  delete arg1;
-  
-}
-
-
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPIAtomPositioned_1getPosition(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPIAtom_1getPosition(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
-  molesimAPI::IAPIAtomPositioned *arg1 = (molesimAPI::IAPIAtomPositioned *) 0 ;
+  molesimAPI::IAPIAtom *arg1 = (molesimAPI::IAPIAtom *) 0 ;
   molesimAPI::IAPIVectorMutable *result = 0 ;
   
   (void)jenv;
   (void)jcls;
-  arg1 = *(molesimAPI::IAPIAtomPositioned **)&jarg1; 
+  arg1 = *(molesimAPI::IAPIAtom **)&jarg1; 
   result = (molesimAPI::IAPIVectorMutable *)(arg1)->getPosition();
   *(molesimAPI::IAPIVectorMutable **)&jresult = result; 
   return jresult;
 }
 
 
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIAtomPositioned(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIAtomPositioned *arg1 = (molesimAPI::IAPIAtomPositioned *) 0 ;
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIAtom(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  molesimAPI::IAPIAtom *arg1 = (molesimAPI::IAPIAtom *) 0 ;
   
   (void)jenv;
   (void)jcls;
-  arg1 = *(molesimAPI::IAPIAtomPositioned **)&jarg1; 
+  arg1 = *(molesimAPI::IAPIAtom **)&jarg1; 
   delete arg1;
   
 }
@@ -3491,83 +3478,6 @@ JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIPotentialMaster(JN
 }
 
 
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISpeciesManager_1removeSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
-  (arg1)->removeSpecies(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISpeciesManager_1addSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
-  (arg1)->addSpecies(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISpeciesManager_1boxAddedNotify(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  molesimAPI::IAPIBox *arg2 = (molesimAPI::IAPIBox *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  arg2 = *(molesimAPI::IAPIBox **)&jarg2; 
-  (arg1)->boxAddedNotify(arg2);
-}
-
-
-JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_IAPISpeciesManager_1getSpeciesCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jint jresult = 0 ;
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  int result;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  result = (int)(arg1)->getSpeciesCount();
-  jresult = (jint)result; 
-  return jresult;
-}
-
-
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISpeciesManager_1getSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
-  jlong jresult = 0 ;
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  int arg2 ;
-  molesimAPI::IAPISpecies *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  arg2 = (int)jarg2; 
-  result = (molesimAPI::IAPISpecies *)(arg1)->getSpecies(arg2);
-  *(molesimAPI::IAPISpecies **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPISpeciesManager(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPISpeciesManager *arg1 = (molesimAPI::IAPISpeciesManager *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISpeciesManager **)&jarg1; 
-  delete arg1;
-  
-}
-
-
 JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1addBox(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
   molesimAPI::IAPIBox *arg2 = (molesimAPI::IAPIBox *) 0 ;
@@ -3622,6 +3532,74 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getBox(JNIEnv
 }
 
 
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1addSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->addSpecies(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1removeSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->removeSpecies(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getSpeciesCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
+  result = (int)(arg1)->getSpeciesCount();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
+  int arg2 ;
+  molesimAPI::IAPISpecies *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (molesimAPI::IAPISpecies *)(arg1)->getSpecies(arg2);
+  *(molesimAPI::IAPISpecies **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getIntegrator(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
+  molesimAPI::IAPIIntegrator *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
+  result = (molesimAPI::IAPIIntegrator *)(arg1)->getIntegrator();
+  *(molesimAPI::IAPIIntegrator **)&jresult = result; 
+  return jresult;
+}
+
+
 JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getRandom(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
@@ -3646,34 +3624,6 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getEventManag
   arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
   result = (molesimAPI::IAPISimulationEventManager *)(arg1)->getEventManager();
   *(molesimAPI::IAPISimulationEventManager **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1getSpeciesManager(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
-  molesimAPI::IAPISpeciesManager *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
-  result = (molesimAPI::IAPISpeciesManager *)(arg1)->getSpeciesManager();
-  *(molesimAPI::IAPISpeciesManager **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT jboolean JNICALL Java_glotz_wrapper_testJNI_IAPISimulation_1isDynamic(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jboolean jresult = 0 ;
-  molesimAPI::IAPISimulation *arg1 = (molesimAPI::IAPISimulation *) 0 ;
-  bool result;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPISimulation **)&jarg1; 
-  result = (bool)(arg1)->isDynamic();
-  jresult = (jboolean)result; 
   return jresult;
 }
 
@@ -9846,20 +9796,6 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getEvent
 }
 
 
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getSpeciesManager(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
-  molesimAPI::IAPISpeciesManager *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
-  result = (molesimAPI::IAPISpeciesManager *)(arg1)->getSpeciesManager();
-  *(molesimAPI::IAPISpeciesManager **)&jresult = result; 
-  return jresult;
-}
-
-
 JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getBox(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
   jlong jresult = 0 ;
   glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
@@ -9890,16 +9826,70 @@ JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getBoxCou
 }
 
 
-JNIEXPORT jboolean JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1isDynamic(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jboolean jresult = 0 ;
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1addSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
-  bool result;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
   
   (void)jenv;
   (void)jcls;
   arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
-  result = (bool)(arg1)->isDynamic();
-  jresult = (jboolean)result; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->addSpecies(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1removeSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->removeSpecies(arg2);
+}
+
+
+JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getSpeciesCount(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0 ;
+  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
+  result = (int)(arg1)->getSpeciesCount();
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+  jlong jresult = 0 ;
+  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
+  int arg2 ;
+  molesimAPI::IAPISpecies *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
+  arg2 = (int)jarg2; 
+  result = (molesimAPI::IAPISpecies *)(arg1)->getSpecies(arg2);
+  *(molesimAPI::IAPISpecies **)&jresult = result; 
+  return jresult;
+}
+
+
+JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getIntegrator(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
+  molesimAPI::IAPIIntegrator *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
+  result = (molesimAPI::IAPIIntegrator *)(arg1)->getIntegrator();
+  *(molesimAPI::IAPIIntegrator **)&jresult = result; 
   return jresult;
 }
 
@@ -9971,6 +9961,18 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1getSpace
   result = (glotzwrappers::GlotzillaSpace *)(arg1)->getSpace();
   *(glotzwrappers::GlotzillaSpace **)&jresult = result; 
   return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_GlotzillaSimulation_1setIntegrator(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  glotzwrappers::GlotzillaSimulation *arg1 = (glotzwrappers::GlotzillaSimulation *) 0 ;
+  molesimAPI::IAPIIntegrator *arg2 = (molesimAPI::IAPIIntegrator *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(glotzwrappers::GlotzillaSimulation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIIntegrator **)&jarg2; 
+  (arg1)->setIntegrator(arg2);
 }
 
 
@@ -10555,19 +10557,11 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGIAPISimulationIndexEventU
     return baseptr;
 }
 
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGIAPIAtomPositionedUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-    jlong baseptr = 0;
-    (void)jenv;
-    (void)jcls;
-    *(molesimAPI::IAPIAtom **)&baseptr = *(molesimAPI::IAPIAtomPositioned **)&jarg1;
-    return baseptr;
-}
-
 JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGIAPIAtomKineticUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
     (void)jcls;
-    *(molesimAPI::IAPIAtomPositioned **)&baseptr = *(molesimAPI::IAPIAtomKinetic **)&jarg1;
+    *(molesimAPI::IAPIAtom **)&baseptr = *(molesimAPI::IAPIAtomKinetic **)&jarg1;
     return baseptr;
 }
 
@@ -11088,14 +11082,6 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGGlotzillaBoxAtomIndexEven
     (void)jenv;
     (void)jcls;
     *(glotzwrappers::GlotzillaBoxAtomEvent **)&baseptr = *(glotzwrappers::GlotzillaBoxAtomIndexEvent **)&jarg1;
-    return baseptr;
-}
-
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGGlotzillaSpeciesManagerUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-    jlong baseptr = 0;
-    (void)jenv;
-    (void)jcls;
-    *(molesimAPI::IAPISpeciesManager **)&baseptr = *(glotzwrappers::GlotzillaSpeciesManager **)&jarg1;
     return baseptr;
 }
 

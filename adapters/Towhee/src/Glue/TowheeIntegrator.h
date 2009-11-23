@@ -16,8 +16,6 @@ using namespace molesimAPI;
 namespace towheewrappers
 {
 
-    extern "C" { void twh_ensemble_(int *, int *); }
-
     class TowheeIntegrator : public virtual IAPIIntegrator {
 
         public:

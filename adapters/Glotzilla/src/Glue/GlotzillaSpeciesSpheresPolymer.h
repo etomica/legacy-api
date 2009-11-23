@@ -8,7 +8,6 @@
 #define GLOTZ_SPECIESPOLY_WRAPPER_H
 
 #include "IAPISimulation.h"
-#include "IAPISpeciesManager.h"
 #include "GlotzillaInterfaceConformation.h"
 #include "GlotzillaSpecies.h"
 #include "GlotzillaAtomTypeSphere.h"

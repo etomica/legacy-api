@@ -9,7 +9,6 @@
 
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "IAPIVectorMutable.h"
@@ -20,8 +19,7 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
-    class LammpsAtom : public virtual IAPIAtom, public virtual IAPIAtomPositioned,
-                       public virtual IAPIAtomKinetic {
+    class LammpsAtom : public virtual IAPIAtom, public virtual IAPIAtomKinetic {
 
         public:
             LammpsAtom(IAPISimulation *sim);

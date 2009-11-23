@@ -10,7 +10,6 @@
 #include "IAPIAtomType.h"
 #include "IAPIMolecule.h"
 #include "IAPISimulation.h"
-#include "IAPISpeciesManager.h"
 #include "GlotzillaInterfaceConformation.h"
 #include "GlotzillaSpecies.h"
 #include "GlotzillaAtomTypeSphere.h"

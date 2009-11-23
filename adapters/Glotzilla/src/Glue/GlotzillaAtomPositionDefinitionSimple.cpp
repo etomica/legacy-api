@@ -6,7 +6,6 @@
 
 #include <glotzmd.h>
 
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomList.h"
 
 #include "GlotzillaAtomPositionDefinitionSimple.h"

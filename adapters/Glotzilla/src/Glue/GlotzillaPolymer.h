@@ -10,7 +10,6 @@
 #include <glotzmd.h>
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomList.h"
 #include "IAPIAtomType.h"
 #include "IAPISimulation.h"

@@ -14,8 +14,10 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPISpeciesManager.h"
+#include "IAPISpecies.h"
 #include "IAPIPotentialMaster.h"
+#include "TowheePotentialMaster.h"
+#include "TowheeSpeciesManager.h"
 #include "IndexManager.h"
 
 using namespace molesimAPI;
@@ -33,27 +35,32 @@ namespace towheewrappers
             void removeBox(IAPIBox *);
             IAPIRandom *getRandom();
             IAPISimulationEventManager *getEventManager();
-            IAPISpeciesManager *getSpeciesManager();
             int getBoxCount();
             IAPIBox *getBox(int index);
-            bool isDynamic();
+            void addSpecies(IAPISpecies *species);
+            void removeSpecies(IAPISpecies *removedSpecies);
+            int getSpeciesCount();
+            IAPISpecies *getSpecies(int index);
+            IAPIIntegrator *getIntegrator();
 
             // Non-API methods
-            void setup(IAPIVector *config);
+            void setup(TowheePotentialMaster *pm, IAPIVector *config);
             static int getState();
             IndexManager *getAtomIDMgr();
             IndexManager *getMoleculeIDMgr();
             void resetCOM();
             double getTemp();
             double getTotalEnergy(IAPIBox *box);
+            void setIntegrator(IAPIIntegrator *integrator);
 
             static const int UNINITIALIZED;
             static const int INITIALIZED;
 
         private:
             IAPIRandom *mRand;
-            IAPISpeciesManager *mSpeciesManager;
+            TowheeSpeciesManager *mSpeciesManager;
             IAPISimulationEventManager *mEventManager;
+            IAPIIntegrator *mIntegrator;
             std::vector<IAPIBox *>mBox;
             static int mState;
             IndexManager *mAtomIDMgr;

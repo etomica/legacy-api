@@ -25,17 +25,17 @@ extern "C" { void twh_numboxes_(int *, int *); }
 namespace towheewrappers
 {
 
-    TowheeMCMoveCOMTranslation::TowheeMCMoveCOMTranslation(IAPISpeciesManager *sm, double p) :
+    TowheeMCMoveCOMTranslation::TowheeMCMoveCOMTranslation(IAPISimulation *sim, double p) :
                                    TowheeMCMove(p) {
-        mSpeciesMgr = sm;
+        mSimulation = sim;
     }
 
     /*
      * setPmtcmt()
      */
     void TowheeMCMoveCOMTranslation::setPmtcmt(double values[]) {
-        pmtcmt = (double *) malloc (mSpeciesMgr->getSpeciesCount() * sizeof(double));
-        for(int i = 0; i < mSpeciesMgr->getSpeciesCount(); i++)
+        pmtcmt = (double *) malloc (mSimulation->getSpeciesCount() * sizeof(double));
+        for(int i = 0; i < mSimulation->getSpeciesCount(); i++)
             pmtcmt[i] = values[i];
     }
 
@@ -68,7 +68,7 @@ printf("WARNING : TowheeMCMoveCOMTranslation::setup() is not implemented yet.\n"
 
         double probMax = 0.0;
         double value;
-        for(int i = 1; i <= mSpeciesMgr->getSpeciesCount(); i++) {
+        for(int i = 1; i <= mSimulation->getSpeciesCount(); i++) {
             value = pmtcmt[i-1];
             twh_pmtcmt_(&set, &i, &value);
             if (value > probMax ) probMax = value;
@@ -91,7 +91,7 @@ numBoxes = 1;
 printf("TowheeMCMoveCOMTranslation HARDCODED num boxes : %d\n", numBoxes); fflush(stdout);
 
         for(int ibox = 1; ibox <= numBoxes; ibox++) {
-            for(int i = 1; i <= mSpeciesMgr->getSpeciesCount(); i++) {
+            for(int i = 1; i <= mSimulation->getSpeciesCount(); i++) {
                 twh_rmtrac_(&set, &i, &ibox, &rmtrac);
             }
         }

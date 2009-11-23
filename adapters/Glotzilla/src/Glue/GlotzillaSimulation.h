@@ -14,12 +14,13 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPISpeciesManager.h"
+#include "IAPISpecies.h"
 
 #include "GlotzillaBox.h"
 #include "GlotzillaIntegrator.h"
 #include "GlotzillaRandom.h"
 #include "GlotzillaSpace.h"
+#include "GlotzillaSpeciesManager.h"
 
 #include <vector>
 
@@ -76,10 +77,6 @@ namespace glotzwrappers
               */
             IAPISimulationEventManager *getEventManager();
             /**
-              * @return Return the species manager.
-              */
-            IAPISpeciesManager *getSpeciesManager();
-            /**
               * @param index Index into box list contained by simulation.
               * @return Returns the box held by the simulation from the
               *         box list at the given index.
@@ -90,11 +87,11 @@ namespace glotzwrappers
               *         list.
               */
             int getBoxCount();
-            /**
-              * @return Returns a flag indicating whether the simulation
-              *         involves molecular dynamics.
-              */
-            bool isDynamic();
+            void addSpecies(IAPISpecies *species);
+            void removeSpecies(IAPISpecies *removedSpecies);
+            int getSpeciesCount();
+            IAPISpecies *getSpecies(int index);
+            IAPIIntegrator *getIntegrator();
 
             // Non-API methods
            /**
@@ -121,17 +118,19 @@ namespace glotzwrappers
               * @return Returns the space held by the simulation.
               */
             GlotzillaSpace *getSpace();
+            void setIntegrator(IAPIIntegrator *integrator);
 
         protected:
             glotzmd::Simulation* mGlotzSim;
             std::vector<IAPIBox *> mBox;
             IAPISimulationEventManager *eventManager;
-            IAPISpeciesManager *speciesManager;
 
         private:
             void init();
             IAPIRandom *mRand;
             GlotzillaSpace *mSpace;
+            GlotzillaSpeciesManager *mSpeciesManager;
+            IAPIIntegrator *mIntegrator;
     };
 }
 

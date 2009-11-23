@@ -7,7 +7,6 @@
 #include "stdio.h"
 #include <math.h>
 
-#include "IAPIAtomPositioned.h"
 #include "IAPIVector.h"
 #include "LammpsConformation.h"
 #include "LammpsAtom.h"
