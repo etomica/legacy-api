@@ -206,12 +206,12 @@ printf("BOX COUNT     : %d\n", getBoxCount()); fflush(stdout);
                      if(typeid(*species) == typeid(TowheeSpeciesSpheresMono)) {
 //printf("    mono species\n"); fflush(stdout);
                          mole =
-                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule(k);
+                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule();
                      }
                      else if(typeid(*species) == typeid(TowheeSpeciesSpheresHetero)) {
 //printf("    hetero species\n"); fflush(stdout);
                          mole =
-                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule(k);
+                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule();
                      }
 
                      box->addMolecule(mole);

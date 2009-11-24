@@ -47,6 +47,7 @@ namespace towheesnifferwrappers
      */
     void TowheeBox::addMolecule(IAPIMolecule *mole) {
         mMoleList->addMolecule(mole);
+        mole->setIndex(mMoleList->getMoleculeCount()-1);
         TowheeAtomList *atomList = dynamic_cast<TowheeAtomList *>(mole->getChildList());
         for(int i = 0; i < atomList->getAtomCount(); i++) {
             mLeafList->addChildAtom(atomList->getAtom(i));

@@ -22,15 +22,8 @@ namespace towheesnifferwrappers
      * makeMolecule()
      */
     IAPIMolecule *TowheeSpeciesSpheresMono::makeMolecule() {
-printf("TowheeSpeciesSpheresMono::makeMolecule() NOT implemented.\n"); fflush(stdout);
-    }
-
-    /*
-     * makeMolecule()
-     */
-    IAPIMolecule *TowheeSpeciesSpheresMono::makeMolecule(int mID) {
         IAPIAtom *atom = new TowheeAtom(mAtomType, mSim->getAtomIDMgr()->getNextIndex());
-        IAPIMolecule *mole = new TowheeMonatomicMolecule(this, mID);
+        IAPIMolecule *mole = new TowheeMonatomicMolecule(this);
         atom->setParent(mole);
         mole->addChildAtom(atom);
         return mole;

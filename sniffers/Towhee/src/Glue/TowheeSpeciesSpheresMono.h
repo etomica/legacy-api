@@ -25,9 +25,6 @@ namespace towheesnifferwrappers
             // API compliant methods
             virtual IAPIMolecule *makeMolecule();
 
-            // API compliant methods
-            virtual IAPIMolecule *makeMolecule(int mID);
-
         private:
             IAPIAtomType *mAtomType;
     };

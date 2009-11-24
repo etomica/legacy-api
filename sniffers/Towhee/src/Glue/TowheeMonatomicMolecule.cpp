@@ -10,9 +10,8 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeMonatomicMolecule:: TowheeMonatomicMolecule(IAPISpecies *species, int mID) {
+    TowheeMonatomicMolecule:: TowheeMonatomicMolecule(IAPISpecies *species) {
         mSpecies = species;
-        setIndex(mID);
         mAtoms = new TowheeAtomList();
     }
 

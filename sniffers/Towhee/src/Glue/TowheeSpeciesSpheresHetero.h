@@ -26,7 +26,6 @@ namespace towheesnifferwrappers
 
             // API compliant methods
             virtual IAPIMolecule *makeMolecule();
-            virtual IAPIMolecule *makeMolecule(int mID);
 
             // Non-API compliant methods
             void addAtomType(IAPIAtomType *atomType);

@@ -85,6 +85,7 @@ printf("    TOWHEE ATOM INDEX : %d\n", mTowheeIndex); fflush(stdout);
 //printf("      %f %f %f\n", mPosition->x(0), mPosition->x(1), mPosition->x(2)); fflush(stdout);
 */
 
+//printf("  ATOM INDEX : %d  %d\n", getParentGroup()->getIndex() + 1, getIndex()+1); fflush(stdout);
         mPosition->update();
 
         return mPosition;

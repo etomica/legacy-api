@@ -22,7 +22,7 @@ namespace towheesnifferwrappers
     class TowheeMonatomicMolecule : public TowheeMolecule {
 
         public:
-            TowheeMonatomicMolecule(IAPISpecies *species, int mID);
+            TowheeMonatomicMolecule(IAPISpecies *species);
 
             // API Compliance
             virtual void addChildAtom(IAPIAtom *atom);

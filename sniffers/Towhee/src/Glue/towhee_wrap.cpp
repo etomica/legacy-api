@@ -4278,7 +4278,7 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_new_1TowheeSpecies
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresMono_1makeMolecule_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresMono_1makeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   towheesnifferwrappers::TowheeSpeciesSpheresMono *arg1 = (towheesnifferwrappers::TowheeSpeciesSpheresMono *) 0 ;
   molesimAPI::IAPIMolecule *result = 0 ;
@@ -4287,22 +4287,6 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpher
   (void)jcls;
   arg1 = *(towheesnifferwrappers::TowheeSpeciesSpheresMono **)&jarg1; 
   result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule();
-  *(molesimAPI::IAPIMolecule **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresMono_1makeMolecule_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
-  jlong jresult = 0 ;
-  towheesnifferwrappers::TowheeSpeciesSpheresMono *arg1 = (towheesnifferwrappers::TowheeSpeciesSpheresMono *) 0 ;
-  int arg2 ;
-  molesimAPI::IAPIMolecule *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheesnifferwrappers::TowheeSpeciesSpheresMono **)&jarg1; 
-  arg2 = (int)jarg2; 
-  result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule(arg2);
   *(molesimAPI::IAPIMolecule **)&jresult = result; 
   return jresult;
 }
@@ -4333,7 +4317,7 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_new_1TowheeSpecies
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresHetero_1makeMolecule_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresHetero_1makeMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   towheesnifferwrappers::TowheeSpeciesSpheresHetero *arg1 = (towheesnifferwrappers::TowheeSpeciesSpheresHetero *) 0 ;
   molesimAPI::IAPIMolecule *result = 0 ;
@@ -4342,22 +4326,6 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpher
   (void)jcls;
   arg1 = *(towheesnifferwrappers::TowheeSpeciesSpheresHetero **)&jarg1; 
   result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule();
-  *(molesimAPI::IAPIMolecule **)&jresult = result; 
-  return jresult;
-}
-
-
-JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpeciesSpheresHetero_1makeMolecule_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
-  jlong jresult = 0 ;
-  towheesnifferwrappers::TowheeSpeciesSpheresHetero *arg1 = (towheesnifferwrappers::TowheeSpeciesSpheresHetero *) 0 ;
-  int arg2 ;
-  molesimAPI::IAPIMolecule *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheesnifferwrappers::TowheeSpeciesSpheresHetero **)&jarg1; 
-  arg2 = (int)jarg2; 
-  result = (molesimAPI::IAPIMolecule *)(arg1)->makeMolecule(arg2);
   *(molesimAPI::IAPIMolecule **)&jresult = result; 
   return jresult;
 }
@@ -5987,17 +5955,15 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeInter
 }
 
 
-JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_new_1TowheeMonatomicMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2) {
+JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_new_1TowheeMonatomicMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   molesimAPI::IAPISpecies *arg1 = (molesimAPI::IAPISpecies *) 0 ;
-  int arg2 ;
   towheesnifferwrappers::TowheeMonatomicMolecule *result = 0 ;
   
   (void)jenv;
   (void)jcls;
   arg1 = *(molesimAPI::IAPISpecies **)&jarg1; 
-  arg2 = (int)jarg2; 
-  result = (towheesnifferwrappers::TowheeMonatomicMolecule *)new towheesnifferwrappers::TowheeMonatomicMolecule(arg1,arg2);
+  result = (towheesnifferwrappers::TowheeMonatomicMolecule *)new towheesnifferwrappers::TowheeMonatomicMolecule(arg1);
   *(towheesnifferwrappers::TowheeMonatomicMolecule **)&jresult = result; 
   return jresult;
 }
