@@ -1,8 +1,9 @@
+@SET_MAKE@
 
-SHELL = /bin/sh
-
-
-# ------ FILES ------
+USER_INCLUDES = @USER_INCLUDES@
+TOWHEE_LIB = @TOWHEE_LIB@
+LIBFLAG = @LIBFLAG@
+TOWHEE_INSTALL_DIR = @TOWHEE_INSTALL_DIR@
 
 SRC =	TowheeAtom.cpp \
 	TowheeAtomList.cpp \
@@ -54,35 +55,22 @@ SRC =	TowheeAtom.cpp \
 	IndexManager.cpp \
 	towhee_wrap.cpp
 
-INCDIR = -I/usr/users/rrassler/API/api/C++ \
-	-I/usr/users/rrassler/towhee/towhee-6.2.5/Source
-
-FILES = $(SRC) Makefile
-
-# ------ DEFINITIONS ------
-
 LIB = libtowhee_sniffer.so
-ALIB = libtowhee_sniffer.a
+INCLUDES = $(USER_INCLUDES)
 OBJ =   $(SRC:.cpp=.o)
 
-# ------ SETTINGS ------
-
-CC =	        g++ -v
 CCFLAGS =       -O1 -fPIC -g #-Wno-deprecated
 ARCHIVE =	ar
 ARCHFLAG =	-rc
 DEPFLAGS =      -M
 LINK =         	g++
-LINKFLAGS =	-O
-USRLIB =	-L/usr/users/rrassler/API/lib -ltowhee
-SYSLIB =
+LINKFLAGS =	-O1
+USRLIB =	$(TOWHEE_LIB)
 
-# ------ MAKE PROCEDURE ------
+all:	lib
 
 lib: 	$(OBJ)
-	$(CC) -shared -o$(LIB) $(INCDIR) $(USRLIB) $(OBJ)
-	cp $(LIB) /usr/users/rrassler/API/lib
-#	$(ARCHIVE) $(ARFLAGS) $(LIB) $(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
 
 clean:
 	rm *.o *.so
@@ -90,22 +78,9 @@ clean:
 install: lib
 	mv *.so $(TOWHEE_INSTALL_DIR)
 
-archive:	$(OBJ)
-	ar -r $(ALIB) $(OBJ)
-	cp $(ALIB) /usr/users/rrassler/API/lib
-# ------ COMPILE RULES ------
-
 %.o:%.cpp
-	$(CC) $(CCFLAGS) $(INCDIR) $(USRLIB) -c $<
-%.d:%.cpp
-	$(CC) $(CCFLAGS) $(DEPFLAGS) $< > $@		
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $<
 
-# ------ DEPENDENCIES ------
-
-DEPENDS = $(OBJ:.o=.d)
-
-# ------ CLEAN ------
-
-clean:
-	-rm *.o $(LIB)
-
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

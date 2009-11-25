@@ -234,29 +234,31 @@ printf("COMPLETE\n"); fflush(stdout);
         // Number of species
         int x;
         twh_nmolty_(&get, &x);
+printf("specie count : %d\n", x); fflush(stdout);
         for(int i = 1; i <= x; i++) {
             // Number of atoms in a molecule of the species
             int y;
             twh_nunit_(&get, &i, &y);
+printf("  atoms in species : %d\n", y); fflush(stdout);
             for(int j = 1; j <= y; j++) {
                 int at;
                 twh_ntype_(&get, &i, &j, &at);
-//printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
+printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
 
                 bool inList = false;
                 for(int idx = 0; idx < uniqueIndices; idx++) {
                     if(atomTypeIndex[idx] == at) {
                         inList = true;
-//printf("  already in list...\n"); fflush(stdout);
+printf("  already in list...\n"); fflush(stdout);
                         break;
                     }
                 }
                 if(inList == false) {
-//printf("  adding to list...\n"); fflush(stdout);
+printf("  adding to list...\n"); fflush(stdout);
                     uniqueIndices++;
                     atomTypeIndex = (int *)realloc(atomTypeIndex, (uniqueIndices * sizeof(int)));
                     atomTypeIndex[uniqueIndices-1] = at;
-//printf("  ... done\n"); fflush(stdout);
+printf("  ... done\n"); fflush(stdout);
                 }
             }
         }

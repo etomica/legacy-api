@@ -1,0 +1,81 @@
+AC_INIT([noidea],[1.0])
+AC_PREREQ([2.5.9])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS([config.h])
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_INSTALL
+AM_PROG_LIBTOOL
+
+API_INCLUDE_DIR=
+TOWHEE_SRC_DIR=
+TOWHEE_LIB=
+TOWHEE_INSTALL_DIR="."
+JAVA_INSTALL_DIR=
+USER_INCLUDES=
+
+case $host in
+  *-*-linux*)
+    LIBFLAG="-shared"
+    CXXFLAGS="$CXXFLAGS -O1 -v"
+    ;;
+  *-apple-darwin*)
+    LIBFLAG="-dynamiclib -arch $host_cpu -framework JavaVM -undefined dynamic_lookup"
+    CXXFLAGS="$CXXFLAGS -O1 -v"
+    AC_ARG_WITH(jni-install,
+    [  --with-jni-install=dir  Location of the Java installation directory(which will contain a Header directory)],
+      JAVA_INSTALL_DIR=$withval)
+    if test ! -d "$JAVA_INSTALL_DIR"; then
+      AC_MSG_ERROR([Must use the --with-jni-install directive with
+      a valid directory.])
+    fi
+    USER_INCLUDES="$USER_INCLUDES -I$JAVA_INSTALL_DIR/Headers"
+    ;;
+esac
+
+AC_ARG_WITH(api-include,
+[  --with-api-include=dir  Location of the C++ include files],
+  API_INCLUDE_DIR=$withval)
+if test ! -d "$API_INCLUDE_DIR"; then
+  AC_MSG_ERROR([Must use the --with-api-include directive with
+a valid directory.])
+fi
+USER_INCLUDES="$USER_INCLUDES -I$API_INCLUDE_DIR"
+
+AC_ARG_WITH(towhee-install,
+[  --with-towhee-install=dir  Location of the Towhee source directory],
+  TOWHEE_SRC_DIR=$withval)
+if test ! -d "$TOWHEE_SRC_DIR"; then
+  AC_MSG_ERROR([Must use the --with-towhee-install directive with
+a valid directory.])
+fi
+USER_INCLUDES="$USER_INCLUDES -I$TOWHEE_SRC_DIR"
+
+AC_ARG_WITH(towhee-lib-dir,
+[  --with-towhee-lib-dir=dir  Location of the towhee shared object library],
+  TOWHEE_LIB=$withval)
+# THIS NEXT TEST IS NOT WORKING
+if test !  "$TOWHEE_LIB/libtowhee.so"; then
+  AC_MSG_ERROR([Must use the --with-towhee-lib-dir directive with
+a directory that has a valid libtowhee.so.])
+fi
+TOWHEE_LIB="-L$TOWHEE_LIB -ltowhee"
+
+AC_ARG_WITH(install-dir,
+[  --with-install-dir=dir  Location to install towhee adapter library],
+  TOWHEE_INSTALL_DIR=$withval)
+
+AC_SUBST(USER_INCLUDES)
+AC_SUBST(TOWHEE_LIB)
+AC_SUBST(LIBFLAG)
+AC_SUBST(TOWHEE_INSTALL_DIR)
+
+AC_PREFIX_DEFAULT([${PWD}])
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+src/Glue/Makefile
+])
+AC_OUTPUT
+
+
