@@ -136,6 +136,8 @@ The simplest way to compile this package is (after Towhee is built):
                                       installed.  This should be the directory
                                       where the make command would be issued
                                       to build Towhee.
+     --with-towhee-lib-dir (required) The directory where the Towhee shared
+                                      object library is installed.
      --with-install-dir (optional)    The directory where the Towhee sniffer
                                       library should be installed.  The default
                                       is the directory where the sniffer source

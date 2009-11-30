@@ -70,7 +70,7 @@ USRLIB =	$(TOWHEE_LIB)
 all:	lib
 
 lib: 	$(OBJ)
-	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIBS) $(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIB) $(OBJ)
 
 clean:
 	rm *.o *.so
