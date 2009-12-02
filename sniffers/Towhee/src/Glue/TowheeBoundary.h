@@ -29,7 +29,7 @@ namespace towheesnifferwrappers
 
             void setBoxSize(IAPIVector *v);
             IAPIVector *getBoxSize();
-            double volume();
+            virtual double volume() = 0;
             virtual void nearestImage(IAPIVectorMutable *v) = 0;
             virtual IAPIVector *centralImage(IAPIVector *v) = 0;
             void setBox(IAPIBox *box);
@@ -42,6 +42,8 @@ namespace towheesnifferwrappers
         protected:
             IAPIVectorMutable *mDimensions;
             IAPIVectorMutable *mCenter;
+            IAPIVectorMutable *mEdgeVector;
+            TowheeSpace *mSpace;
     };
 }
 

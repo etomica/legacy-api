@@ -304,7 +304,6 @@ printf("  species : %d   num atoms : %d\n", i, numAtoms); fflush(stdout);
                 species->setIndex(i-1);
             }
             else {
-printf("MULTI-ATOMIC SPECIES DOES NOT EXIST YET.\n"); fflush(stdout);
                 species = new TowheeSpeciesSpheresHetero(this);
 
                 // Get atom types for the molecule

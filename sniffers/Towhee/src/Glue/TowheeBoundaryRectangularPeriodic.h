@@ -28,7 +28,7 @@ namespace towheesnifferwrappers
             virtual IAPIVector *centralImage(IAPIVector *v);
             virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
-
+            double volume();
     };
 }
 

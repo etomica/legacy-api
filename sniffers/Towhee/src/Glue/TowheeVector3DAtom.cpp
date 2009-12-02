@@ -65,7 +65,10 @@ namespace towheesnifferwrappers
         int set = GLB_SET;
         int moleIndex = mAtom->getParentGroup()->getIndex()+1;
         int atomIndex = mAtom->getIndex()+1;
-printf("args : %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
+//printf("SETTING ---------------------\n");
+//printf("  args : %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
+//printf("  vals : %f  %f  %f\n", vecPos[0], vecPos[1], vecPos[2]); fflush(stdout);
+//printf("DONE SETTING ---------------------\n");
 
         (*mFunction)(&set, &iArg1, &moleIndex, &atomIndex, &vecPos[0], &vecPos[1], &vecPos[2]);
 
@@ -75,7 +78,7 @@ printf("args : %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
         int ctrInitial = CTR_INITIAL;
         int failFlag;
         int ibox = dynamic_cast<TowheeMolecule *>(mAtom->getParentGroup())->getBox()->getIndex()+1;
-printf("ibox : %d  moleIndex : %d\n", ibox, moleIndex); fflush(stdout);
+//printf("ibox : %d  moleIndex : %d\n", ibox, moleIndex); fflush(stdout);
         twh_ctrmas_(&failFlag, &tCoord, &ibox, &moleIndex, &ctrInitial);
 
     }

@@ -13,8 +13,10 @@ namespace towheesnifferwrappers
 {
 
     TowheeBoundary::TowheeBoundary(TowheeSpace *space) {
+        mSpace = space;
         mDimensions = space->makeVector();
         mCenter = space->makeVector();
+        mEdgeVector = space->makeVector();
     }
 
     /*
@@ -32,12 +34,6 @@ namespace towheesnifferwrappers
      */
     IAPIVector *TowheeBoundary::getBoxSize() {
         return mDimensions;
-    }
-
-    /*
-     * volume()
-     */
-    double TowheeBoundary::volume() {
     }
 
     /*

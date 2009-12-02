@@ -5,6 +5,7 @@
  */
 
 #include "preproc.h"
+#include "stdio.h"
 
 #include "TowheeAtomType.h"
 
@@ -61,10 +62,10 @@ namespace towheesnifferwrappers
      * getMass()
      */
     double TowheeAtomType::getMass() {
-        int set = GLB_SET;
+        int get = GLB_GET;
         int idx = mIndex + 1;
         double mass;
-        twh_mass_(&set, &idx, &mass);
+        twh_mass_(&get, &idx, &mass);
         return mass;
     }
 
