@@ -46,6 +46,7 @@ extern "C" { void set_towhee_input_file(char *); }
 extern "C" { void twh_io_directory_c_(int *, char *, int *); }
 extern "C" { void twh_initialize_(int *); }
 extern "C" { void twh_temperature_(int *, double *); }
+extern "C" { void twh_boxvclassic_(int *, int *, double *); }
 
 
 namespace towheesnifferwrappers
@@ -165,6 +166,20 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
         twh_temperature_(&get, &temp);
 
         return temp;
+    }
+
+    /*
+     * getgetTotalEnergy()
+     */
+    double TowheeSimulationSniffer::getTotalEnergy(IAPIBox *box) {
+        double energy;
+        int ibox = box->getIndex() + 1;
+        int get = GLB_GET;
+
+        twh_boxvclassic_(&get, &ibox, &energy);
+
+        return energy;
+
     }
 
     /*

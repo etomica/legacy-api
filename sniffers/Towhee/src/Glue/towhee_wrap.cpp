@@ -4812,6 +4812,20 @@ JNIEXPORT jboolean JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeBoundaryR
 }
 
 
+JNIEXPORT jdouble JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeBoundaryRectangularPeriodic_1volume(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jdouble jresult = 0 ;
+  towheesnifferwrappers::TowheeBoundaryRectangularPeriodic *arg1 = (towheesnifferwrappers::TowheeBoundaryRectangularPeriodic *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeBoundaryRectangularPeriodic **)&jarg1; 
+  result = (double)(arg1)->volume();
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
 JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeBoundaryRectangularPeriodic(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   towheesnifferwrappers::TowheeBoundaryRectangularPeriodic *arg1 = (towheesnifferwrappers::TowheeBoundaryRectangularPeriodic *) 0 ;
   
@@ -6975,6 +6989,22 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSimulationSni
   arg1 = *(towheesnifferwrappers::TowheeSimulationSniffer **)&jarg1; 
   arg2 = *(molesimAPI::IAPIIntegrator **)&jarg2; 
   (arg1)->setIntegrator(arg2);
+}
+
+
+JNIEXPORT jdouble JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSimulationSniffer_1getTotalEnergy(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  jdouble jresult = 0 ;
+  towheesnifferwrappers::TowheeSimulationSniffer *arg1 = (towheesnifferwrappers::TowheeSimulationSniffer *) 0 ;
+  molesimAPI::IAPIBox *arg2 = (molesimAPI::IAPIBox *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeSimulationSniffer **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIBox **)&jarg2; 
+  result = (double)(arg1)->getTotalEnergy(arg2);
+  jresult = (jdouble)result; 
+  return jresult;
 }
 
 

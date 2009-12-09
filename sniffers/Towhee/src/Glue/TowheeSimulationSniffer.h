@@ -48,6 +48,7 @@ namespace towheesnifferwrappers
             void sniff();
             double getTemp();
             void setIntegrator(IAPIIntegrator *integrator);
+            double getTotalEnergy(IAPIBox *box);
 
         private:
             void sniffBoxes();

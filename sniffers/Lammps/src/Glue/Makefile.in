@@ -1,0 +1,38 @@
+@SET_MAKE@
+
+USER_INCLUDES = @USER_INCLUDES@
+LAMMPS_LIB = @LAMMPS_LIB@
+LIBFLAG = @LIBFLAG@
+LAMMPS_INSTALL_DIR = @LAMMPS_INSTALL_DIR@
+
+SRC =	
+
+LIB = liblammps_sniffer.so
+INCLUDES = $(USER_INCLUDES)
+OBJ =   $(SRC:.cpp=.o)
+
+CCFLAGS =       -O1 -fPIC -g #-Wno-deprecated
+ARCHIVE =	ar
+ARCHFLAG =	-rc
+DEPFLAGS =      -M
+LINK =         	g++
+LINKFLAGS =	-O1
+USRLIB =	$(LAMMPS_LIB)
+
+all:	lib
+
+lib: 	$(OBJ)
+	$(CXX) $(LIBFLAG) -o $(LIB) $(INCLUDES) $(USRLIB) $(OBJ)
+
+clean:
+	rm *.o *.so
+
+install: lib
+	mv *.so $(LAMMPS_INSTALL_DIR)
+
+%.o:%.cpp
+	$(CC) $(CCFLAGS) $(INCLUDES) -c $<
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
