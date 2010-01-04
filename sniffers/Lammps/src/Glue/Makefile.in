@@ -5,7 +5,14 @@ LAMMPS_LIB = @LAMMPS_LIB@
 LIBFLAG = @LIBFLAG@
 LAMMPS_INSTALL_DIR = @LAMMPS_INSTALL_DIR@
 
-SRC =	
+SRC =	LammpsBoundary.cpp \
+	LammpsSimulation.cpp \
+	LammpsSpace.cpp \
+	LammpsVector.cpp \
+	LammpsVector2D.cpp \
+	LammpsVector3D.cpp \
+	lammps_wrap.cpp
+
 
 LIB = liblammps_sniffer.so
 INCLUDES = $(USER_INCLUDES)
