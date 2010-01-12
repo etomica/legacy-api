@@ -17,15 +17,18 @@
 
 namespace lammpssnifferwrappers
 {
-/*
+
     LammpsVector3D::LammpsVector3D() {
         D = 3;
-        pos = (double *) malloc (D * sizeof(double));
-        (pos)[0] = 0.0;
-        (pos)[1] = 0.0;
-        (pos)[2] = 0.0;
+        pos = (double **) malloc (D * sizeof(double *));
+        pos[0] = (double *) malloc (1 * sizeof(double));
+        pos[1] = (double *) malloc (1 * sizeof(double));
+        pos[2] = (double *) malloc (1 * sizeof(double));
+        *(pos)[0] = 0.0;
+        *(pos)[1] = 0.0;
+        *(pos)[2] = 0.0;
     }
-
+/*
     LammpsVector3D::LammpsVector3D(double v1, double v2, double v3) {
         D = 3;
         pos = (double *) malloc (D * sizeof(double));

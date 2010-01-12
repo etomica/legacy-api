@@ -67,14 +67,14 @@
 #include "LammpsNVTAsphere.h"
 #include "LammpsNVTSphere.h"
 #include "LammpsNVTSllod.h"
-#include "LammpsAtom.h"
 */
+#include "LammpsAtom.h"
 #include "LammpsBoundary.h"
-/*
 #include "LammpsBox.h"
 #include "LammpsBoxEventManager.h"
 #include "LammpsMolecule.h"
 #include "LammpsSpeciesManager.h"
+/*
 #include "LammpsSimulationEvent.h"
 #include "LammpsSimulationBoxEvent.h"
 #include "LammpsSimulationSpeciesEvent.h"
@@ -83,21 +83,20 @@
 #include "LammpsSimulationAtomTypeEvent.h"
 #include "LammpsSimulationAtomTypeIndexEvent.h"
 #include "LammpsSimulationListenerNative.h"
-#include "LammpsSimulationEventManager.h"
 */
+#include "LammpsSimulationEventManager.h"
 #include "LammpsSimulation.h"
-/*
 #include "LammpsAtomList.h"
 #include "LammpsMoleculeList.h"
-*/
 #include "LammpsVector.h"
 #include "LammpsVector2D.h"
 #include "LammpsVector3D.h"
-/*
 #include "LammpsAtomType.h"
+/*
 #include "LammpsAtomTypeSphere.h"
 #include "LammpsConformation.h"
 #include "LammpsNativeConformation.h"
+*/
 #include "LammpsSpecies.h"
 #include "LammpsSpeciesSpheres.h"
 #include "LammpsBoundaryPeriodic.h"
@@ -105,13 +104,16 @@
 #include "LammpsBoundaryShrink.h"
 #include "LammpsBoundaryShrinkMin.h"
 #include "LammpsBoundaryCustom.h"
+/*
 #include "LammpsBoundaryDeformable.h"
 #include "LammpsAtomPositionDefinition.h"
 #include "LammpsNativeAtomPositionDefinition.h"
+*/
 #include "LammpsRandom.h"
 #include "LammpsIntegratorEventManager.h"
 #include "LammpsIntegratorListenerNative.h"
 #include "LammpsIntegrator.h"
+/*
 #include "LammpsIntegratorRespa.h"
 #include "LammpsIntegratorVerlet.h"
 #include "PotentialGroup.h"
@@ -214,8 +216,8 @@ using namespace molesimAPI;
 %include "LammpsSimulationAtomTypeEvent.h"
 %include "LammpsSimulationAtomTypeIndexEvent.h"
 %include "LammpsSimulationListenerNative.h"
-%include "LammpsSimulationEventManager.h"
 */
+%include "LammpsSimulationEventManager.h"
 %include "LammpsSimulation.h"
 /*
 %include "LammpsTemperatureRescale.h"
@@ -233,25 +235,24 @@ using namespace molesimAPI;
 %include "LammpsNVTAsphere.h"
 %include "LammpsNVTSphere.h"
 %include "LammpsNVTSllod.h"
-%include "LammpsAtom.h"
 */
+%include "LammpsAtom.h"
 %include "LammpsBoundary.h"
-/*
 %include "LammpsBox.h"
 %include "LammpsBoxEventManager.h"
 %include "LammpsMolecule.h"
 %include "LammpsSpeciesManager.h"
 %include "LammpsAtomList.h"
 %include "LammpsMoleculeList.h"
-*/
 %include "LammpsVector.h"
 %include "LammpsVector2D.h"
 %include "LammpsVector3D.h"
-/*
 %include "LammpsAtomType.h"
+/*
 %include "LammpsAtomTypeSphere.h"
 %include "LammpsConformation.h"
 %include "LammpsNativeConformation.h"
+*/
 %include "LammpsSpecies.h"
 %include "LammpsSpeciesSpheres.h"
 %include "LammpsBoundaryPeriodic.h"
@@ -259,13 +260,16 @@ using namespace molesimAPI;
 %include "LammpsBoundaryShrink.h"
 %include "LammpsBoundaryShrinkMin.h"
 %include "LammpsBoundaryCustom.h"
+/*
 %include "LammpsBoundaryDeformable.h"
 %include "LammpsAtomPositionDefinition.h"
 %include "LammpsNativeAtomPositionDefinition.h"
+*/
 %include "LammpsRandom.h"
 %include "LammpsIntegratorEventManager.h"
 %include "LammpsIntegratorListenerNative.h"
 %include "LammpsIntegrator.h"
+/*
 %include "LammpsIntegratorRespa.h"
 %include "LammpsIntegratorVerlet.h"
 %include "PotentialGroup.h"

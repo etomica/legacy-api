@@ -18,11 +18,10 @@
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
 #include "IAPIPotentialMaster.h"
-//#include "LammpsBox.h"
 #include "LammpsSpace.h"
-//#include "LammpsSpeciesManager.h"
+#include "LammpsSpeciesManager.h"
 
-//#include "IDManager.h"
+#include "IDManager.h"
 
 using namespace LAMMPS_NS;
 using namespace molesimAPI;
@@ -34,14 +33,13 @@ namespace lammpssnifferwrappers
 //    class LammpsNeighborList;
 //    class LammpsRegion;;
 
-    class LammpsSimulation /*: public virtual IAPISimulation*/ {
+    class LammpsSimulation : public virtual IAPISimulation {
 
         public:
             LammpsSimulation(int D);
             ~LammpsSimulation();
 
             // API Compliance
-/*
             void addBox(IAPIBox *);
             void removeBox(IAPIBox *);
             IAPIRandom *getRandom();
@@ -53,7 +51,6 @@ namespace lammpssnifferwrappers
             int getSpeciesCount();
             IAPISpecies *getSpecies(int index);
             IAPIIntegrator *getIntegrator();
-*/
 
             // Non-API methods
             LammpsSpace *getSpace();
@@ -65,42 +62,36 @@ namespace lammpssnifferwrappers
             double getPE();
             double getTotalEnergy();
             void addRegionWithAtoms(LammpsRegion *region);
-            void setIntegrator(IAPIIntegrator *integrator);
 */
 
             LAMMPS *getLammpsSim() { return mLammpsSim; }
 /*
-            void setState(int state);
-            int getState();
             IDManager *getMoleculeIDMgr();
-            IDManager *getFixIDMgr();
             IDManager *getRegionIDMgr();
-            void lammpsSetup();
-
-            static const int UNINITIALIZED;
-            static const int CREATING_ATOMS;
-            static const int INITIALIZED;
 */
+            IDManager *getFixIDMgr();
+
+            void sniff();
 
         protected:
             LAMMPS *mLammpsSim;
-//            std::vector<IAPIBox *> mBox;
-//            IAPISimulationEventManager *mEventManager;
-//            LammpsSpeciesManager *mSpeciesManager;
+            std::vector<IAPIBox *> mBox;
+            LammpsSpeciesManager *mSpeciesManager;
+            IAPISimulationEventManager *mEventManager;
 
         private:
 /*
             void init();
             void initThermo();
-            IAPIRandom *mRand;
             int initialized;
             IDManager *moleculeIDManager;
-            IDManager *fixIDManager;
             IDManager *regionIDManager;
             bool thermoInit;
-            IAPIIntegrator *mIntegrator;
             std::vector<LammpsRegion *>atomRegionList;
 */
+            IDManager *fixIDManager;
+            IAPIIntegrator *mIntegrator;
+            IAPIRandom *mRand;
             LammpsSpace *mSpace;
     };
 }

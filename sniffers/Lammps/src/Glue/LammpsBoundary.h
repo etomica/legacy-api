@@ -42,9 +42,6 @@ namespace lammpssnifferwrappers
             virtual bool getPeriodicity(int d) = 0;
             IAPIBoundaryEventManager *getEventManager();
 
-            // Non-API methods
-            virtual void lammpsSetup() = 0;
-
         protected:
             LammpsSpace *mSpace;
             LammpsSimulation *mSim;

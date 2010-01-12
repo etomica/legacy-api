@@ -5,12 +5,33 @@ LAMMPS_LIB = @LAMMPS_LIB@
 LIBFLAG = @LIBFLAG@
 LAMMPS_INSTALL_DIR = @LAMMPS_INSTALL_DIR@
 
-SRC =	LammpsBoundary.cpp \
+SRC =	LammpsAtom.cpp \
+	LammpsAtomList.cpp \
+	LammpsAtomType.cpp \
+	LammpsBoundary.cpp \
+	LammpsBoundaryCustom.cpp \
+	LammpsBoundaryFixed.cpp \
+	LammpsBoundaryPeriodic.cpp \
+	LammpsBoundaryShrink.cpp \
+	LammpsBoundaryShrinkMin.cpp \
+	LammpsBox.cpp \
+	LammpsBoxEventManager.cpp \
+	LammpsIntegrator.cpp \
+	LammpsIntegratorEventManager.cpp \
+	LammpsIntegratorListenerNative.cpp \
+	LammpsMolecule.cpp \
+	LammpsMoleculeList.cpp \
+	LammpsRandom.cpp \
 	LammpsSimulation.cpp \
+	LammpsSimulationEventManager.cpp \
 	LammpsSpace.cpp \
+	LammpsSpecies.cpp \
+	LammpsSpeciesManager.cpp \
+	LammpsSpeciesSpheres.cpp \
 	LammpsVector.cpp \
 	LammpsVector2D.cpp \
 	LammpsVector3D.cpp \
+	IDManager.cpp \
 	lammps_wrap.cpp
 
 

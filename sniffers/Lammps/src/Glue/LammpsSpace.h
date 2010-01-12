@@ -20,7 +20,7 @@ namespace lammpssnifferwrappers
             LammpsSpace(int dim);
 
             int getD();
-//            IAPIVectorMutable *makeVector();
+            IAPIVectorMutable *makeVector();
             IAPIVectorMutable *makeVector(double **vals);
 
         private:

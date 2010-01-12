@@ -12,89 +12,27 @@
 #include "LammpsAtom.h"
 #include "LammpsAtomType.h"
 
-namespace lammpswrappers
+namespace lammpssnifferwrappers
 {
 
-    LammpsAtom::LammpsAtom(IAPISimulation *sim) {
-        init(sim, 0.0, 0.0, 0.0, new LammpsAtomType());
-    }
+    LammpsAtom::LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at) {
 
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, IAPIAtomType *at) {
-        init(sim, 0.0, 0.0, 0.0, at);
-    }
-
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, double x,
-                                   double y, double z) {
-        init(sim, x, y, z, new LammpsAtomType());
-    }
-
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, double x, double y,
-                                   double z, IAPIAtomType *at) {
-        init(sim, x, y, z, at);
-    }
-
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, IAPIVector *pos) {
-        init(sim, pos->getX(0), pos->getX(1), pos->getX(2), new LammpsAtomType());
-    }
-
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, IAPIVector *pos,
-                                   IAPIAtomType *at) {
-        init(sim, pos->getX(0), pos->getX(1), pos->getX(2), at);
-    }
-
-    LammpsAtom::LammpsAtom(IAPISimulation *sim, IAPIAtomType *at, int leafIndex) {
-
-        mSim = dynamic_cast<LammpsSimulation *>(sim);
-
-printf("WARNING : LammpsAtom::init() -> hardcoded bond_per_atom is NOT ok.\n");
-mSim->getLammpsSim()->atom->bond_per_atom = 1;
-
-        setLeafIndex(leafIndex);
-        mAtomType = at;
-
-        mPosition = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->x[mLeafIndex]);
-        mVel = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->v[mLeafIndex]);
-        mForce = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->f[mLeafIndex]);
-
-        char command[512];
-
-        sprintf(command,
-                "mass %d %f",
-                mAtomType->getIndex(),
-                mAtomType->getMass());
-printf("lammps_command : %s\n", command); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), command);
-    }
-
-    void LammpsAtom::init(IAPISimulation *sim, double x, double y, double z, IAPIAtomType *at) {
-        mSim = dynamic_cast<LammpsSimulation *>(sim);
-
-printf("WARNING : LammpsAtom::init() -> hardcoded bond_per_atom is NOT ok.\n");
-mSim->getLammpsSim()->atom->bond_per_atom = 1;
+        mSim = sim;
 
         mAtomType = at;
 
-        char command[512];
-        sprintf(command,
-                "create_atoms %d single 0.0 0.0 0.0 units box",
-                mAtomType->getIndex());
-printf("lammps_command : %s\n", command); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), command);
+        double **pos = (double **) malloc (1 * sizeof(double *));
+        pos[0] = mSim->getLammpsSim()->atom->x[mLeafIndex];
+        mPosition = mSim->getSpace()->makeVector(pos);
 
-        int natoms = (int)mSim->getLammpsSim()->atom->natoms;
-        // lammps tags start at 1, leaf index start at 0
-        setLeafIndex(mSim->getLammpsSim()->atom->tag[natoms-1]-1);
+        double **vel = (double **) malloc (1 * sizeof(double *));
+        vel[0] = mSim->getLammpsSim()->atom->v[mLeafIndex];
+        mVel = mSim->getSpace()->makeVector(vel);
 
-        mPosition = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->x[mLeafIndex]);
-        mVel = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->v[mLeafIndex]);
-        mForce = mSim->getSpace()->makeVector(mSim->getLammpsSim()->atom->f[mLeafIndex]);
+        double **force = (double **) malloc (1 * sizeof(double *));
+        force[0] = mSim->getLammpsSim()->atom->f[mLeafIndex];
+        mForce = mSim->getSpace()->makeVector(force);
 
-        sprintf(command,
-                "mass %d %f",
-                mAtomType->getIndex(),
-                mAtomType->getMass());
-printf("lammps_command : %s\n", command); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), command);
     }
 
     /*
@@ -129,12 +67,7 @@ printf("lammps_command : %s\n", command); fflush(stdout);
      * setParent()
      */
     void LammpsAtom::setParent(IAPIMolecule *newParent) {
-        if(mSim->getState() == LammpsSimulation::UNINITIALIZED) {
-            parent = newParent;
-        }
-        else {
-            printf("ERROR : LammpsAtom::setParent CANNOT set parent after simulation is initialized.\n");
-        }
+        parent = newParent;
     }
 
     /*
