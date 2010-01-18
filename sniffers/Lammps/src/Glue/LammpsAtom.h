@@ -21,7 +21,7 @@ namespace lammpssnifferwrappers
     class LammpsAtom : public virtual IAPIAtom, public virtual IAPIAtomKinetic {
 
         public:
-            LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at);
+            LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at, int nIndex);
 
             // API Compliance
             int getIndex();
@@ -51,6 +51,7 @@ namespace lammpssnifferwrappers
             LammpsSimulation *mSim;
             IAPIMolecule *parent;
             int mIndex;
+            int nativeIndex;
 
     };
 }

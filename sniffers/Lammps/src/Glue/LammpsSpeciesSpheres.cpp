@@ -33,6 +33,8 @@ namespace lammpssnifferwrappers
      */
     IAPIMolecule *LammpsSpeciesSpheres::makeMolecule() {
 
+printf("LammpsSpeciesSpheres::makeMolecule() is NOT implemented.\n");
+/*
         LammpsMolecule *mole = new LammpsMolecule();
         std::map<IAPIAtomType *, int>::iterator it;
 printf("DEBUG : typelist size : %d\n", typeList.size()); fflush(stdout);
@@ -48,6 +50,8 @@ printf("added atom to molecule\n"); fflush(stdout);
         }
 
         return mole;
+*/
+        return NULL;
     }
 
     /*
@@ -58,26 +62,6 @@ printf("added atom to molecule\n"); fflush(stdout);
         type->setSpecies(this);
         typeList.push_back(type);
         typeCount.push_back(nAtoms);
-    }
-
-    /*
-     * makeMolecule() - Non-API
-     */
-    IAPIMolecule *LammpsSpeciesSpheres::makeMolecule(int leafIndex) {
-
-        LammpsMolecule *mole = NULL;
-
-        if(getAtomTypeCount() == 1 && typeCount.at(0) == 1) {
-            mole = new LammpsMolecule();
-            IAPIAtom *atom = new LammpsAtom(mSim, typeList.at(0));
-            mole->addChildAtom(atom);
-            atom->setIndex(0);
-        }
-        else {
-            printf("Cannot create a molecule in this manner that is multi-atomic.\n"); fflush(stdout);
-        }
-
-        return mole;
     }
 
 }

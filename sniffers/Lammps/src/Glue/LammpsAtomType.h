@@ -19,10 +19,10 @@ namespace lammpssnifferwrappers
     class LammpsAtomType : public virtual IAPIAtomType {
 
         public:
-            LammpsAtomType();
-            LammpsAtomType(double m);
-            LammpsAtomType(int at);
-            LammpsAtomType(int at, double m);
+//            LammpsAtomType();
+//            LammpsAtomType(double m);
+            LammpsAtomType(int at, int nIndex);
+            LammpsAtomType(int at, int nIndex, double m);
 
             // API Compliance : IAPIAtomType
             void setIndex(int index);
@@ -35,6 +35,9 @@ namespace lammpssnifferwrappers
             double rm();
             IAPIElement *getElement();
 
+            // Non-API
+            int getNativeIndex();
+
         protected:
             IAPIElement *mElement;
 
@@ -42,6 +45,7 @@ namespace lammpssnifferwrappers
             IAPISpecies *mSpecies;
             double       mMass;
             int mAtomType;
+            int nativeIndex;
             static const double DEFAULT_MASS;
             static const int DEFAULT_TYPE;
     };

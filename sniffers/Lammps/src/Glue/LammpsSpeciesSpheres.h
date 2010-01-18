@@ -35,7 +35,6 @@ namespace lammpssnifferwrappers
 
             // Non-API  methods
             void addChildType(IAPIAtomType *type, int nAtoms);
-            IAPIMolecule *makeMolecule(int leafIndex);
 
     };
 }

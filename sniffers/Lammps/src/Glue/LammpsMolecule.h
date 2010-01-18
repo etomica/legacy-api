@@ -24,7 +24,7 @@ namespace lammpssnifferwrappers
 
         public:
 
-            LammpsMolecule();
+            LammpsMolecule(int nIndex);
 
             // API Compliance
             int getIndex();
@@ -43,7 +43,7 @@ namespace lammpssnifferwrappers
         private:
             LammpsAtomList *mAtoms;
             int mIndex;
-//            int nativeMoleculeID;
+            int nativeMoleculeID;
 
     };
 }

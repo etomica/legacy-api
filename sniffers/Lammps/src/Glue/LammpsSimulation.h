@@ -93,6 +93,24 @@ namespace lammpssnifferwrappers
             IAPIIntegrator *mIntegrator;
             IAPIRandom *mRand;
             LammpsSpace *mSpace;
+            struct NativeSpecies {
+                int moleculeCount;
+//                struct *NativeMolecule;
+                int *moleculeID;
+// The following 2 could be retrieved from lammps using the molecule
+                int numAtomTypes; // total #, not unique #
+                int *atomTypes; // not a unique list
+            };
+            struct NativeMolecule {
+                int nativeID;
+                int atomCount;
+                int *nativeAtomID;
+//                NativeSpecies *species; // can't use this.  Using realloc!
+                int speciesIndex;
+            };
+            NativeMolecule *createMoleculeData(int *moleCount, int atomPos);
+            NativeSpecies *createSpeciesData(NativeMolecule **moles, int moleCount, int *speciesCount);
+
     };
 }
 

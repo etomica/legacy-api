@@ -15,22 +15,24 @@
 namespace lammpssnifferwrappers
 {
 
-    LammpsAtom::LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at) {
+    LammpsAtom::LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at, int nIndex) {
 
         mSim = sim;
 
         mAtomType = at;
 
+        nativeIndex = nIndex;
+
         double **pos = (double **) malloc (1 * sizeof(double *));
-        pos[0] = mSim->getLammpsSim()->atom->x[mLeafIndex];
+        pos[0] = mSim->getLammpsSim()->atom->x[nativeIndex];
         mPosition = mSim->getSpace()->makeVector(pos);
 
         double **vel = (double **) malloc (1 * sizeof(double *));
-        vel[0] = mSim->getLammpsSim()->atom->v[mLeafIndex];
+        vel[0] = mSim->getLammpsSim()->atom->v[nativeIndex];
         mVel = mSim->getSpace()->makeVector(vel);
 
         double **force = (double **) malloc (1 * sizeof(double *));
-        force[0] = mSim->getLammpsSim()->atom->f[mLeafIndex];
+        force[0] = mSim->getLammpsSim()->atom->f[nativeIndex];
         mForce = mSim->getSpace()->makeVector(force);
 
     }

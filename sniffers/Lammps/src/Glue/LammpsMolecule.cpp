@@ -15,9 +15,9 @@
 namespace lammpssnifferwrappers
 {
 
-    LammpsMolecule::LammpsMolecule() {
+    LammpsMolecule::LammpsMolecule(int nIndex) {
         mAtomType = NULL;
-//        nativeMoleculeID = nIndex;
+        nativeMoleculeID = nIndex;
         mAtoms = new LammpsAtomList();
 //        for(int i = 0; i < atomCount; i++) mAtoms->addAtom(atoms[i]);
         mIndex = -1;

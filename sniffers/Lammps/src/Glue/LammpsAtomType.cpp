@@ -14,6 +14,7 @@ namespace lammpssnifferwrappers
     const double LammpsAtomType::DEFAULT_MASS = 1.0;
     const int LammpsAtomType::DEFAULT_TYPE = 1;
 
+/*
     LammpsAtomType::LammpsAtomType() {
         mMass = DEFAULT_MASS;
         mAtomType = 0;
@@ -23,15 +24,18 @@ namespace lammpssnifferwrappers
         mMass = m;
         mAtomType = 0;
     }
+*/
 
-    LammpsAtomType::LammpsAtomType(int at) {
+    LammpsAtomType::LammpsAtomType(int at, int nIndex) {
         mMass = DEFAULT_MASS;
         mAtomType = at;
+        nativeIndex = nIndex;
     }
 
-    LammpsAtomType::LammpsAtomType(int at, double m) {
+    LammpsAtomType::LammpsAtomType(int at, int nIndex, double m) {
         mMass = m;
         mAtomType = at;
+        nativeIndex = nIndex;
     }
 
     /*
@@ -95,6 +99,13 @@ printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
      */
     IAPIElement *LammpsAtomType::getElement() {
         return mElement;
+    }
+
+    /*
+     * getNativeIndex()
+     */
+    int LammpsAtomType::getNativeIndex() {
+        return nativeIndex;
     }
 
 }
