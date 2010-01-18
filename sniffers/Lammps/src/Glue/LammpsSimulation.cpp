@@ -251,54 +251,8 @@ printf("ERROR : LammpsSimulation::removeBox() does NOT remove box from simulatio
      */
     void LammpsSimulation::sniff() {
 
-
         // Create boundary
-        /* From lammps source file domain.cpp :
-             if (c == 'p') boundary[idim][iside] = 0;
-             else if (c == 'f') boundary[idim][iside] = 1;
-             else if (c == 's') boundary[idim][iside] = 2;
-             else if (c == 'm') boundary[idim][iside] = 3;
-             else error->all("Illegal boundary command");
-        */
-        int boundaryType;
-        const int PERIODIC = 0;
-        const int NON_PERIODIC_FIXED = 1;
-        const int NON_PERIODIC_SHRINK = 2;
-        const int NON_PERIODIC_SHRINK_MIN = 3;
-        const int CUSTOM = 4;
-        for(int i = 0; i < mSpace->getD(); i++) {
-printf("DIM : %d  [0] = %d  [1] = %d\n", i, mLammpsSim->domain->boundary[i][0], mLammpsSim->domain->boundary[i][1]); fflush(stdout);
-            if(mLammpsSim->domain->boundary[i][0] !=
-               mLammpsSim->domain->boundary[i][1]) {
-                boundaryType = CUSTOM;
-                break;
-            }
-            if(i > 0 &&
-               mLammpsSim->domain->boundary[i][0] !=
-               mLammpsSim->domain->boundary[i-1][0]) {
-                boundaryType = CUSTOM;
-                break;
-            }
-            boundaryType = mLammpsSim->domain->boundary[i][0];
-        }
-
-        IAPIBoundary *boundary = NULL;
-
-        if(boundaryType == PERIODIC) {
-            boundary = new LammpsBoundaryPeriodic(this);
-        }
-        else if(boundaryType == NON_PERIODIC_FIXED) {
-            boundary = new LammpsBoundaryFixed(this);
-        }
-        else if(boundaryType == NON_PERIODIC_SHRINK) {
-            boundary = new LammpsBoundaryShrink(this);
-        }
-        else if(boundaryType == NON_PERIODIC_SHRINK_MIN) {
-            boundary = new LammpsBoundaryShrinkMin(this);
-        }
-        else if(boundaryType == CUSTOM) {
-printf("ERROR : custom boundary type not implemented yet.\n");
-        }
+        IAPIBoundary *boundary = createBoundary();
 
         // Create integrator
         mIntegrator = new LammpsIntegrator(this);
@@ -434,6 +388,29 @@ printf("Adding atom type to species idx : %d\n", specIdx);
 //printf("molecule species : %x     species : %x\n", molecules[moleIdx]->species, &species[specIdx]);
                     if(molecules[moleIdx]->speciesIndex == specIdx) {
 printf("Create molecule of species idx : %d\n", specIdx);
+                        LammpsMolecule *mole = new LammpsMolecule(molecules[moleIdx]->nativeID);
+
+                        // Create atoms for molecule
+                        for(int atomIdx = 0; atomIdx < molecules[moleIdx]->atomCount; atomIdx++) {
+
+                            LammpsAtomType *at = NULL;
+
+                            for(int allIdx = 0; allIdx < mLammpsSim->atom->ntypes; allIdx++) {
+                                if(species[specIdx].atomTypes[atomIdx] == atomType[allIdx]->getNativeIndex()) {
+                                  at = atomType[atomIdx];
+printf("    ATOM TYPE : %d\n", allIdx);
+                                  break;
+                                }
+                            }
+
+                            LammpsAtom *atom =
+                              new LammpsAtom(this, at,
+                                         molecules[moleIdx]->nativeAtomID[atomIdx]);
+printf("    CREATE THE ATOM : %d\n", molecules[moleIdx]->nativeAtomID[atomIdx]);
+
+                            // Add atom to molecule
+                            mole->addChildAtom(atom);
+                        }
                     }
                 }
             }
@@ -834,6 +811,61 @@ printf("  new species %d  atom type : %d\n", *speciesCount, species[*speciesCoun
    
     }
 
+    /*
+     * createBoundary()
+     */
+    IAPIBoundary *LammpsSimulation::createBoundary() {
+
+        // Create boundary
+        /* From lammps source file domain.cpp :
+             if (c == 'p') boundary[idim][iside] = 0;
+             else if (c == 'f') boundary[idim][iside] = 1;
+             else if (c == 's') boundary[idim][iside] = 2;
+             else if (c == 'm') boundary[idim][iside] = 3;
+             else error->all("Illegal boundary command");
+        */
+        int boundaryType;
+        const int PERIODIC = 0;
+        const int NON_PERIODIC_FIXED = 1;
+        const int NON_PERIODIC_SHRINK = 2;
+        const int NON_PERIODIC_SHRINK_MIN = 3;
+        const int CUSTOM = 4;
+        for(int i = 0; i < mSpace->getD(); i++) {
+printf("DIM : %d  [0] = %d  [1] = %d\n", i, mLammpsSim->domain->boundary[i][0], mLammpsSim->domain->boundary[i][1]); fflush(stdout);
+            if(mLammpsSim->domain->boundary[i][0] !=
+               mLammpsSim->domain->boundary[i][1]) {
+                boundaryType = CUSTOM;
+                break;
+            }
+            if(i > 0 &&
+               mLammpsSim->domain->boundary[i][0] !=
+               mLammpsSim->domain->boundary[i-1][0]) {
+                boundaryType = CUSTOM;
+                break;
+            }
+            boundaryType = mLammpsSim->domain->boundary[i][0];
+        }
+
+        IAPIBoundary *boundary = NULL;
+
+        if(boundaryType == PERIODIC) {
+            boundary = new LammpsBoundaryPeriodic(this);
+        }
+        else if(boundaryType == NON_PERIODIC_FIXED) {
+            boundary = new LammpsBoundaryFixed(this);
+        }
+        else if(boundaryType == NON_PERIODIC_SHRINK) {
+            boundary = new LammpsBoundaryShrink(this);
+        }
+        else if(boundaryType == NON_PERIODIC_SHRINK_MIN) {
+            boundary = new LammpsBoundaryShrinkMin(this);
+        }
+        else if(boundaryType == CUSTOM) {
+printf("ERROR : custom boundary type not implemented yet.\n");
+        }
+
+        return boundary;
+    }
 
 }
 

@@ -89,6 +89,7 @@ namespace lammpssnifferwrappers
             bool thermoInit;
             std::vector<LammpsRegion *>atomRegionList;
 */
+            IAPIBoundary *createBoundary();
             IDManager *fixIDManager;
             IAPIIntegrator *mIntegrator;
             IAPIRandom *mRand;
