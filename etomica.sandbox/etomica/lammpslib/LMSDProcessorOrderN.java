@@ -88,9 +88,8 @@ public class LMSDProcessorOrderN {
      */
     
     public void setDeltaTmax(int newDeltaTmax){
-        buffnum = newDeltaTmax;
         //Reduces the actual number of blocks to a multiple of 10;
-        buffnum = (int)Math.floor(buffnum/10);
+        buffnum = (int)Math.floor(Math.log10(newDeltaTmax));
     }
 
     public void fillArrays(){
@@ -111,9 +110,10 @@ public class LMSDProcessorOrderN {
     	try{
     		fileReader = new FileReader(msdInput);
         	buffReader = new BufferedReader(fileReader);
+        	jcount = new int[3][10];
         	
         	//LOOP OVER CONFIGURATION BLOCKS
-        	for (int i=1; i<numBlocks; i++){
+        	for (int i=1; i<numBlocks+1; i++){
                 System.out.println("Calculating for configuration block "+i);
                 
                 //Advance past Atom Number and "Atoms" lines.
@@ -133,8 +133,8 @@ public class LMSDProcessorOrderN {
                 
                 //LOOP OVER BUFFERS - 1deltaT, 10deltaT, 100deltaT....
 	            for(int b=0;b<buffnum;b++){
-	            	
-	            	if(i%(int)(Math.pow(10,b))==0){
+	   
+	            	if(i%(int)Math.pow(10,b)==0){
 	            			
 	            			//Copy 1detaT into current buffer start
 	            			for(int a=0; a<numAtoms; a++){
@@ -144,6 +144,7 @@ public class LMSDProcessorOrderN {
 	            			//PROCESS DATA FROM BUFFERS FOR: +XYZ MSD, +MSD PerAtom, +Z-profile
 	            			//loop over deltaT's
 	            			for(int j=0; j<10; j++){
+	            				if(j>i){continue;}
 	            				
 	            				//DENSITY PROFILE
 		            			if(b==1){
@@ -154,10 +155,11 @@ public class LMSDProcessorOrderN {
 	            				
 	            				//MAIN MSD CALC
 	            				for(int a=0; a<numAtoms; a++){
+	            					jcount[b][j]++;
 	            					//difference of current coordinate block and subsequent block in coordBlock array.
-	            					RsquaredXYZ[species[a]][(b+10)+j][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
-	            					RsquaredXYZ[species[a]][(b+10)+j][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
-	            					RsquaredXYZ[species[a]][(b+10)+j][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
+	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
+	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
 	            				}
 	            				
 	            				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
@@ -185,7 +187,7 @@ public class LMSDProcessorOrderN {
 	            		
 	            			//BOOKKEEPING STEP, FREE UP FIRST ROW
 	            			//Shift sampled values 1 row down the array for all species (work backwards)
-	                    	for(int dt=9; dt>-1; dt--){
+	                    	for(int dt=9; dt>0; dt--){
 		                    	for (int j=0; j<numAtoms; j++){
 	                                coordBlocks[b][dt][j].E(coordBlocks[b][dt-1][j]);
 	                            }
@@ -210,14 +212,23 @@ public class LMSDProcessorOrderN {
         for(int k=0; k<numSpecies; k++){
         	int speciesCount=0;
         	for(int a=0; a<species.length; a++){
-        		if(species[a]==k){speciesCount++;}
+        		if(species[a]==(k+1)){speciesCount++;}
         	}
-        	for (int i=0; i<RsquaredXYZ.length; i++){
-        			int dt = (i%10)*(int)Math.pow(10,(i/10));
-            		RsquaredXYZ[k][i][0] /= (speciesCount*(numBlocks-dt));
-            		RsquaredXYZ[k][i][1] /= (speciesCount*(numBlocks-dt));
-            		RsquaredXYZ[k][i][2] /= (speciesCount*(numBlocks-dt));
-            }
+        	int row=0;
+        	for(int b=0; b<buffnum; b++){
+	        	for (int j=0; j<10; j++){
+	        			int nt=(int)Math.pow(10,b)*j;
+	        			nt = speciesCount*(numBlocks-nt);
+	        			
+	        			System.out.println("-______________________-"+speciesCount+" "+nt+" "+jcount[b][j]);
+	        			System.out.println(RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]);
+	            		RsquaredXYZ[k][row][0] /= nt;
+	            		RsquaredXYZ[k][row][1] /= nt;
+	            		RsquaredXYZ[k][row][2] /= nt;            		
+	            		System.out.println("> "+nt+" "+RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]);
+	            		row++;
+	        	}
+        	}
     	}
         
         //Writes totalRsquared to file
@@ -226,10 +237,14 @@ public class LMSDProcessorOrderN {
             fileWriter.write(numAtoms+"\n");
             fileWriter.write(numBlocks+"\n");          
             
-            for(int j=0;j<numSpecies;j++){
-            	fileWriter.write("___SPECIES "+(j+1)+" Time dependent data for X,Y,Z_______________________\n");
-            	for(int i=0;i<RsquaredXYZ.length;i++){
-            		fileWriter.write((i%10)*(int)Math.pow(10,(i/10))+" "+RsquaredXYZ[j][i][0]+" "+RsquaredXYZ[j][i][1]+" "+RsquaredXYZ[j][i][2]+"\n");
+            for(int k=0;k<numSpecies;k++){
+            	int row=0;
+            	fileWriter.write("___SPECIES "+(k+1)+" Time dependent data for X,Y,Z_______________________\n");
+            	for(int b=0;b<buffnum;b++){
+            		for (int j=0; j<10; j++){
+	            		fileWriter.write(row+" "+((int)Math.pow(10,b)*j)+" "+RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]+"\n");
+	            		row++;
+            		}
             	}
             	fileWriter.write("\n");
             }
@@ -272,6 +287,7 @@ public class LMSDProcessorOrderN {
     private String[] coordString;
     private int[] species;
     private int numSpecies;
+    private int[][] jcount;
     
 
 }
