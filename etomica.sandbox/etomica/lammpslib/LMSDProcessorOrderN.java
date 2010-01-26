@@ -34,14 +34,14 @@ public class LMSDProcessorOrderN {
         try {
         	buffReader.readLine();
         	int numLines=2;
-        	
+        	species = new int[numAtoms];
         	for(int i=0; i<numAtoms; i++){
 	        	//count species
 	        	positionLine = buffReader.readLine();
 	        	coordString = positionLine.split(" ");
-	        	species = Integer.parseInt(coordString[0]);
-	        	if(species>numSpecies){
-	        		numSpecies=species;
+	        	species[i] = Integer.parseInt(coordString[0]);
+	        	if(species[i]>numSpecies){
+	        		numSpecies=species[i];
 	        	}
 	        	numLines++;
         	}
@@ -54,10 +54,8 @@ public class LMSDProcessorOrderN {
             }
             
             numBlocks = numLines/(numAtoms+2);
-            
-            //Reduces the acutal number of blocks to a multiple of 10;
-            blocknum = (int)Math.floor(Math.log(numBlocks));
-            deltaTmax = (int)Math.pow(10,blocknum);
+            //Reduces the actual number of blocks to a multiple of 10;
+            buffnum = (int)Math.floor(Math.log10(numBlocks));
             
         } catch(IOException e) {
             throw new RuntimeException("Problem reading "+inputFile+", caught IOException: " + e.getMessage());
@@ -69,13 +67,17 @@ public class LMSDProcessorOrderN {
             throw new RuntimeException("Couldn't shut down readers, caught IOException: " +e.getMessage());
         }
         
-        coordBlock1 = new IVectorMutable[numAtoms];
-        coordVector2 = space.makeVector();
         coordVectorAtom = space.makeVector();
-        for (int j=0; j<numAtoms; j++){
-            coordBlock1[j] = space.makeVector();
-        }
-       
+        
+    	coordBlocks = new IVectorMutable[buffnum][10][numAtoms];
+    	for(int b=0; b<buffnum; b++){
+        	for(int dt=0; dt<10; dt++){
+        		for (int j=0; j<numAtoms; j++){
+                    coordBlocks[b][dt][j] = space.makeVector();
+                }
+        	}
+    	}
+        
 	}
     
     /**
@@ -86,193 +88,180 @@ public class LMSDProcessorOrderN {
      */
     
     public void setDeltaTmax(int newDeltaTmax){
-        deltaTmax = newDeltaTmax;
+        buffnum = newDeltaTmax;
+        //Reduces the actual number of blocks to a multiple of 10;
+        buffnum = (int)Math.floor(buffnum/10);
     }
 
     public void fillArrays(){
-    	coordString = new String[4];
-    	int[] numAtomsS = new int[numSpecies];
-        
-    	//Total RMS displacement
-        double[] totalRsquared = new double[blocknum*10];
-        
+    	
+    	coordString = new String[4];                
         //XYZ Components
-        double[][][] RsquaredXYZ = new double[blocknum*10][3][numSpecies];
+        double[][][] RsquaredXYZ = new double[numSpecies][buffnum*10][3];
         
-        //Total RMS displacement per atom from longest blog
+        //Total RMS displacement per atom from longest block
         double[] RsquaredAtom = new double[numAtoms];
         
-        //Current Z direction
-        double[] Zlocation = new double[numAtoms];
-        
         //Create histogram instance for Z plane
-        HistogramNotSoSimple hist = new HistogramNotSoSimple(30, new DoubleRange(-30,30));
+        HistogramSimple histz = new HistogramSimple(30, new DoubleRange(-30,30));
         HistogramNotSoSimple histdelt1 = new HistogramNotSoSimple(30, new DoubleRange(-30,30));
         HistogramNotSoSimple histdelt2 = new HistogramNotSoSimple(30, new DoubleRange(-30,30));
         
-        //Fills Block1 and 2, subtracts, and fills totalRsquared.  Repeat.
-        for (int i=1; i<numBlocks; i++){
-            System.out.println("Solving for iteration "+i);
-        	try{
-        		fileReader = new FileReader(msdInput);
-            	buffReader = new BufferedReader(fileReader);
-                //Gets buffReader to start of block 1 in question
-                for (int j=0; j<(i-1)*(numAtoms+2)+2; j++){
-                    buffReader.readLine();
-                }
-                
-                //Block 1 Loop - Grabs XYZ lines from block 1
-                for (int k=0; k<numAtoms; k++){
-                    positionLine = buffReader.readLine();
-                    coordString = positionLine.split(" ");
-                    //get species number
-                    species = Integer.parseInt(coordString[0]);
-                    //count species
-                    numAtomsS[species-1]++;
-                    for (int l=1; l<coordString.length; l++) {
-                        coord = Double.valueOf(coordString[l]).doubleValue();
-                        coordBlock1[k].setX(l-1,coord);
-                    }
-                }
-                
-                //Block 2 Loop - Subtracts successive blocks from Block 1 (coordBlock1[]) - 
-                for (int deltaT=1; deltaT<deltaTmax+1; deltaT++){
-                	if (i + deltaT > numBlocks) {
-	                     continue;
-	                 }
-	            	
-                	buffReader.readLine();
-	            	buffReader.readLine();
-                	
-                	//Block 2 Loop over Atoms - Adds XYZ lines from block 2
-                    for (int iatom=0; iatom<numAtoms; iatom++){
-                    	/*//Restricts number of block pairs subtracted 
-                    	//skip head in deltaT
-                    	if(deltaT<(deltaTmax/2)){
-                    		buffReader.readLine();
-                    		continue;
-                    	}*/
-                       
-                    	String positionLine = buffReader.readLine();
-                        String [] coordString = positionLine.split(" ");
-                        species = Integer.parseInt(coordString[0]);
-                   
-                        for (int icoord=1; icoord<coordString.length; icoord++) {
-                            double coord = Double.valueOf(coordString[icoord]).doubleValue();
-                            coordVector2.setX(icoord-1,coord);
-                        }
-                        
-                        //Update totalRSquared
-                        
-                        //get Z location of atoms
-                        if(deltaT==10){
-                        	Zlocation[iatom] = coordVector2.getX(2);
-                        }
-                        //per Z Planar Diffusivity information
-                        if(deltaT==100){
-                        	coordVectorAtom.Ev1Mv2(coordVector2, coordBlock1[iatom]);
-                        	coordVectorAtom.setX(2, 0.0);
-                            RsquaredAtom[iatom]=coordVectorAtom.squared();
-                        	histdelt1.addValue(Zlocation[iatom], RsquaredAtom[iatom]);
-                        }
-                        //get per atom displacement in XY
-                        if(deltaT==deltaTmax){
-                            coordVectorAtom.Ev1Mv2(coordVector2, coordBlock1[iatom]);
-                        	coordVectorAtom.setX(2, 0.0);
-                            RsquaredAtom[iatom]=coordVectorAtom.squared();
-                           	hist.addValue(Zlocation[iatom],RsquaredAtom[iatom]);
-                           	histdelt2.addValue(Zlocation[iatom], RsquaredAtom[iatom]);
-                        }
-                        //record MSD per deltaT
-                        coordVector2.ME(coordBlock1[iatom]);
-                        totalRsquared[deltaT-1] += coordVector2.squared();
-                        //add X Y and Z for a particular deltaT and species
-                        for(int j=0;j<3;j++){
-                        	RsquaredXYZ[deltaT-1][j][species-1] += Math.pow(coordVector2.getX(j),2.0);
-                        }
 
-                    }
-                   
+    	try{
+    		fileReader = new FileReader(msdInput);
+        	buffReader = new BufferedReader(fileReader);
+        	
+        	//LOOP OVER CONFIGURATION BLOCKS
+        	for (int i=1; i<numBlocks; i++){
+                System.out.println("Calculating for configuration block "+i);
+                
+                //Advance past Atom Number and "Atoms" lines.
+                buffReader.readLine();
+                buffReader.readLine();
+        	
+                //READ IN CURRENT COORDINATE BLOCK
+                for (int k=0; k<numAtoms; k++){
+                	positionLine = buffReader.readLine();
+	                coordString = positionLine.split(" ");
+	                //get configuration and store in 1deltaT spot
+	                for (int l=1; l<coordString.length; l++) {
+	                    coord = Double.valueOf(coordString[l]).doubleValue();
+	                    coordBlocks[0][0][k].setX(l-1,coord);
+	                }
                 }
                 
-                fileReader.close();
-                buffReader.close();
-                
-                //break;
-            } catch(IOException e) {
-                throw new RuntimeException("Problem creating array of positions, caught IOException: " + e.getMessage());
-            }
-        }
+                //LOOP OVER BUFFERS - 1deltaT, 10deltaT, 100deltaT....
+	            for(int b=0;b<buffnum;b++){
+	            	
+	            	if(i%(int)(Math.pow(10,b))==0){
+	            			
+	            			//Copy 1detaT into current buffer start
+	            			for(int a=0; a<numAtoms; a++){
+	            				coordBlocks[b][0][a].E(coordBlocks[0][0][a]);
+	            			}
+	            			
+	            			//PROCESS DATA FROM BUFFERS FOR: +XYZ MSD, +MSD PerAtom, +Z-profile
+	            			//loop over deltaT's
+	            			for(int j=0; j<10; j++){
+	            				
+	            				//DENSITY PROFILE
+		            			if(b==1){
+		            				for(int a=0; a<numAtoms; a++){
+		            					histz.addValue(coordBlocks[b][0][a].getX(2));
+		            				}
+		            			}
+	            				
+	            				//MAIN MSD CALC
+	            				for(int a=0; a<numAtoms; a++){
+	            					//difference of current coordinate block and subsequent block in coordBlock array.
+	            					RsquaredXYZ[species[a]][(b+10)+j][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
+	            					RsquaredXYZ[species[a]][(b+10)+j][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
+	            					RsquaredXYZ[species[a]][(b+10)+j][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+	            				}
+	            				
+	            				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
+	            				if(b==2){
+	            					if(j==4){
+		            					for(int a=0; a<numAtoms; a++){
+		            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
+		            						//remove Z-component
+		            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2), 2);
+		        	                    	histdelt1.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
+		            					}
+	            					}
+	            					if(j==9){
+	            						for(int a=0; a<numAtoms; a++){
+		            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
+		            						//remove Z-component
+		            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2),2);
+		        	                    	histdelt2.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
+		            					}
+	            					}	
+	            				}
+	            				
+	            			//end loop over deltaT's (j);
+	            			}
+	            		
+	            			//BOOKKEEPING STEP, FREE UP FIRST ROW
+	            			//Shift sampled values 1 row down the array for all species (work backwards)
+	                    	for(int dt=9; dt>-1; dt--){
+		                    	for (int j=0; j<numAtoms; j++){
+	                                coordBlocks[b][dt][j].E(coordBlocks[b][dt-1][j]);
+	                            }
+	                    	}
+	    	                
+	                    //end if statement (choose buffer to work with)
+	    	            }
+	            		
+	            	//end loop over buffers	
+	            	}
+	            
+	            //end loop over configuration blocks
+        		}
+        	
+	        fileReader.close();
+	        buffReader.close();
+        } 
+        catch(IOException e) {throw new RuntimeException("Problem creating array of positions, caught IOException: " + e.getMessage());}
          
-        /*
-         * Each row of totalRsquared initially contains the summation of all
-         * the atoms position differences for a specific deltaT (i.e. row 
-         * three is the difference of block1 and block4, plus the difference 
-         * of block2 and block5, etc.)
-         * 
-         * These sums are being divided by the number of atoms, and the respective
-         * deltaT
-         */
-        for (int ideltaT=1; ideltaT<deltaTmax+1; ideltaT++){
-            totalRsquared[ideltaT-1] /= (numAtoms*(numBlocks-ideltaT));
-            for(int j=0;j<3;j++){
-            	for(int k=0; k<numSpecies; k++){
-            		RsquaredXYZ[ideltaT-1][j][k] /= (numAtomsS[k]*(numBlocks-ideltaT));
-            	}
+      
+        //WE'RE DONE! Normalize Rsquared Array. Length is buffnum*10.
+        for(int k=0; k<numSpecies; k++){
+        	int speciesCount=0;
+        	for(int a=0; a<species.length; a++){
+        		if(species[a]==k){speciesCount++;}
+        	}
+        	for (int i=0; i<RsquaredXYZ.length; i++){
+        			int dt = (i%10)*(int)Math.pow(10,(i/10));
+            		RsquaredXYZ[k][i][0] /= (speciesCount*(numBlocks-dt));
+            		RsquaredXYZ[k][i][1] /= (speciesCount*(numBlocks-dt));
+            		RsquaredXYZ[k][i][2] /= (speciesCount*(numBlocks-dt));
             }
-        }
+    	}
         
         //Writes totalRsquared to file
         try{
             fileWriter = new FileWriter(msdOutput, false);
             fileWriter.write(numAtoms+"\n");
-            fileWriter.write(numBlocks+"\n");
-            
-            fileWriter.write("__Total Rsquared for All Species________________________________\n");
-            for (int irow=0; irow<deltaTmax; irow++){
-                fileWriter.write(irow+"\t"+totalRsquared[irow]+"\n");
-            }
-            
+            fileWriter.write(numBlocks+"\n");          
             
             for(int j=0;j<numSpecies;j++){
             	fileWriter.write("___SPECIES "+(j+1)+" Time dependent data for X,Y,Z_______________________\n");
-            	for(int i=0;i<deltaTmax;i++){
-            		fileWriter.write(RsquaredXYZ[i][0][j]+" "+RsquaredXYZ[i][1][j]+" "+RsquaredXYZ[i][2][j]+"\n");
+            	for(int i=0;i<RsquaredXYZ.length;i++){
+            		fileWriter.write((i%10)*(int)Math.pow(10,(i/10))+" "+RsquaredXYZ[j][i][0]+" "+RsquaredXYZ[j][i][1]+" "+RsquaredXYZ[j][i][2]+"\n");
             	}
             	fileWriter.write("\n");
             }
             
-            fileWriter.write("___Per Atom Histogram Displacement Data_______________________\n");
-            fileWriter.write("+Range is "+hist.getXRange().minimum()+" to "+hist.getXRange().maximum()+".\n");
-            fileWriter.write("+Number of bins is "+hist.getNBins()+".\n");
-            for(int i=0;i<hist.getHistogram().length;i++){
-            	fileWriter.write(hist.getHistogram()[i]+"\n");	
+            fileWriter.write("___Density Profile_______________________\n");
+            fileWriter.write("+Range is "+histz.getXRange().minimum()+" to "+histz.getXRange().maximum()+".\n");
+            fileWriter.write("+Number of bins is "+histz.getNBins()+".\n");
+            for(int i=0;i<histz.getHistogram().length;i++){
+            	fileWriter.write(histz.getHistogram()[i]+"\n");	
             }
             
-            fileWriter.write("___Per Z-plane Diffusion Data_______________________\n");
-            fileWriter.write("+Range is "+hist.getXRange().minimum()+" to "+hist.getXRange().maximum()+".\n");
-            fileWriter.write("+Number of bins is "+hist.getNBins()+".\n");
+            fileWriter.write("___Z-plane Diffusion Data_______________________\n");
+            fileWriter.write("+Range is "+histdelt2.getXRange().minimum()+" to "+histdelt2.getXRange().maximum()+".\n");
+            fileWriter.write("+Number of bins is "+histdelt2.getNBins()+".\n");
             double D;
             for(int i=0;i<histdelt2.getHistogram().length;i++){
-            	D=(histdelt2.getHistogram()[i]-histdelt1.getHistogram()[i])/(4*50);
+            	D=(histdelt2.getHistogram()[i]-histdelt1.getHistogram()[i])/(4*500);
             	fileWriter.write(D+"\n");
             }
             
             fileWriter.close();
-            
-            fileReader.close();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
     
-	private IVectorMutable [] coordBlock1;
-	private IVectorMutable coordVector2, coordVectorAtom;
+	private IVectorMutable [][][] coordBlocks;
+	private IVectorMutable coordVectorAtom;
 	private int numAtoms;
     private int numBlocks;
-    private int deltaTmax;
-    private	int blocknum;
+    private	int buffnum;
 	private FileReader fileReader;
     private BufferedReader buffReader;
 	private FileWriter fileWriter;
@@ -281,7 +270,7 @@ public class LMSDProcessorOrderN {
     private double coord;
     private String positionLine;
     private String[] coordString;
-    private int species;
+    private int[] species;
     private int numSpecies;
     
 
