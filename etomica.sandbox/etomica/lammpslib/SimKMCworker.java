@@ -1,6 +1,5 @@
 package etomica.lammpslib;
 
-<<<<<<< SimKMCworker.java
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -75,17 +74,7 @@ public class SimKMCworker extends Simulation{
         String fileName = args[0];
         boolean ortho = Boolean.getBoolean(args[1]);
         
-        final String APP_NAME = "SimKMCworker";
-<<<<<<< SimKMCworker.java
-=======
-
-        final SimKMCMEAMadatom sim = new SimKMCMEAMadatom();
-        IVectorMutable vect = sim.getSpace().makeVector();
-        vect.setX(0, 9.8);
-        vect.setX(1, -0.2);
-        vect.setX(2, -0.2);
->>>>>>> 1.4
-        
+        final String APP_NAME = "SimKMCworker";        
         final SimKMCMEAMGB sim = new SimKMCMEAMGB(new int[] {1,0,1}, new int[] {3,3,8});
         final SimKMCworker worker = new SimKMCworker(sim.getSpace());
         

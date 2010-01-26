@@ -15,12 +15,6 @@ import etomica.box.Box;
 import etomica.chem.elements.Tin;
 import etomica.config.ConfigurationFile;
 import etomica.config.GrainBoundaryTiltConfiguration;
-import etomica.dimer.CalcVibrationalModes;
-import etomica.dimer.IntegratorDimerMin;
-import etomica.dimer.IntegratorDimerRT;
-import etomica.dimer.LammpsInterface;
-import etomica.dimer.PotentialCalculationForcePressureSumGB;
-import etomica.dimer.SimDimerMEAMGB;
 import etomica.graphics.ColorSchemeByType;
 import etomica.graphics.DisplayBox;
 import etomica.graphics.SimulationGraphic;
@@ -382,7 +376,7 @@ public class SimDimerMEAMGB extends Simulation{
         activityIntegrateMD.setMaxSteps(maxSteps);
     }
     
-public void enableDimerSearch(String fileName, long maxSteps, boolean orthoSearch, boolean fine){
+    public void enableDimerSearch(String fileName, long maxSteps, boolean orthoSearch, boolean fine){
         
         integratorDimer = new IntegratorDimerRT(this, lammpsSim, potentialMasterD, new ISpecies[]{movable}, space);
         integratorDimer.setBox(box);
@@ -435,7 +429,7 @@ public void enableDimerSearch(String fileName, long maxSteps, boolean orthoSearc
         */
         final String APP_NAME = "SimDimerMEAMGBCluster";
         
-        final SimDimerMEAMGB sim = new SimDimerMEAMGB(new int[] {2,0,1}, new int[] {6,4,50});        
+        final SimDimerMEAMGB sim = new SimDimerMEAMGB(new int[] {3,1,0}, new int[] {3,9,24});        
         sim.refreshSpecies();
    
         IVectorMutable dimerCenter = sim.getSpace().makeVector();
@@ -481,7 +475,7 @@ public void enableDimerSearch(String fileName, long maxSteps, boolean orthoSearc
 	    WriteConfiguration writer = new WriteConfiguration(sim.getSpace());
 	    writer.setBox(sim.box);
 	    writer.setConfName("tilt201-6450");
-	    writer.actionPerformed();
+	    //writer.actionPerformed();
 	    
 	    /**
 	    //STRUCTURE FACTOR CALCULATION
@@ -536,6 +530,9 @@ public void enableDimerSearch(String fileName, long maxSteps, boolean orthoSearc
 	    
 	    //System.exit(1);
 	    **/
+	    
+	    LXYZ2PropertyReader xyz2prop = new LXYZ2PropertyReader("310-300.xyz","blank",1000,sim.box,sim,sim.space);
+	    xyz2prop.actionPerformed();
 	    
 	    //sim.randomizePositions();
 	    //sim.setMovableAtomsSphere(10.0, dimerCenter);

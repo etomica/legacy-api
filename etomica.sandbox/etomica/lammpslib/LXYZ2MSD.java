@@ -1,9 +1,8 @@
 package etomica.lammpslib;
 
 import etomica.space3d.Space3D;
-import etomica.zeolite.MSDProcessor;
 
-public class xyz2msd {
+public class LXYZ2MSD {
 	
 	
 	
@@ -11,9 +10,10 @@ public class xyz2msd {
 		
 		String inputFile = args[0];
 		String outputFile = inputFile+".msd";
+		int dtmax = Integer.parseInt(args[1]);
 		
-		MSDProcessor msdproc =  new MSDProcessor(Space3D.getInstance(), inputFile, outputFile);
-		msdproc.setDeltaTmax(800);
+		LMSDProcessor msdproc =  new LMSDProcessor(Space3D.getInstance(), inputFile, outputFile);
+		msdproc.setDeltaTmax(dtmax);
 		msdproc.fillArrays();
 			
 		}
