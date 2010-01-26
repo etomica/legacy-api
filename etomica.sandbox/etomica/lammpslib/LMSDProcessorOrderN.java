@@ -132,70 +132,73 @@ public class LMSDProcessorOrderN {
                 }
                 
                 //LOOP OVER BUFFERS - 1deltaT, 10deltaT, 100deltaT....
+                int tb = 0;
 	            for(int b=0;b<buffnum;b++){
-	   
-	            	if(i%(int)Math.pow(10,b)==0){
+	                if (b == 0) {
+	                    tb = 1;
+	                }
+	                else {
+	                    tb *= 10;
+	                }
+            	   int maxj = i/tb;
+            	   if (maxj*tb != i) break;
 	            			
-	            			//Copy 1detaT into current buffer start
-	            			for(int a=0; a<numAtoms; a++){
-	            				coordBlocks[b][0][a].E(coordBlocks[0][0][a]);
-	            			}
-	            			
-	            			//PROCESS DATA FROM BUFFERS FOR: +XYZ MSD, +MSD PerAtom, +Z-profile
-	            			//loop over deltaT's
-	            			for(int j=0; j<10; j++){
-	            				if(j>i){continue;}
-	            				
-	            				//DENSITY PROFILE
-		            			if(b==1){
-		            				for(int a=0; a<numAtoms; a++){
-		            					histz.addValue(coordBlocks[b][0][a].getX(2));
-		            				}
-		            			}
-	            				
-	            				//MAIN MSD CALC
+            			//Copy 1detaT into current buffer start
+            			for(int a=0; a<numAtoms; a++){
+            				coordBlocks[b][0][a].E(coordBlocks[0][0][a]);
+            			}
+            			
+            			//PROCESS DATA FROM BUFFERS FOR: +XYZ MSD, +MSD PerAtom, +Z-profile
+            			//loop over deltaT's
+            			for(int j=1; j<maxj; j++){
+            				
+            				//DENSITY PROFILE
+	            			if(b==1){
 	            				for(int a=0; a<numAtoms; a++){
-	            					jcount[b][j]++;
-	            					//difference of current coordinate block and subsequent block in coordBlock array.
-	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
-	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
-	            					RsquaredXYZ[species[a]-1][(b*10)+(j)][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+	            					histz.addValue(coordBlocks[b][0][a].getX(2));
 	            				}
-	            				
-	            				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
-	            				if(b==2){
-	            					if(j==4){
-		            					for(int a=0; a<numAtoms; a++){
-		            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
-		            						//remove Z-component
-		            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2), 2);
-		        	                    	histdelt1.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
-		            					}
-	            					}
-	            					if(j==9){
-	            						for(int a=0; a<numAtoms; a++){
-		            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
-		            						//remove Z-component
-		            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2),2);
-		        	                    	histdelt2.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
-		            					}
-	            					}	
-	            				}
-	            				
-	            			//end loop over deltaT's (j);
 	            			}
-	            		
-	            			//BOOKKEEPING STEP, FREE UP FIRST ROW
-	            			//Shift sampled values 1 row down the array for all species (work backwards)
-	                    	for(int dt=9; dt>0; dt--){
-		                    	for (int j=0; j<numAtoms; j++){
-	                                coordBlocks[b][dt][j].E(coordBlocks[b][dt-1][j]);
-	                            }
-	                    	}
+            				
+            				//MAIN MSD CALC
+            				for(int a=0; a<numAtoms; a++){
+            					jcount[b][j]++;
+            					//difference of current coordinate block and subsequent block in coordBlock array.
+            					RsquaredXYZ[species[a]-1][(b*10)+(j)][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
+            					RsquaredXYZ[species[a]-1][(b*10)+(j)][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
+            					RsquaredXYZ[species[a]-1][(b*10)+(j)][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+            				}
+            				
+            				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
+            				if(b==2){
+            					if(j==4){
+	            					for(int a=0; a<numAtoms; a++){
+	            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
+	            						//remove Z-component
+	            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2), 2);
+	        	                    	histdelt1.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
+	            					}
+            					}
+            					if(j==9){
+            						for(int a=0; a<numAtoms; a++){
+	            						coordVectorAtom.Ev1Mv2(coordBlocks[b][j][a],coordBlocks[b][0][a]);
+	            						//remove Z-component
+	            						RsquaredAtom[a] = coordVectorAtom.squared()-Math.pow(coordVectorAtom.getX(2),2);
+	        	                    	histdelt2.addValue(coordBlocks[b][j][a].getX(2), RsquaredAtom[a]);
+	            					}
+            					}	
+            				}
+            				
+            			//end loop over deltaT's (j);
+            			}
+            		
+            			//BOOKKEEPING STEP, FREE UP FIRST ROW
+            			//Shift sampled values 1 row down the array for all species (work backwards)
+                        IVectorMutable[] lastBlock = coordBlocks[b][9];
+                    	for(int dt=9; dt>0; dt--){
+                    	    coordBlocks[b][dt] = coordBlocks[b][dt-1];
+                    	}
+                    	coordBlocks[b][0] = lastBlock;
 	    	                
-	                    //end if statement (choose buffer to work with)
-	    	            }
-	            		
 	            	//end loop over buffers	
 	            	}
 	            
