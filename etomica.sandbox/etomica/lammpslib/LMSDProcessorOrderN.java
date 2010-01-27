@@ -55,7 +55,7 @@ public class LMSDProcessorOrderN {
             
             numBlocks = numLines/(numAtoms+2);
             //Reduces the actual number of blocks to a multiple of 10;
-            buffnum = (int)Math.floor(Math.log10(numBlocks));
+            buffnum = (int)Math.floor(Math.log10(numBlocks))+1;
             
         } catch(IOException e) {
             throw new RuntimeException("Problem reading "+inputFile+", caught IOException: " + e.getMessage());
@@ -91,9 +91,9 @@ public class LMSDProcessorOrderN {
     	if(newDeltaTmax%10!=0){
     		System.out.println("DeltaTMax must be a multiple of 10.  Fixing...");
     		//Reduces the actual number of blocks to a multiple of 10;
-            buffnum = (int)Math.floor(Math.log10(newDeltaTmax));
+            buffnum = (int)Math.floor(Math.log10(newDeltaTmax))+1;
             if(newDeltaTmax>numBlocks){
-            	buffnum = (int)Math.floor(Math.log10(numBlocks));
+            	buffnum = (int)Math.floor(Math.log10(numBlocks))+1;
             }
             System.out.println("DeltaTMax is now "+(buffnum*10)+".");
             return;
@@ -101,12 +101,12 @@ public class LMSDProcessorOrderN {
     	
     	if(newDeltaTmax>numBlocks){
     		System.out.println("DeltaTMax must be smaller than the total number of configuration blocks.  Fixing...");
-    		buffnum = (int)Math.floor(Math.log10(numBlocks));
+    		buffnum = (int)Math.floor(Math.log10(numBlocks))+1;
     		System.out.println("DeltaTMax is now "+(Math.pow(10, buffnum))+".");
     		return;
     	}
-    	buffnum = (int)Math.floor(Math.log10(newDeltaTmax));
-    	System.out.println("DeltaTMax is now "+(Math.pow(10, buffnum))+".");
+    	buffnum = (int)Math.floor(Math.log10(newDeltaTmax))+1;
+    	System.out.println("DeltaTMax is now "+(Math.pow(10, buffnum))+1+".");
     }
 
     public void fillArrays(){
@@ -131,7 +131,7 @@ public class LMSDProcessorOrderN {
         	buffReader = new BufferedReader(fileReader);
         	
         	//LOOP OVER CONFIGURATION BLOCKS
-        	for (int i=1; i<numBlocks+1; i++){
+        	for (int i=0; i<numBlocks; i++){
                 System.out.println("Calculating for configuration block "+i);
                 
                 //Advance past Atom Number and "Atoms" lines.
@@ -159,14 +159,14 @@ public class LMSDProcessorOrderN {
                     int maxj = i/tb;
                     
             	    
-            		System.out.println(i+"  "+b+" "+tb+" "+maxj);
+ //           		System.out.println(i+"  "+b+" "+tb+" "+maxj);
             		
             		if (maxj*tb != i) break;
             		//Copy 1detaT into current buffer start
         			for(int a=0; a<numAtoms; a++){
         				coordBlocks[b][0][a].E(coordBlocks[0][0][a]);
         			}
-        			System.out.println(">Copied current position info into dt 0 for buffer "+b);
+  //      			System.out.println(">Copied current position info into dt 0 for buffer "+b);
 	            }
 	            
 	            //LOOP OVER BUFFERS TO PROCESS DATA
@@ -177,13 +177,13 @@ public class LMSDProcessorOrderN {
 	            	//set largest deltaT(maxj) in BUFFER
                     int maxj = i/tb;
                     if (maxj*tb != i) break;
-            	    if (maxj>10) maxj = 10;   
+            	    if (maxj>9) maxj = 9;   
             	    
-            		System.out.println(i+"  "+b+" "+tb+" "+maxj);
+//            		System.out.println(i+"  "+b+" "+tb+" "+maxj);
 	            
         			//PROCESS DATA FROM BUFFERS FOR: +XYZ MSD, +MSD PerAtom, +Z-profile
         			//loop over deltaT's
-        			for(int j=1; j<maxj; j++){
+        			for(int j=1; j<maxj+1; j++){
         				
         				jcount[b][j]++;
         				
@@ -194,7 +194,7 @@ public class LMSDProcessorOrderN {
             				}
             			}
         				
-            			System.out.println(">>Calculating MSD of dt "+j+" for buffer "+b);
+//            			if (b==1) System.out.println(">>Calculating MSD of dt "+j+" for buffer "+b);
         				
             			//MAIN MSD CALC
         				for(int a=0; a<numAtoms; a++){
@@ -202,7 +202,8 @@ public class LMSDProcessorOrderN {
         					//difference of current coordinate block and subsequent block in coordBlock array.
         					RsquaredXYZ[species[a]-1][b][j][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
         					RsquaredXYZ[species[a]-1][b][j][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
-        					RsquaredXYZ[species[a]-1][b][j][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+        					RsquaredXYZ[species[a]-1][b][j][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);
+
         				}
         				
         				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
@@ -231,7 +232,7 @@ public class LMSDProcessorOrderN {
         			//BOOKKEEPING STEP, FREE UP FIRST ROW IF WE COPIED CONFIGURATION DATA
         			IVectorMutable[] lastBlock = coordBlocks[b][9];
                 	for(int dt=9; dt>0; dt--){
-                		System.out.println(">>>Shifting blocks of dt "+dt+" for buffer "+b);
+//                		System.out.println(">>>Shifting blocks of dt "+dt+" for buffer "+b);
                 	    coordBlocks[b][dt] = coordBlocks[b][dt-1];
                 	}
                 	coordBlocks[b][0] = lastBlock;
@@ -262,7 +263,7 @@ public class LMSDProcessorOrderN {
         		else{tb*=10;};
 	        	for (int j=1; j<10; j++){
 	        			//finish average, normalize by number of SD sums
-	        			nt=speciesCount*((numBlocks/tb)-j);
+	        			nt=speciesCount*(((numBlocks-1)/tb)-j+1);
 	        			System.out.println(">> calc: "+nt+"  jcount: "+speciesCount*jcount[b][j]+"  "+(RsquaredXYZ[k][b][j][0]+RsquaredXYZ[k][b][j][1]+RsquaredXYZ[k][b][j][2]));
 	            		RsquaredXYZ[k][b][j][0] /= nt;
 	            		RsquaredXYZ[k][b][j][1] /= nt;
