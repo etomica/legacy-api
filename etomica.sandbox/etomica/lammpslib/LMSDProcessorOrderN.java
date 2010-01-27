@@ -96,7 +96,7 @@ public class LMSDProcessorOrderN {
     	
     	coordString = new String[4];                
         //XYZ Components
-        double[][][] RsquaredXYZ = new double[numSpecies][buffnum*10][3];
+        double[][][][] RsquaredXYZ = new double[numSpecies][buffnum][10][3];
         
         //Total RMS displacement per atom from longest block
         double[] RsquaredAtom = new double[numAtoms];
@@ -110,7 +110,6 @@ public class LMSDProcessorOrderN {
     	try{
     		fileReader = new FileReader(msdInput);
         	buffReader = new BufferedReader(fileReader);
-        	jcount = new int[3][10];
         	
         	//LOOP OVER CONFIGURATION BLOCKS
         	for (int i=1; i<numBlocks+1; i++){
@@ -134,16 +133,16 @@ public class LMSDProcessorOrderN {
                 //LOOP OVER BUFFERS - 1deltaT, 10deltaT, 100deltaT....
                 int tb = 0;
 	            for(int b=0;b<buffnum;b++){
-	                if (b == 0) {
-	                    tb = 1;
-	                }
-	                else {
-	                    tb *= 10;
-	                }
-            	   int maxj = i/tb;
-            	   if (maxj*tb != i) break;
-	            			
-            			//Copy 1detaT into current buffer start
+	                //catch for deltaT's larger than current buffReader position
+	            	if (b==0) {tb = 1;}
+	                else {tb *= 10;}
+	            	//set largest deltaT(maxj) in BUFFER
+                    int maxj = i/tb;
+                    if (maxj*tb != i) break;
+                    
+            	    if (maxj>10) maxj = 10;               
+            		System.out.println(i+"  "+b+" "+tb+" "+maxj);
+            	    	//Copy 1detaT into current buffer start
             			for(int a=0; a<numAtoms; a++){
             				coordBlocks[b][0][a].E(coordBlocks[0][0][a]);
             			}
@@ -161,11 +160,10 @@ public class LMSDProcessorOrderN {
             				
             				//MAIN MSD CALC
             				for(int a=0; a<numAtoms; a++){
-            					jcount[b][j]++;
             					//difference of current coordinate block and subsequent block in coordBlock array.
-            					RsquaredXYZ[species[a]-1][(b*10)+(j)][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
-            					RsquaredXYZ[species[a]-1][(b*10)+(j)][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
-            					RsquaredXYZ[species[a]-1][(b*10)+(j)][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
+            					RsquaredXYZ[species[a]-1][b][j][0] += Math.pow((coordBlocks[b][j][a].getX(0)-coordBlocks[b][0][a].getX(0)),2); 
+            					RsquaredXYZ[species[a]-1][b][j][1] += Math.pow((coordBlocks[b][j][a].getX(1)-coordBlocks[b][0][a].getX(1)),2);  
+            					RsquaredXYZ[species[a]-1][b][j][2] += Math.pow((coordBlocks[b][j][a].getX(2)-coordBlocks[b][0][a].getX(2)),2);  
             				}
             				
             				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
@@ -192,7 +190,7 @@ public class LMSDProcessorOrderN {
             			}
             		
             			//BOOKKEEPING STEP, FREE UP FIRST ROW
-            			//Shift sampled values 1 row down the array for all species (work backwards)
+            			//Shift sampled values via pointers.  Memory locations of data are maintained.
                         IVectorMutable[] lastBlock = coordBlocks[b][9];
                     	for(int dt=9; dt>0; dt--){
                     	    coordBlocks[b][dt] = coordBlocks[b][dt-1];
@@ -212,24 +210,26 @@ public class LMSDProcessorOrderN {
          
       
         //WE'RE DONE! Normalize Rsquared Array. Length is buffnum*10.
+        
         for(int k=0; k<numSpecies; k++){
+        	//count species
         	int speciesCount=0;
         	for(int a=0; a<species.length; a++){
         		if(species[a]==(k+1)){speciesCount++;}
         	}
-        	int row=0;
+        	int tb=1;
+        	int nt=0;
         	for(int b=0; b<buffnum; b++){
-	        	for (int j=0; j<10; j++){
-	        			int nt=(int)Math.pow(10,b)*j;
-	        			nt = speciesCount*(numBlocks-nt);
-	        			
-	        			System.out.println("-______________________-"+speciesCount+" "+nt+" "+jcount[b][j]);
-	        			System.out.println(RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]);
-	            		RsquaredXYZ[k][row][0] /= nt;
-	            		RsquaredXYZ[k][row][1] /= nt;
-	            		RsquaredXYZ[k][row][2] /= nt;            		
-	            		System.out.println("> "+nt+" "+RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]);
-	            		row++;
+        		if(b==0)tb=1;
+        		else{tb*=10;};
+	        	for (int j=1; j<10; j++){
+	        			//finish average, normalize by number of SD sums
+	        			nt=speciesCount*((numBlocks/tb)-j);
+	        			System.out.println(">>"+nt+" "+(RsquaredXYZ[k][b][j][0]+RsquaredXYZ[k][b][j][1]+RsquaredXYZ[k][b][j][2]));
+	            		RsquaredXYZ[k][b][j][0] /= nt;
+	            		RsquaredXYZ[k][b][j][1] /= nt;
+	            		RsquaredXYZ[k][b][j][2] /= nt;            		
+	            		System.out.println("> "+nt+" "+(RsquaredXYZ[k][b][j][0]+RsquaredXYZ[k][b][j][1]+RsquaredXYZ[k][b][j][2]));
 	        	}
         	}
     	}
@@ -237,16 +237,18 @@ public class LMSDProcessorOrderN {
         //Writes totalRsquared to file
         try{
             fileWriter = new FileWriter(msdOutput, false);
-            fileWriter.write(numAtoms+"\n");
-            fileWriter.write(numBlocks+"\n");          
+            fileWriter.write("Atoms: "+numAtoms+"\n");
+            fileWriter.write("Blocks: "+numBlocks+"\n");     
+            fileWriter.write("DeltaTMax: "+Math.pow(10,buffnum)+"\n");     
             
             for(int k=0;k<numSpecies;k++){
-            	int row=0;
             	fileWriter.write("___SPECIES "+(k+1)+" Time dependent data for X,Y,Z_______________________\n");
+            	int bt=0;
             	for(int b=0;b<buffnum;b++){
-            		for (int j=0; j<10; j++){
-	            		fileWriter.write(row+" "+((int)Math.pow(10,b)*j)+" "+RsquaredXYZ[k][row][0]+" "+RsquaredXYZ[k][row][1]+" "+RsquaredXYZ[k][row][2]+"\n");
-	            		row++;
+            		if(b==0){bt=1;}
+            		else{bt*=10;};
+            		for (int j=1; j<10; j++){
+	            		fileWriter.write((bt*j)+" "+RsquaredXYZ[k][b][j][0]+" "+RsquaredXYZ[k][b][j][1]+" "+RsquaredXYZ[k][b][j][2]+" "+(RsquaredXYZ[k][b][j][0]+RsquaredXYZ[k][b][j][1]+RsquaredXYZ[k][b][j][2])+"\n");
             		}
             	}
             	fileWriter.write("\n");
