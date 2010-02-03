@@ -17,6 +17,7 @@
 #include "LammpsAtomList.h"
 #include "LammpsBox.h"
 //#include "LammpsRegionBlock.h"
+//#include "LammpsMolecule.h"
 //#include "LammpsSpecies.h"
 //#include "LammpsBoundaryDeformable.h"
 
@@ -25,14 +26,37 @@ namespace lammpssnifferwrappers
 
     const int LammpsBox::INDEX_UNASSIGNED = -1;
 
-    LammpsBox::LammpsBox(LammpsSimulation *sim) {
+    LammpsBox::LammpsBox(LammpsSimulation *sim,
+                         IAPIBoundary *boundary,
+                         std::vector<LammpsSpecies *> species,
+                         std::vector<LammpsMolecule *> molecules) {
         mSim = sim;
+        mBoundary = boundary;
         mMolecules = new LammpsMoleculeList();
         mIndex = INDEX_UNASSIGNED;
         mBoxEvtMgr = new LammpsBoxEventManager();
 //        objectManager = new ObjectManager();
         mLeafList = new LammpsAtomList();
-//        mMoleListBySpecies = new LammpsMoleculeList();
+        mMoleListBySpecies = new LammpsMoleculeList();
+
+        for(int i = 0; i < species.size(); i++) {
+            if(speciesList.find(species.at(i)) == speciesList.end()) {
+                speciesList.insert(std::pair<IAPISpecies *, int>(species.at(i), 0));
+            }
+        }
+
+        for(int i = 0; i < molecules.size(); i++) {
+            mMolecules->addMolecule(molecules.at(i));
+            molecules.at(i)->setIndex(mMolecules->getMoleculeCount() - 1);
+            speciesList[molecules.at(i)->getType()]++;
+
+            // Set leaf index for atoms
+            for(int j = 0; j < molecules.at(i)->getChildList()->getAtomCount(); j++) {
+                mLeafList->addAtom(molecules.at(i)->getChildList()->getAtom(j));
+                molecules.at(i)->getChildList()->getAtom(j)->setLeafIndex(mLeafList->getAtomCount()-1);
+            }
+        }
+
     }
 
     /*
@@ -53,6 +77,8 @@ namespace lammpssnifferwrappers
      * addMolecule()
      */
     void LammpsBox::addMolecule(IAPIMolecule *mole) {
+printf("ERROR : LammpsBox::addMolecule(IAPIMolecule *) not implemented.\n");
+/*
         mMolecules->addMolecule(mole);
         mole->setIndex(mMolecules->getMoleculeCount() - 1);
         speciesList[mole->getType()]++;
@@ -62,21 +88,22 @@ namespace lammpssnifferwrappers
             mLeafList->addAtom(mole->getChildList()->getAtom(i));
             mole->getChildList()->getAtom(i)->setLeafIndex(mLeafList->getAtomCount());
         }
+*/
     }
 
     /*
      * removeMolecule()
      */
     void LammpsBox::removeMolecule(IAPIMolecule *mole) {
-
-        printf("ERROR : LammpsBox::removeMolecule() should never be called.\n");
+printf("ERROR : LammpsBox::removeMolecule(IAPIMolecule *) not implemented.\n");
     }
 
     /*
      * setNMolecules()
      */
     void LammpsBox::setNMolecules(IAPISpecies *species, int numMolecules) {
-
+printf("ERROR : LammpsBox::setNMolecules(IAPISpecies *, int) not implemented.\n");
+/*
         if(speciesList.find(species) ==  speciesList.end()) {
             printf("ERROR : LammpsBox::setNMolecules() : species not added to box yet.\n");
         }
@@ -92,16 +119,14 @@ namespace lammpssnifferwrappers
                 printf("of the species have already been added to the simulation.\n"); fflush(stdout);
             }
         }
+*/
     }
 
     /*
      * getNMolecules()
      */
     int LammpsBox::getNMolecules(IAPISpecies *species) {
-printf("LammpsBox::getNMolecules NOT implemented yet.\n");
-/*
         return speciesList[species];
-*/
     }
 
     /*
@@ -109,8 +134,6 @@ printf("LammpsBox::getNMolecules NOT implemented yet.\n");
      */
     IAPIMoleculeList *LammpsBox::getMoleculeList(IAPISpecies *species) {
 
-printf("LammpsBox::getMoleculeList(IAPISpecies) NOT implemented yet.\n");
-/*
         mMoleListBySpecies->clear();
 
         for(int i = 0; i < mMolecules->getMoleculeCount(); i++) {
@@ -120,13 +143,14 @@ printf("LammpsBox::getMoleculeList(IAPISpecies) NOT implemented yet.\n");
             }
         }
         return mMoleListBySpecies;
-*/
+
     }
 
     /*
      * getMoleculeList()
      */
     IAPIMoleculeList *LammpsBox::getMoleculeList() {
+printf("# of molecules : %d\n", mMolecules->getMoleculeCount()); fflush(stdout);
         return mMolecules;
     }
 
@@ -149,7 +173,7 @@ printf("LammpsBox::getMoleculeList(IAPISpecies) NOT implemented yet.\n");
      * setBoundary()
      */
     void LammpsBox::setBoundary(IAPIBoundary *boundary) {
-        mBoundary = boundary;
+        printf("ERROR : LammpsBox::setBoundary() not implemented.\n");
     }
 
     /*
@@ -163,17 +187,20 @@ printf("LammpsBox::getMoleculeList(IAPISpecies) NOT implemented yet.\n");
      * addSpeciesNotify()
      */
     void LammpsBox::addSpeciesNotify(IAPISpecies *species) {
+printf("ERROR : LammpsBox::addSpeciesNotify(IAPISpecies *) not implemented.\n");
+/*
         // Only add species if not previously added
         if(speciesList.find(species) == speciesList.end()) {
             speciesList.insert(std::pair<IAPISpecies *, int>(species, 0));
         }
+*/
     }
 
     /*
      * removeSpeciesNotify()
      */
     void LammpsBox::removeSpeciesNotify(IAPISpecies *species) {
-printf("LammpsBox::removeSpeciesNotify(IAPISpecies) NOT implemented yet.\n");
+printf("ERROR : LammpsBox::removeSpeciesNotify(IAPISpecies) not implemented.\n");
 /*
         if(mSim->getState() == LammpsSimulation::UNINITIALIZED) {
             speciesList.erase(speciesList.find(species));
@@ -182,14 +209,6 @@ printf("LammpsBox::removeSpeciesNotify(IAPISpecies) NOT implemented yet.\n");
             printf("ERROR : LammpsBox::removeSpeciesNotify() cannot be called after the simulation is initialized.\n");
         }
 */
-    }
-
-    /*
-     * addNewMolecule()
-     */
-    IAPIMolecule *LammpsBox::addNewMolecule(IAPISpecies *species) {
-        IAPIMolecule *mole = species->makeMolecule();
-        addMolecule(mole);
     }
 
 }

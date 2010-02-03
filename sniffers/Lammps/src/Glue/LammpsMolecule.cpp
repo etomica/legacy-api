@@ -16,7 +16,9 @@ namespace lammpssnifferwrappers
 {
 
     LammpsMolecule::LammpsMolecule(int nIndex) {
-        mAtomType = NULL;
+printf("DEBUG : MOLECULE CREATION : %d\n", nIndex);
+
+        mSpecies = NULL;
         nativeMoleculeID = nIndex;
         mAtoms = new LammpsAtomList();
 //        for(int i = 0; i < atomCount; i++) mAtoms->addAtom(atoms[i]);
@@ -62,7 +64,7 @@ printf("WARNING : LammpsMolecule::removeChildAtom() is NOT implemented yet\n");
      * getType()
      */
     IAPISpecies *LammpsMolecule::getType() {
-        return mAtomType;
+        return mSpecies;
     }
 
     /*
@@ -75,6 +77,20 @@ printf("WARNING : LammpsMolecule::removeChildAtom() is NOT implemented yet\n");
             dynamic_cast<LammpsAtom *>(atom)->getVelocity()->E(velocity);
         }
 
+    }
+
+    /*
+     * getNativeIndex()
+     */
+    int LammpsMolecule::getNativeIndex() {
+        return nativeMoleculeID;
+    }
+
+    /*
+     * setSpecies()
+     */
+    void LammpsMolecule::setSpecies(IAPISpecies *species) {
+        mSpecies = species;
     }
 
 }

@@ -29,9 +29,29 @@ namespace lammpssnifferwrappers
         mIndex = -1;
     }
 */
-    LammpsSpecies::LammpsSpecies(LammpsSimulation *sim) {
+    LammpsSpecies::LammpsSpecies(LammpsSimulation *sim, std::vector<LammpsAtomType *>tList) {
         mSim = sim;
         mIndex = -1;
+
+        bool inList[tList.size()];
+        for(int i = 0; i < tList.size(); i++) {
+            inList[i] = false;
+        }
+        for(int i = 0; i < tList.size(); i++) {
+            if(inList[i] == false) {
+                typeList.push_back(tList[i]);
+                inList[i] = true;
+                int tCount = 1;
+                for(int j = i+1; j < tList.size(); j++) {
+                    if(tList[i] == tList[j]) {
+                        inList[j] = true;
+                        tCount++;
+                    }
+                }
+                typeCount.push_back(tCount);
+            }
+        }
+
     }
 
     /*
@@ -60,7 +80,6 @@ namespace lammpssnifferwrappers
      */
     IAPIAtomType *LammpsSpecies::getAtomType(int index) {
         IAPIAtomType *aType = NULL;
-
         if(index < typeList.size()) {
             aType = typeList.at(index);
         }
@@ -71,8 +90,21 @@ namespace lammpssnifferwrappers
      * initializeConformation()
      */
     void LammpsSpecies::initializeConformation(IAPIMolecule *molecule) {
-printf("ERROR : LammpsSpecies::initializeConformation(molecule) NOT implemented.\n"); fflush(stdout);
-//        mConformation->initializePositions(molecule->getChildList());
+        mConformation->initializePositions(molecule->getChildList());
+    }
+
+    /*
+     * makeMolecule()
+     */
+    IAPIMolecule *LammpsSpecies::makeMolecule() {
+        printf("WARNING : LammpsSpecies::makeMolecule() is not implemented.\n");
+    }
+
+    /*
+     * setConformation()
+     */
+    void LammpsSpecies::setConformation(LammpsInterfaceConformation *c) {
+        mConformation = c;
     }
 
 }

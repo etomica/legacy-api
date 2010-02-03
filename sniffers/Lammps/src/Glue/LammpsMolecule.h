@@ -36,9 +36,11 @@ namespace lammpssnifferwrappers
 
             // Non-API methods
             void setVelocity(IAPIVector *velocity);
+            int getNativeIndex();
+            void setSpecies(IAPISpecies *species);
 
         protected:
-            IAPISpecies *mAtomType;
+            IAPISpecies *mSpecies;
 
         private:
             LammpsAtomList *mAtoms;

@@ -7,8 +7,9 @@
 #ifndef LAMMPS_BOX_WRAPPER_H
 #define LAMMPS_BOX_WRAPPER_H
 
-#include <string>
 #include <map>
+#include <string>
+#include <vector>
 
 #include "IAPIAtom.h"
 #include "IAPIBoundary.h"
@@ -21,8 +22,10 @@
 #include "IAPISpecies.h"
 #include "LammpsAtomList.h"
 #include "LammpsBoxEventManager.h"
+#include "LammpsMolecule.h"
 #include "LammpsMoleculeList.h"
 #include "LammpsSimulation.h"
+#include "LammpsSpecies.h"
 
 #include "ObjectManager.h"
 
@@ -35,7 +38,7 @@ namespace lammpssnifferwrappers
 
         public:
 
-            LammpsBox(LammpsSimulation *sim);
+            LammpsBox(LammpsSimulation *sim, IAPIBoundary *boundary, std::vector<LammpsSpecies *>, std::vector<LammpsMolecule *>);
 
             // API Compliance
             void setIndex(int newIndex);
@@ -62,11 +65,10 @@ namespace lammpssnifferwrappers
             LammpsSimulation *mSim;
             void lammpsSetup();
 //            int numberAtomTypes();
-            IAPIMolecule *addNewMolecule(IAPISpecies *species);
 //            ObjectManager *objectManager;
             std::map<IAPISpecies *, int> speciesList;
             LammpsAtomList *mLeafList;
-//            LammpsMoleculeList *mMoleListBySpecies;
+            LammpsMoleculeList *mMoleListBySpecies;
             LammpsBoxEventManager *mBoxEvtMgr;
             static const int INDEX_UNASSIGNED;
     };

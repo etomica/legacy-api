@@ -12,6 +12,7 @@ namespace lammpssnifferwrappers
 {
 
     const double LammpsAtomType::DEFAULT_MASS = 1.0;
+    const double LammpsAtomType::DEFAULT_DIAMETER = 1.0;
     const int LammpsAtomType::DEFAULT_TYPE = 1;
 
 /*
@@ -30,12 +31,15 @@ namespace lammpssnifferwrappers
         mMass = DEFAULT_MASS;
         mAtomType = at;
         nativeIndex = nIndex;
+        mDiameter = DEFAULT_DIAMETER;
     }
 
     LammpsAtomType::LammpsAtomType(int at, int nIndex, double m) {
+printf("DEBUG : New atom type -> (glue idx)%d  (native idx)%d\n", at, nIndex);
         mMass = m;
         mAtomType = at;
         nativeIndex = nIndex;
+        mDiameter = DEFAULT_DIAMETER;
     }
 
     /*
@@ -99,6 +103,20 @@ printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
      */
     IAPIElement *LammpsAtomType::getElement() {
         return mElement;
+    }
+
+    /*
+     * getDiameter()
+     */
+    double LammpsAtomType::getDiameter() {
+        return mDiameter;
+    }
+
+    /*
+     * setDiameter()
+     */
+    void LammpsAtomType::setDiameter(double d) {
+        mDiameter = d;
     }
 
     /*

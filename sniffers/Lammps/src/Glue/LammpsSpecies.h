@@ -13,7 +13,8 @@
 #include "IAPIAtomType.h"
 #include "IAPISpeciesManager.h"
 #include "IAPIMolecule.h"
-//#include "LammpsInterfaceConformation.h"
+#include "LammpsInterfaceConformation.h"
+#include "LammpsAtomType.h"
 #include "LammpsSimulation.h"
 
 using namespace molesimAPI;
@@ -28,19 +29,22 @@ namespace lammpssnifferwrappers
 
 //            LammpsSpecies(IAPISimulation *sim,
 //                          LammpsInterfaceConformation *conform);
-            LammpsSpecies(LammpsSimulation *sim);
+            LammpsSpecies(LammpsSimulation *sim, std::vector<LammpsAtomType *>tList);
 
             // API compliant methods
             int getIndex();
             void setIndex(int index);
-            virtual IAPIMolecule *makeMolecule() = 0;
+            virtual IAPIMolecule *makeMolecule();
             virtual int getAtomTypeCount();
             virtual IAPIAtomType *getAtomType(int index);
             void initializeConformation(IAPIMolecule *molecule);
 
+            // Non-API methods
+            void setConformation(LammpsInterfaceConformation *c);
+
         protected:
             LammpsSimulation *mSim;
-//            LammpsInterfaceConformation *mConformation;
+            LammpsInterfaceConformation *mConformation;
             std::vector<IAPIAtomType *> typeList;
             std::vector<int> typeCount;
 

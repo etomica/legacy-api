@@ -23,7 +23,7 @@
 #include "LammpsSimulationEventManager.h"
 #include "LammpsBox.h"
 //#include "LammpsSpecies.h"
-#include "LammpsSpeciesSpheres.h"
+//#include "LammpsSpeciesSpheres.h"
 #include "LammpsRandom.h"
 #include "LammpsAtom.h"
 #include "LammpsAtomType.h"
@@ -34,6 +34,7 @@
 //#include "LammpsBoundaryCustom.h"
 //#include "LammpsBoundaryDeformable.h"
 //#include "LammpsPotentialMaster.h"
+#include "LammpsInitialization.h"
 #include "LammpsIntegrator.h"
 //#include "LammpsIntegratorRespa.h"
 //#include "LammpsIntegratorVerlet.h"
@@ -190,7 +191,7 @@ printf("ERROR : LammpsSimulation::removeBox() does NOT remove box from simulatio
      * addSpecies()
      */
     void LammpsSimulation::addSpecies(IAPISpecies *species) {
-        mSpeciesManager->addSpecies(species);
+        printf("LammpsSimulation::addSpecies(IAPISpecies *) not implemented.\n");
     }
 
     /*
@@ -272,38 +273,19 @@ printf("ERROR : LammpsSimulation::removeBox() does NOT remove box from simulatio
 */
 
         // Create atom types
-        LammpsAtomType *atomType[mLammpsSim->atom->ntypes];
-printf("DEBUG : atom types -> %d\n", mLammpsSim->atom->ntypes);
+        LammpsInitialization *init = new LammpsInitialization(this);
+        init->init();
 
-        int nativeAtomID[mLammpsSim->atom->ntypes];
-        int count = 0;
-        for(int i = 0; i < mLammpsSim->atom->natoms; i++) {
-            bool inList = false;
-printf("my index : %d   atom type %d\n", i, mLammpsSim->atom->type[i]);
-            for(int j = 0; j < count; j++) {
-                if(nativeAtomID[j] == mLammpsSim->atom->type[i]) {
-                    inList = true;
-                    break;
-                }
-            }
-            if(!inList) {
-                nativeAtomID[count] = mLammpsSim->atom->type[i];
-                count++;
-            }
-        }
-printf("UNIQUE ATOM IDS FOUND(WHICH SHOULD MATCH ACTUAL NATIVE ATOM TYPES) : %d\n", count);
-
-        for(int i = 0; i < mLammpsSim->atom->ntypes; i++) {
-printf("DEBUG : Creating new atom type -> %d  %d  %f\n", i, nativeAtomID[i], mLammpsSim->atom->mass[i+1]);
-            atomType[i]= new LammpsAtomType(i, nativeAtomID[i], mLammpsSim->atom->mass[i+1]);
+        // Add species to species manager
+        std::vector<LammpsSpecies *> sList = init->getSpecies();
+        for(int i = 0; i < sList.size(); i++) {
+            mSpeciesManager->addSpecies(sList[i]);
         }
 
         // Create box
         IAPIBox *box = NULL;
 
-        box = new LammpsBox(this);
-
-        box->setBoundary(boundary);
+        box = new LammpsBox(this, boundary, init->getSpecies(), init->getMolecules());
 
         addBox(box);
 
@@ -312,7 +294,7 @@ printf("DEBUG : Creating new atom type -> %d  %d  %f\n", i, nativeAtomID[i], mLa
            strcmp(mLammpsSim->atom->atom_style, "bond")      == 0 ||
            strcmp(mLammpsSim->atom->atom_style, "full")      == 0 ||
            strcmp(mLammpsSim->atom->atom_style, "molecular") == 0) {
-
+/*
             NativeMolecule **molecules = NULL;
             int moleculeCount = 0;
 printf("moleculeCount address : %x\n", &moleculeCount);
@@ -348,6 +330,8 @@ printf("  atom id : %d  ", molecules[i]->nativeAtomID[j]);
 printf("\n");
 }
 fflush(stdout);
+
+
             int speciesCount = 0;
 
             NativeSpecies *species;
@@ -367,7 +351,8 @@ printf("    atom type : %d\n", species[i].atomTypes[j]);
 }
 }
 fflush(stdout);
-
+*/
+/*
 printf("WARNING : specie child type list is not a unique list(atom types repeated if more than one atom of the type in molecule) and shoud be.\n");
             for(int specIdx = 0; specIdx < speciesCount; specIdx++) {
                 LammpsSpeciesSpheres *specie = new LammpsSpeciesSpheres(this);
@@ -414,136 +399,11 @@ printf("    CREATE THE ATOM : %d\n", molecules[moleIdx]->nativeAtomID[atomIdx]);
                     }
                 }
             }
-        }
-        else {
-            printf("ERROR : atom_style is not of the kind where a molecule can be created.\n");
-        }
-/*
-        // Create species
-        if(strcmp(mLammpsSim->atom->atom_style, "angle")     == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "bond")      == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "full")      == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "molecular") == 0) {
-
-            // Monatomic species
-            int monatomicSpeciesIdx[mLammpsSim->atom->ntypes];  // allocation overkill
-            int monatomicSpeciesCount[mLammpsSim->atom->ntypes];  // allocation overkill
-            int speciesCount = 0;
-            for(int i = 0; i < mLammpsSim->atom->ntypes; i++) {
-                monatomicSpeciesIdx[i] = 0;
-                monatomicSpeciesCount[i] = 0;
-            }
-
-//            for(int i = 1; i <= (long)mLammpsSim->atom->natoms; i++) {
-            for(int i = 0; i < (long)mLammpsSim->atom->natoms; i++) {
-                if(mLammpsSim->atom->molecule[i] == 0) {
-                    bool speciesFound = false;
-                    for(int j = 0; j < speciesCount; j++) {
-                        if(mLammpsSim->atom->type[i] == monatomicSpeciesIdx[j]) {
-                            speciesFound = true;
-                            break;
-                        }
-                    }
-                    if(speciesFound) {
-                        monatomicSpeciesCount[speciesCount-1]++;
-                    }
-                    else {
-                        LammpsSpeciesSpheres *species = new LammpsSpeciesSpheres(this);
-                        species->addChildType(atomType[mLammpsSim->atom->type[i]-1], 1);
-printf("DEBUG : New species -> %d\n", mLammpsSim->atom->type[i]); fflush(stdout);
-                        addSpecies(species);
-                        box->addSpeciesNotify(species);
-                        monatomicSpeciesIdx[speciesCount] = mLammpsSim->atom->type[i];
-                        monatomicSpeciesCount[speciesCount]++;
-                        speciesCount++;
-                    }
-                }
-            }
-
-            for(int i = 0; i < getSpeciesCount(); i++) {
-printf("DEBUG : species %d    count : %d\n", monatomicSpeciesIdx[i], monatomicSpeciesCount[i]); fflush(stdout);
-                // make molecule and have molecule hold its lammps molecule id
-                // (if it has one)
-                LammpsMolecule *mole = new LammpsMolecule(<MOLE ID>);
-                LammpsAtom *atom = new LammpsAtom(this, getSpecies(i)->getAtomType(0), <ATOM ID>);
-
-                // add molecule to box with addMolecule(IAPIMolecule *)
-                // addMolecule(IAPIMolecule *) should also update its species list/count
-                // also needs to update box's leaf list
-                // set molecules index, molecules atoms' index and atoms leaf index
-
-//                box->setNMolecules(getSpecies(i), monatomicSpeciesCount[i]);
-            }
-
-        }
-        else {
-            printf("ERROR : atom_style is not of the kind where a molecule can be created.\n");
-        }
 */
-
-/*
-        // Create atoms
-printf("DEBUG : # atoms -> %d\n", (long)mLammpsSim->atom->natoms);
-LammpsAtom *atoms[long(mLammpsSim->atom->natoms)];
-        for(int i = 0; i < (long)mLammpsSim->atom->natoms; i++) {
-printf("  new atom type -> %d\n", mLammpsSim->atom->type[i]);
-printf("  new atom tag -> %d\n", mLammpsSim->atom->tag[i]);
-            atoms[i] = new LammpsAtom(this, atomType[mLammpsSim->atom->type[i]-1], mLammpsSim->atom->tag[i]-1);
-        }
-*/
-/*
-        // Create molecules and species (not sure yet how to do this...
-        if(strcmp(mLammpsSim->atom->atom_style, "angle")     == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "bond")      == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "full")      == 0 ||
-           strcmp(mLammpsSim->atom->atom_style, "molecular") == 0) {
-
-            // Monatomic molecules
-            for(int i = 1; i <= (long)mLammpsSim->atom->natoms; i++) {
-                if(mLammpsSim->atom->molecule[i] == 0) {
-                    LammpsAtom *monatomic[1];
-                    monatomic[0] = atoms[i-1];
-                    // Need to make a species instead of a molecule here
-                    LammpsMolecule *mole = new LammpsMolecule(monatomic, 1, -1);
-                    box->addMolecule(mole);
-                }
-            }
-
-/*
-            int moleculeID[(int)mLammpsSim->atom->natoms];  // overkill here
-            int moleculeCount = 0;
-
-            bool inList = false;
-
-            for(int i = 1; i <= (long)mLammpsSim->atom->natoms; i++) {
-                for(int j = 0; j < moleculeCount-1; j++) {
-                    if(mLammpsSim->atom->molecule[i] == moleculeID[j]) {
-                        inList = true;;
-                        break;
-                    }
-                }
-                if(!inList && mLammpsSim->atom->molecule[i] > 0) {
-                    moleculeID[moleculeCount] = mLammpsSim->atom->molecule[i];
-                    moleculeCount++;
-                }
-            }
-printf("DEBUG : molecule count -> %d\n", moleculeCount); fflush(stdout);
-
-            for(int i = 0; i < moleculeCount; i++) {
-printf("DEBUG : MoleculeID : %d\n", moleculeID[i]); fflush(stdout);
-                for(int j = 1; j <= mLammpsSim->atom->natoms; j++) {
-                    if(mLammpsSim->atom->molecule[j] == moleculeID[i]) {
-printf("  DEBUG : atom in molecule : %d\n", mLammpsSim->atom->tag[j]); fflush(stdout);
-                    }
-                }
-
-//                molecules[] = new LammpsMolecule();
-            }
         }
         else {
             printf("ERROR : atom_style is not of the kind where a molecule can be created.\n");
         }
-*/        
     }
 
     /*

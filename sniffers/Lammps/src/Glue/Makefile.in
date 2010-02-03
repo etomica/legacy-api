@@ -16,18 +16,20 @@ SRC =	LammpsAtom.cpp \
 	LammpsBoundaryShrinkMin.cpp \
 	LammpsBox.cpp \
 	LammpsBoxEventManager.cpp \
+	LammpsConformation.cpp \
+	LammpsInitialization.cpp \
 	LammpsIntegrator.cpp \
 	LammpsIntegratorEventManager.cpp \
 	LammpsIntegratorListenerNative.cpp \
 	LammpsMolecule.cpp \
 	LammpsMoleculeList.cpp \
+	LammpsNativeConformation.cpp \
 	LammpsRandom.cpp \
 	LammpsSimulation.cpp \
 	LammpsSimulationEventManager.cpp \
 	LammpsSpace.cpp \
 	LammpsSpecies.cpp \
 	LammpsSpeciesManager.cpp \
-	LammpsSpeciesSpheres.cpp \
 	LammpsVector.cpp \
 	LammpsVector2D.cpp \
 	LammpsVector3D.cpp \

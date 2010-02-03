@@ -36,6 +36,7 @@ namespace lammpssnifferwrappers
 
             // Non-API Method
             IAPIVectorMutable *getForce();
+            int getNativeIndex();
 
         private:
 //            void init(LammpsSimulation *sim, double x, double y, double z, IAPIAtomType *at);

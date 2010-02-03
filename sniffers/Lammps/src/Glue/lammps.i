@@ -49,8 +49,8 @@
 #include "IAPISimulationListener.h"
 #include "IAPISimulationEventManager.h"
 #include "IAPISimulation.h"
-/*
 #include "LammpsInterfaceConformation.h"
+/*
 #include "LammpsInterfaceAtomPositionDefinition.h"
 #include "LammpsTemperatureRescale.h"
 #include "LammpsMomentum.h"
@@ -94,11 +94,13 @@
 #include "LammpsAtomType.h"
 /*
 #include "LammpsAtomTypeSphere.h"
+*/
 #include "LammpsConformation.h"
 #include "LammpsNativeConformation.h"
-*/
 #include "LammpsSpecies.h"
+/*
 #include "LammpsSpeciesSpheres.h"
+*/
 #include "LammpsBoundaryPeriodic.h"
 #include "LammpsBoundaryFixed.h"
 #include "LammpsBoundaryShrink.h"
@@ -205,8 +207,8 @@ using namespace molesimAPI;
 %include "IAPISimulationListener.h"
 %include "IAPISimulationEventManager.h"
 %include "IAPISimulation.h"
-/*
 %include "LammpsInterfaceConformation.h"
+/*
 %include "LammpsInterfaceAtomPositionDefinition.h"
 %include "LammpsSimulationEvent.h"
 %include "LammpsSimulationBoxEvent.h"
@@ -250,11 +252,13 @@ using namespace molesimAPI;
 %include "LammpsAtomType.h"
 /*
 %include "LammpsAtomTypeSphere.h"
+*/
 %include "LammpsConformation.h"
 %include "LammpsNativeConformation.h"
-*/
 %include "LammpsSpecies.h"
+/*
 %include "LammpsSpeciesSpheres.h"
+*/
 %include "LammpsBoundaryPeriodic.h"
 %include "LammpsBoundaryFixed.h"
 %include "LammpsBoundaryShrink.h"

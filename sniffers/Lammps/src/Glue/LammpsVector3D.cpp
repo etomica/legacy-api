@@ -93,7 +93,6 @@ namespace lammpssnifferwrappers
         else {
             value = *(pos)[2];
         }
-
         return value;
     }
 
@@ -147,6 +146,8 @@ namespace lammpssnifferwrappers
         *(pos)[0] += v->getX(0);
         *(pos)[1] += v->getX(1);
         *(pos)[2] += v->getX(2);
+//printf("::PE %x  %x  %x  %f  %f  %f\n", &(pos[0][0]), &(pos[0][1]), &(pos[0][2]),
+//       pos[0][0],  pos[0][1],  pos[0][2]); fflush(stdout);
     }
 
     /*
