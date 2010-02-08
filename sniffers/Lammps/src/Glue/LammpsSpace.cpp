@@ -36,16 +36,11 @@ namespace lammpssnifferwrappers
 
         IAPIVectorMutable *vec;
 
-        double **vals;
-        vals = (double **) malloc (D * sizeof(double *));
-        for(int i = 0; i < D; i++)
-            vals[i] = (double *) malloc (1 * sizeof(double));
-
         if(D == 2) {
-            vec = new LammpsVector2D(vals);
+            vec = new LammpsVector2D();
         }
         else if(D == 3) {
-            vec = new LammpsVector3D(vals);
+            vec = new LammpsVector3D();
         }
 
         return vec;

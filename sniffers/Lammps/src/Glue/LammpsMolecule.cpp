@@ -16,7 +16,6 @@ namespace lammpssnifferwrappers
 {
 
     LammpsMolecule::LammpsMolecule(int nIndex) {
-printf("DEBUG : MOLECULE CREATION : %d\n", nIndex);
 
         mSpecies = NULL;
         nativeMoleculeID = nIndex;

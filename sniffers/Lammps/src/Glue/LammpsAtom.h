@@ -40,6 +40,7 @@ namespace lammpssnifferwrappers
 
         private:
 //            void init(LammpsSimulation *sim, double x, double y, double z, IAPIAtomType *at);
+            void init(LammpsSimulation *sim, IAPIAtomType *at, int nIndex);
 
             // atoms are tagged starting at 1 in Lammps.  Our leaf index
             // starts at 0.  So, when using mLeafIndex to access Lammps

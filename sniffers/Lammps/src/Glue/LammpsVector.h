@@ -53,6 +53,8 @@ namespace lammpssnifferwrappers
         protected:
             int D;
             double **pos;
+bool debug;
+
     };
 }
 

@@ -568,8 +568,8 @@ printf("lammps_command : %s\n", command);
         moles->speciesIndex = -1;
         moles->nativeAtomID = (int *)malloc(sizeof(int));
         moles->nativeAtomID[0] = atomPos;
-printf("DEBUG : NEW MOLECULE %d   first atom pos %d\n",moles->nativeID ,atomPos);
-fflush(stdout);
+//printf("DEBUG : NEW MOLECULE %d   first atom pos %d\n",moles->nativeID ,atomPos);
+//fflush(stdout);
         moles->atomCount = 1;
 
         // Look for rest of atoms in molecule if not monatomic
@@ -598,33 +598,33 @@ fflush(stdout);
                                              int *speciesCount) {
 
         NativeSpecies *species = NULL;
-for(int i = 0; i < moleCount; i++) {
-printf("MOLECULE : %d  # atoms : %d  -> ", moles[i]->nativeID, moles[i]->atomCount);
-for(int j = 0; j < moles[i]->atomCount; j++) {
-printf("  atom id : %d  ", moles[i]->nativeAtomID[j]);
-}
-printf("\n");
-}
-fflush(stdout);
+//for(int i = 0; i < moleCount; i++) {
+//printf("MOLECULE : %d  # atoms : %d  -> ", moles[i]->nativeID, moles[i]->atomCount);
+//for(int j = 0; j < moles[i]->atomCount; j++) {
+//printf("  atom id : %d  ", moles[i]->nativeAtomID[j]);
+//}
+//printf("\n");
+//}
+//fflush(stdout);
 
         if(moleCount == 0) {
             return NULL;
         }
-printf("MOLECOUNT : %d\n", moleCount);
+//printf("MOLECOUNT : %d\n", moleCount);
 
         for(int i = 0; i < moleCount; i++) {
             // found a molecule does not not have an associated species
             if(moles[i]->speciesIndex == -1) {
-printf("DEBUG : FOUND a new species for molecule in position %d\n", i); fflush(stdout);
-printf("  MOLECULE : %d  # atoms : %d  -> ", moles[i]->nativeID, moles[i]->atomCount);
-for(int j = 0; j < moles[i]->atomCount; j++) {
-printf("    atom id : %d  ", moles[i]->nativeAtomID[j]);
-}
-printf("\n");
-fflush(stdout);
+//printf("DEBUG : FOUND a new species for molecule in position %d\n", i); fflush(stdout);
+//printf("  MOLECULE : %d  # atoms : %d  -> ", moles[i]->nativeID, moles[i]->atomCount);
+//for(int j = 0; j < moles[i]->atomCount; j++) {
+//printf("    atom id : %d  ", moles[i]->nativeAtomID[j]);
+//}
+//printf("\n");
+//fflush(stdout);
                 species = (NativeSpecies *) realloc (species, (*speciesCount+1) * sizeof(NativeSpecies));
                 moles[i]->speciesIndex = *speciesCount;
-printf("  species : %x\n", species[*speciesCount]);
+//printf("  species : %x\n", species[*speciesCount]);
                 species[*speciesCount].moleculeCount = 1;
                 species[*speciesCount].moleculeID = (int *) malloc (sizeof(int));
                 species[*speciesCount].moleculeID[0] = moles[i]->nativeID;

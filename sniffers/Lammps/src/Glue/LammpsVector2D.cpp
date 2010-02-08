@@ -23,14 +23,17 @@
 namespace lammpssnifferwrappers
 {
 
-/*
     LammpsVector2D::LammpsVector2D() {
         D = 2;
-        pos = (double *) malloc (D * sizeof(double));
-        (pos)[0] = 0.0;
-        (pos)[1] = 0.0;
+        pos = (double **) malloc (1 * sizeof(double *));
+        pos[0] = (double *) malloc (D * sizeof(double));
+
+        for(int i = 0; i < D; i++) {
+            pos[0][i] = 0.0;
+        }
     }
 
+/*
     LammpsVector2D::LammpsVector2D(double v1, double v2) {
         D = 2;
         pos = (double *) malloc (D * sizeof(double));
