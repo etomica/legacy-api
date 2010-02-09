@@ -45,7 +45,7 @@
 namespace lammpssnifferwrappers
 {
 
-    LammpsSimulation::LammpsSimulation(int D) {
+    LammpsSimulation::LammpsSimulation(int D, char *inputFile) {
 
         // Fix ID Manager
         fixIDManager = new IDManager("fix");
@@ -79,7 +79,7 @@ namespace lammpssnifferwrappers
 //        args[4] = (char *) malloc (50*sizeof(char));
 //        strcpy(args[4], "/tmp/lammps_step1_input");
         lammps_open(3, args, 0, (void **)&mLammpsSim);
-        lammps_file(mLammpsSim, "/tmp/lammps_step1_input");
+        lammps_file(mLammpsSim, inputFile);
     }
 
     LammpsSimulation::~LammpsSimulation() {
@@ -257,10 +257,6 @@ printf("ERROR : LammpsSimulation::removeBox() does NOT remove box from simulatio
 
         // Create integrator
         mIntegrator = new LammpsIntegrator(this);
-        /* From lammps source style.h :
-             IntegrateStyle(respa,Respa)
-             IntegrateStyle(verlet,Verlet)
-        */
 
 /*
         if(strcmp(mLammpsSim->update->integration_style, "respa") == 0) {

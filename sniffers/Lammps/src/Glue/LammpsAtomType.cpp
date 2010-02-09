@@ -32,6 +32,7 @@ namespace lammpssnifferwrappers
         mAtomType = at;
         nativeIndex = nIndex;
         mDiameter = DEFAULT_DIAMETER;
+        mSpecies = NULL;
     }
 
     LammpsAtomType::LammpsAtomType(int at, int nIndex, double m) {
@@ -40,6 +41,7 @@ printf("DEBUG : New atom type -> (glue idx)%d  (native idx)%d\n", at, nIndex);
         mAtomType = at;
         nativeIndex = nIndex;
         mDiameter = DEFAULT_DIAMETER;
+        mSpecies = NULL;
     }
 
     /*

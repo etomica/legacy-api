@@ -17,6 +17,8 @@ namespace lammpssnifferwrappers
     void LammpsSpeciesManager::addSpecies(IAPISpecies *newSpecies) {
         speciesList.push_back(newSpecies);
         newSpecies->setIndex(speciesList.size() - 1);
+printf("   new species index : %d\n", newSpecies->getIndex()); fflush(stdout);
+
         for(int i = 0; i < boxList.size(); i++) {
             boxList[i]->addSpeciesNotify(newSpecies);
         }

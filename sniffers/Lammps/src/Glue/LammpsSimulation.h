@@ -36,7 +36,7 @@ namespace lammpssnifferwrappers
     class LammpsSimulation : public virtual IAPISimulation {
 
         public:
-            LammpsSimulation(int D);
+            LammpsSimulation(int D, char *inputFile);
             ~LammpsSimulation();
 
             // API Compliance
