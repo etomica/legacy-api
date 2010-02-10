@@ -32,8 +32,6 @@ namespace lammpssnifferwrappers
             virtual bool getPeriodicity(int d);
 
         private:
-            IAPIVectorMutable *dimensions;
-            IAPIVectorMutable *dimensionsHalf;
 
     };
 }

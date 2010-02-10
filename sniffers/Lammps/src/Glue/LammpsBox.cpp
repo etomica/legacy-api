@@ -150,7 +150,6 @@ printf("ERROR : LammpsBox::setNMolecules(IAPISpecies *, int) not implemented.\n"
      * getMoleculeList()
      */
     IAPIMoleculeList *LammpsBox::getMoleculeList() {
-printf("# of molecules : %d\n", mMolecules->getMoleculeCount()); fflush(stdout);
         return mMolecules;
     }
 

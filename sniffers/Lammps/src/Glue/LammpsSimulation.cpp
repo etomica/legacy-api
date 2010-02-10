@@ -441,7 +441,6 @@ printf("lammps_command : %s\n", command);
     /*
      * getTemp()
      */
-/*
     double LammpsSimulation::getTemp() {
 
       double temp;
@@ -452,12 +451,10 @@ printf("lammps_command : %s\n", command);
 
       return temp;
     }
-*/
 
     /*
      * getKE()
      */
-/*
     double LammpsSimulation::getKE() {
 
       double ke;
@@ -472,12 +469,10 @@ printf("lammps_command : %s\n", command);
 
       return ke;
     }
-*/
 
     /*
      * getPE()
      */
-/*
     double LammpsSimulation::getPE() {
 
       double pe;
@@ -492,12 +487,10 @@ printf("lammps_command : %s\n", command);
 
       return pe;
     }
-*/
 
     /*
      * getTotalEnergy()
      */
-/*
     double LammpsSimulation::getTotalEnergy() {
 
       double totalE;
@@ -512,12 +505,10 @@ printf("lammps_command : %s\n", command);
 
       return totalE;
     }
-*/
 
     /*
      * initThermo()
      */
-/*
     void LammpsSimulation::initThermo() {
       if(!thermoInit) {
         mLammpsSim->output->thermo->init();
@@ -530,7 +521,6 @@ printf("lammps_command : %s\n", command);
         thermoInit = true;
       }
     }
-*/
 
     /*
      * getSpace()

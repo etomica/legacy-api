@@ -11,6 +11,7 @@ namespace lammpssnifferwrappers
 
     LammpsIntegratorListenerNative::LammpsIntegratorListenerNative(JNIEnv *jenv, jobject jobj) {
         nativeObject = jenv->NewGlobalRef(jobj);
+printf("CTOR : %x\n", this); fflush(stdout);
     }
 	
     /*

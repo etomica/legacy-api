@@ -54,13 +54,16 @@ namespace lammpssnifferwrappers
 
             // Non-API methods
             LammpsSpace *getSpace();
+            double getTemp();
+
 /*
             void setUnitStyle(char *unitStyle);
             void setAtomStyle(char *style);
-            double getTemp();
+*/
             double getKE();
             double getPE();
             double getTotalEnergy();
+/*
             void addRegionWithAtoms(LammpsRegion *region);
 */
 
@@ -82,11 +85,15 @@ namespace lammpssnifferwrappers
         private:
 /*
             void init();
+*/
             void initThermo();
+/*
             int initialized;
             IDManager *moleculeIDManager;
             IDManager *regionIDManager;
+*/
             bool thermoInit;
+/*
             std::vector<LammpsRegion *>atomRegionList;
 */
             IAPIBoundary *createBoundary();

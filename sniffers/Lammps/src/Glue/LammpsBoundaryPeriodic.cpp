@@ -5,6 +5,7 @@
  */
 
 #include "library.h"
+#include "domain.h"
 
 #include "LammpsBoundaryPeriodic.h"
 
@@ -12,17 +13,15 @@ namespace lammpssnifferwrappers
 {
 
     LammpsBoundaryPeriodic::LammpsBoundaryPeriodic(LammpsSimulation *sim) : LammpsBoundary(sim) {
-        dimensions = mSim->getSpace()->makeVector();
-        dimensionsHalf = mSim->getSpace()->makeVector();
     }
 
     /*
      * setBoxSize()
      */
     void LammpsBoundaryPeriodic::setBoxSize(IAPIVector *v) {
-        LammpsBoundary::setBoxSize(v);
-        dimensions->E(v);
-        dimensionsHalf->Ea1Tv1(0.5, dimensions);
+printf(" LammpsBoundaryPeriodic::setBoxSize(IAPIVector) is not impelemented.\n"); fflush(stdout);
+//        dimensions->E(v);
+//        dimensionsHalf->Ea1Tv1(0.5, dimensions);
     }
 
     /*
@@ -59,6 +58,13 @@ namespace lammpssnifferwrappers
      * nearestImage()
      */
     void LammpsBoundaryPeriodic::nearestImage(IAPIVectorMutable *v) {
+        IAPIVector *dimensions = getBoxSize();
+        IAPIVectorMutable *dimensionsHalf = mSim->getSpace()->makeVector();
+        dimensionsHalf->E(dimensions);
+        IAPIVectorMutable *half = mSim->getSpace()->makeVector();
+        half->E(2);
+        dimensionsHalf->DE(half);
+
         v->PE(dimensionsHalf);
         v->mod(dimensions);
         v->ME(dimensionsHalf);
