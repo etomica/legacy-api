@@ -20,8 +20,6 @@ namespace lammpssnifferwrappers
      */
     void LammpsBoundaryPeriodic::setBoxSize(IAPIVector *v) {
 printf(" LammpsBoundaryPeriodic::setBoxSize(IAPIVector) is not impelemented.\n"); fflush(stdout);
-//        dimensions->E(v);
-//        dimensionsHalf->Ea1Tv1(0.5, dimensions);
     }
 
     /*
