@@ -11,14 +11,12 @@
 #include <string>
 #include <vector>
 
-#include "IAPIAtom.h"
 #include "IAPIBoundary.h"
 #include "IAPIBox.h"
 #include "IAPIBoxEventManager.h"
 #include "IAPIAtomList.h"
 #include "IAPIMolecule.h"
 #include "IAPIMoleculeList.h"
-#include "IAPISimulation.h"
 #include "IAPISpecies.h"
 #include "LammpsAtomList.h"
 #include "LammpsBoxEventManager.h"
@@ -26,8 +24,6 @@
 #include "LammpsMoleculeList.h"
 #include "LammpsSimulation.h"
 #include "LammpsSpecies.h"
-
-#include "ObjectManager.h"
 
 using namespace molesimAPI;
 
@@ -64,8 +60,6 @@ namespace lammpssnifferwrappers
         private:
             LammpsSimulation *mSim;
             void lammpsSetup();
-//            int numberAtomTypes();
-//            ObjectManager *objectManager;
             std::map<IAPISpecies *, int> speciesList;
             LammpsAtomList *mLeafList;
             LammpsMoleculeList *mMoleListBySpecies;

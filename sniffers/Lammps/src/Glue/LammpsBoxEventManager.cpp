@@ -15,14 +15,14 @@ namespace lammpssnifferwrappers
      * addListener()
      */
     void LammpsBoxEventManager::addListener(IAPIBoxListener *listener) {
-        printf("LammpsBoxEventManager::addListener() is NOT implemented.\n"); fflush(stdout);
+        printf("LammpsBoxEventManager::addListener() is not implemented.\n"); fflush(stdout);
     }
 
     /*
      * removeListener()
      */
     void LammpsBoxEventManager::removeListener(IAPIBoxListener *listener) {
-        printf("LammpsBoxEventManager::removeListener() is NOT implemented.\n"); fflush(stdout);
+        printf("LammpsBoxEventManager::removeListener() is not implemented.\n"); fflush(stdout);
     }
 
 }

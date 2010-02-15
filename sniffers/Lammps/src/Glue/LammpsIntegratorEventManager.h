@@ -12,7 +12,6 @@
 
 #include "IAPIIntegratorEventManager.h"
 #include "IAPIIntegratorListener.h"
-#include "IAPISimulation.h"
 #include "LammpsSimulation.h"
 
 using namespace molesimAPI;

@@ -10,22 +10,28 @@
 #include "atom.h"
 
 #include "LammpsAtom.h"
-#include "LammpsAtomType.h"
 
 namespace lammpssnifferwrappers
 {
 
-    LammpsAtom::LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at, int nIndex) {
-        init(sim, at, nIndex);
+    LammpsAtom::LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at,
+                           IAPIMolecule *mole, int nIndex) {
+        init(sim, at, mole, nIndex);
     }
 
-    void LammpsAtom::init(LammpsSimulation *sim, IAPIAtomType *at, int nIndex) {
+    /*
+     * init()
+     */
+    void LammpsAtom::init(LammpsSimulation *sim, IAPIAtomType *at,
+                          IAPIMolecule *mole, int nIndex) {
 
         mSim = sim;
 
         mAtomType = at;
 
         nativeIndex = nIndex;
+
+        parent = mole;
 
         double **pos = (double **) malloc (1 * sizeof(double *));
         pos = &(mSim->getLammpsSim()->atom->x[nativeIndex]);
@@ -39,7 +45,7 @@ namespace lammpssnifferwrappers
         force = &(mSim->getLammpsSim()->atom->f[nativeIndex]);
         mForce = mSim->getSpace()->makeVector(force);
 
-}
+    }
 
 
     /*
@@ -74,7 +80,7 @@ namespace lammpssnifferwrappers
      * setParent()
      */
     void LammpsAtom::setParent(IAPIMolecule *newParent) {
-        parent = newParent;
+        printf("ERROR : LammpsAtom::setParent(IAPIMolecule *) not implemented.\n");
     }
 
     /*

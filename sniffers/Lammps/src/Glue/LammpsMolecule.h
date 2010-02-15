@@ -12,7 +12,6 @@
 #include "IAPISpecies.h"
 #include "IAPIMolecule.h"
 #include "IAPISimulation.h"
-#include "LammpsAtom.h"
 #include "LammpsAtomList.h"
 
 using namespace molesimAPI;

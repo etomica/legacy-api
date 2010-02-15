@@ -29,8 +29,6 @@ namespace lammpssnifferwrappers
             virtual bool getPeriodicity(int d);
 
             // Non-API methods
-            char *getBoundaryArgument();
-            virtual void lammpsSetup();
             static const int DEFAULT_TYPE;
             static const int PERIODIC;
             static const int FIXED;
@@ -40,14 +38,12 @@ namespace lammpssnifferwrappers
         protected:
         private:
             int checkTypeBounds(int type);
-            char *mBoundaryArg;
             int mXLower;
             int mXUpper;
             int mYLower;
             int mYUpper;
             int mZLower;
             int mZUpper;
-            static const char* const bondTypes;
     };
 }
 

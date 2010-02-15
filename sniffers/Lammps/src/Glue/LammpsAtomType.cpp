@@ -15,18 +15,6 @@ namespace lammpssnifferwrappers
     const double LammpsAtomType::DEFAULT_DIAMETER = 1.0;
     const int LammpsAtomType::DEFAULT_TYPE = 1;
 
-/*
-    LammpsAtomType::LammpsAtomType() {
-        mMass = DEFAULT_MASS;
-        mAtomType = 0;
-    }
-
-    LammpsAtomType::LammpsAtomType(double m) {
-        mMass = m;
-        mAtomType = 0;
-    }
-*/
-
     LammpsAtomType::LammpsAtomType(int at, int nIndex) {
         mMass = DEFAULT_MASS;
         mAtomType = at;
@@ -36,7 +24,6 @@ namespace lammpssnifferwrappers
     }
 
     LammpsAtomType::LammpsAtomType(int at, int nIndex, double m) {
-printf("DEBUG : New atom type -> (glue idx)%d  (native idx)%d\n", at, nIndex);
         mMass = m;
         mAtomType = at;
         nativeIndex = nIndex;
@@ -76,14 +63,14 @@ printf("DEBUG : New atom type -> (glue idx)%d  (native idx)%d\n", at, nIndex);
      * setChildIndex()
      */
     void LammpsAtomType::setChildIndex(int newChildIndex) {
-printf("WARNING : LammpsAtomType::setChildIndex() is NOT implemented yet.\n");
+        printf("WARNING : LammpsAtomType::setChildIndex() is NOT implemented yet.\n");
     }
 
     /*
      * getChildIndex()
      */
     int LammpsAtomType::getChildIndex() {
-printf("WARNING : LammpsAtomType::getChildIndex() is NOT implemented yet.\n");
+        printf("WARNING : LammpsAtomType::getChildIndex() is NOT implemented yet.\n");
     }
 
     /*
@@ -97,7 +84,7 @@ printf("WARNING : LammpsAtomType::getChildIndex() is NOT implemented yet.\n");
      * rm()
      */
     double LammpsAtomType::rm() {
-printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
+        return 1.0 / mMass;
     }
 
     /*
@@ -118,7 +105,7 @@ printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
      * setDiameter()
      */
     void LammpsAtomType::setDiameter(double d) {
-        mDiameter = d;
+        printf("ERROR : LammpsAtomType::setDiameter(double) is not implemented.\n");
     }
 
     /*

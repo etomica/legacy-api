@@ -10,20 +10,13 @@
 
 #include "LammpsBoundary.h"
 
-//#include "LammpsBoundaryPeriodic.h"
-//#include "LammpsBoundaryFixed.h"
-//#include "LammpsBoundaryShrink.h"
-//#include "LammpsBoundaryShrinkMin.h"
-//#include "LammpsBoundaryCustom.h"
-
 namespace lammpssnifferwrappers
 {
 
     LammpsBoundary::LammpsBoundary(LammpsSimulation *sim) {
         mSim = sim;
-        mSpace = sim->getSpace();
-        double **vec = (double **) malloc (mSpace->getD() * sizeof(double *));
-        if(mSpace->getD() == 2) {
+        double **vec = (double **) malloc (sim->getSpace()->getD() * sizeof(double *));
+        if(sim->getSpace()->getD() == 2) {
             vec[0] = &mSim->getLammpsSim()->domain->xprd;
             vec[1] = &mSim->getLammpsSim()->domain->yprd;
         }
@@ -32,8 +25,7 @@ namespace lammpssnifferwrappers
             vec[1] = &mSim->getLammpsSim()->domain->yprd;
             vec[2] = &mSim->getLammpsSim()->domain->zprd;
         }
-        mVector = mSpace->makeVector(vec);
-//        mCenter = mSpace->makeVector();
+        mVector = sim->getSpace()->makeVector(vec);
         mBox = NULL;
         mEventMgr = NULL;
     }
@@ -42,14 +34,14 @@ namespace lammpssnifferwrappers
      * setBoxSize()
      */
     void LammpsBoundary::setBoxSize(IAPIVector *v) {
-        printf("LammpsBoundary::setBoxSize should not be called.\n");
+        printf("ERROR : LammpsBoundary::setBoxSize(IAPIVector *) is not implemented.\n");
     }
 
     /*
      * getBoxSize()
      */
     IAPIVector *LammpsBoundary::getBoxSize() {
-        if(mSpace->getD() == 2) {
+        if(mSim->getSpace()->getD() == 2) {
             double dim[] = {mSim->getLammpsSim()->domain->xprd,
                             mSim->getLammpsSim()->domain->yprd};
             mVector->E(dim);
@@ -85,22 +77,21 @@ namespace lammpssnifferwrappers
      * nearestImage()
      */
     void LammpsBoundary::nearestImage(IAPIVectorMutable *v) {
-printf("WARNING : LammpsBoundary::nearestImage() is NOT implemented yet\n");
+        printf("WARNING : LammpsBoundary::nearestImage() is NOT implemented and should be virtual.\n");
     }
 
     /*
      * centralImage()
      */
     IAPIVector *LammpsBoundary::centralImage(IAPIVector *v) {
-printf("WARNING : LammpsBoundary::centralImage() is NOT implemented yet\n");
+        printf("WARNING : LammpsBoundary::centralImage() is NOT implemented and should be virtual.\n");
     }
 
     /*
      * getCenter()
      */
     IAPIVector *LammpsBoundary::getCenter() {
-//        return mCenter;
-printf("WARNING : LammpsBoundary::getCenter(0 is NOT implemented yet.  Need a 'local' vector class.\n");
+        printf("WARNING : LammpsBoundary::getCenter() is not implemented, but should be!\n");
     }
 
     /*

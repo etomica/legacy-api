@@ -44,17 +44,5 @@ namespace lammpssnifferwrappers
         return false;
     }
 
-    /*
-     * lammpsSetup()
-     */
-    void LammpsBoundaryShrink::lammpsSetup() {
-
-        char command[512];
-
-printf("lammps_command : boundary s s s\n"); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), "boundary s s s");
-
-    }
-
 }
 

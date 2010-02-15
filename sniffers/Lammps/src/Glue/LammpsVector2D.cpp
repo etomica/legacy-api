@@ -33,20 +33,6 @@ namespace lammpssnifferwrappers
         }
     }
 
-/*
-    LammpsVector2D::LammpsVector2D(double v1, double v2) {
-        D = 2;
-        pos = (double *) malloc (D * sizeof(double));
-        (pos)[0] = v1;
-        (pos)[1] = v2;
-    }
-
-    LammpsVector2D::LammpsVector2D(LammpsVector2D *v) {
-        D = 2;
-        pos = (double *) malloc (D * sizeof(double));
-        this->E(v);
-    }
-*/
     LammpsVector2D::LammpsVector2D(double **v) {
         pos = v;
         D = 2;
@@ -271,7 +257,7 @@ namespace lammpssnifferwrappers
      * isNaN
      */
     bool LammpsVector2D::isNaN() {
-printf("WARNING : LammpsVector2D::isNaN() NOT implemented.\n");
+        printf("WARNING : LammpsVector2D::isNaN() is not implemented.\n");
     }
 
     /*
@@ -300,15 +286,15 @@ printf("WARNING : LammpsVector2D::isNaN() NOT implemented.\n");
      * map
      */
     void LammpsVector2D::map(IAPIFunction *f) {
-printf("WARNING : LammpsVector2D::map() NOT implemented.\n");
+        printf("WARNING : LammpsVector2D::map() is not implemented.\n");
     }
 
     /*
      * XE
      */
-   void LammpsVector2D::XE(IAPIVector *v) {
-printf("WARNING : LammpsVector2D::XE() NOT implemented.\n");
-   }
+    void LammpsVector2D::XE(IAPIVector *v) {
+        printf("WARNING : LammpsVector2D::XE() is not implemented.\n");
+    }
 
     /*
      * E

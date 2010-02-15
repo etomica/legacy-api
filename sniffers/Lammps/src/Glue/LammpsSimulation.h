@@ -17,7 +17,6 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPIPotentialMaster.h"
 #include "LammpsSpace.h"
 #include "LammpsSpeciesManager.h"
 
@@ -29,9 +28,6 @@ using namespace molesimAPI;
 
 namespace lammpssnifferwrappers
 {
-
-//    class LammpsNeighborList;
-//    class LammpsRegion;;
 
     class LammpsSimulation : public virtual IAPISimulation {
 
@@ -56,22 +52,10 @@ namespace lammpssnifferwrappers
             LammpsSpace *getSpace();
             double getTemp();
 
-/*
-            void setUnitStyle(char *unitStyle);
-            void setAtomStyle(char *style);
-*/
             double getKE();
             double getPE();
             double getTotalEnergy();
-/*
-            void addRegionWithAtoms(LammpsRegion *region);
-*/
-
             LAMMPS *getLammpsSim() { return mLammpsSim; }
-/*
-            IDManager *getMoleculeIDMgr();
-            IDManager *getRegionIDMgr();
-*/
             IDManager *getFixIDMgr();
 
             void sniff();
@@ -83,41 +67,13 @@ namespace lammpssnifferwrappers
             IAPISimulationEventManager *mEventManager;
 
         private:
-/*
-            void init();
-*/
             void initThermo();
-/*
-            int initialized;
-            IDManager *moleculeIDManager;
-            IDManager *regionIDManager;
-*/
             bool thermoInit;
-/*
-            std::vector<LammpsRegion *>atomRegionList;
-*/
             IAPIBoundary *createBoundary();
             IDManager *fixIDManager;
             IAPIIntegrator *mIntegrator;
             IAPIRandom *mRand;
             LammpsSpace *mSpace;
-            struct NativeSpecies {
-                int moleculeCount;
-//                struct *NativeMolecule;
-                int *moleculeID;
-// The following 2 could be retrieved from lammps using the molecule
-                int numAtomTypes; // total #, not unique #
-                int *atomTypes; // not a unique list
-            };
-            struct NativeMolecule {
-                int nativeID;
-                int atomCount;
-                int *nativeAtomID;
-//                NativeSpecies *species; // can't use this.  Using realloc!
-                int speciesIndex;
-            };
-            NativeMolecule *createMoleculeData(int *moleCount, int atomPos);
-            NativeSpecies *createSpeciesData(NativeMolecule **moles, int moleCount, int *speciesCount);
 
     };
 }

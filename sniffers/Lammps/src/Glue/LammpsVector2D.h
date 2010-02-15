@@ -19,8 +19,6 @@ namespace lammpssnifferwrappers
     class LammpsVector2D : public LammpsVector, public virtual IAPIVectorMutable {
         public:
             LammpsVector2D();
-//            LammpsVector2D(double v1, double v2);
-//            LammpsVector2D(LammpsVector2D *v);
             LammpsVector2D(double **v);
 
             // API Compliance

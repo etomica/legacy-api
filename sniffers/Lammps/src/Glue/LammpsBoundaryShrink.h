@@ -27,9 +27,6 @@ namespace lammpssnifferwrappers
             virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
 
-            // Non-API methods
-            virtual void lammpsSetup();
-
     };
 }
 

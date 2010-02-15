@@ -11,7 +11,6 @@
 namespace lammpssnifferwrappers
 {
 
-    const char *const LammpsBoundaryCustom::bondTypes = "pfsm";
     const int LammpsBoundaryCustom::DEFAULT_TYPE = 0;
     const int LammpsBoundaryCustom::PERIODIC = 0;
     const int LammpsBoundaryCustom::FIXED = 1;
@@ -30,24 +29,6 @@ namespace lammpssnifferwrappers
         mZLower = checkTypeBounds(zLower);
         mZUpper = checkTypeBounds(zUpper);
 
-        mBoundaryArg = (char *) malloc (9 * sizeof(char));
-
-        sprintf(mBoundaryArg,
-                "%c%c %c%c %c%c",
-                bondTypes[mXLower],
-                bondTypes[mXUpper],
-                bondTypes[mYLower],
-                bondTypes[mYUpper],
-                bondTypes[mZLower],
-                bondTypes[mZUpper]);
-
-    }
-
-    /*
-     * getBoundaryArgument()
-     */
-    char *LammpsBoundaryCustom::getBoundaryArgument() {
-        return mBoundaryArg;
     }
 
     /*
@@ -90,21 +71,7 @@ namespace lammpssnifferwrappers
      * getPeriodicity()
      */
     bool LammpsBoundaryCustom::getPeriodicity(int d) {
-    }
-
-    /*
-     * lammpsSetup()
-     */
-    void LammpsBoundaryCustom::lammpsSetup() {
-
-        char command[512];
-
-        sprintf(command,
-                "boundary %s",
-                dynamic_cast<LammpsBoundaryCustom *>(this)->getBoundaryArgument());
-printf("lammps_command : %s\n", command); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), command);
-
+        printf("LammpsBoundaryCustom::getPeriodicity(int) is not implemented but should be!\n");
     }
 
 }

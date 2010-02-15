@@ -44,7 +44,6 @@ printf("lammps_command : %s\n", command); fflush(stdout);
      */
     void LammpsIntegratorEventManager::removeListener(IAPIIntegratorListener *listener) {
         if(mListeners.count(listener) == 0) {
-printf("Address : %x\n", listener); fflush(stdout);
             printf("WARNING : Integrator Listener not managed by integrator event manager.\n");
             fflush(stdout);
         }

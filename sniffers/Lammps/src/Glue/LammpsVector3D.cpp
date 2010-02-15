@@ -26,21 +26,7 @@ namespace lammpssnifferwrappers
             pos[0][i] = 0.0;
 
     }
-/*
-    LammpsVector3D::LammpsVector3D(double v1, double v2, double v3) {
-        D = 3;
-        pos = (double *) malloc (D * sizeof(double));
-        (pos)[0] = v1;
-        (pos)[1] = v2;
-        (pos)[2] = v3;
-    }
 
-    LammpsVector3D::LammpsVector3D(LammpsVector3D *v) {
-        D = 3;
-        pos = (double *) malloc (D * sizeof(double));
-        this->E(v);
-    }
-*/
     LammpsVector3D::LammpsVector3D(double **v) {
         pos = v;
         D = 3;
@@ -144,8 +130,6 @@ namespace lammpssnifferwrappers
         pos[0][0] += v->getX(0);
         pos[0][1] += v->getX(1);
         pos[0][2] += v->getX(2);
-//printf("::PE %x  %x  %x  %f  %f  %f\n", &(pos[0][0]), &(pos[0][1]), &(pos[0][2]),
-//       pos[0][0],  pos[0][1],  pos[0][2]); fflush(stdout);
     }
 
     /*
@@ -292,7 +276,7 @@ namespace lammpssnifferwrappers
      * isNaN
      */
     bool LammpsVector3D::isNaN() {
-printf("WARNING : LammpsVector3D::isNaN() NOT implemented.\n");
+        printf("WARNING : LammpsVector3D::isNaN() is not implemented.\n");
     }
 
     /*
@@ -324,7 +308,7 @@ printf("WARNING : LammpsVector3D::isNaN() NOT implemented.\n");
      * map
      */
     void LammpsVector3D::map(IAPIFunction *f) {
-printf("WARNING : LammpsVector3D::map() NOT implemented.\n");
+        printf("WARNING : LammpsVector3D::map() is not implemented.\n");
     }
 
     /*

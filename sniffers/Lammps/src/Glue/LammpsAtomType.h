@@ -19,8 +19,6 @@ namespace lammpssnifferwrappers
     class LammpsAtomType : public virtual IAPIAtomTypeSphere {
 
         public:
-//            LammpsAtomType();
-//            LammpsAtomType(double m);
             LammpsAtomType(int at, int nIndex);
             LammpsAtomType(int at, int nIndex, double m);
 

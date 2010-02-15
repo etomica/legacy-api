@@ -13,7 +13,6 @@
 
 #include "IAPIBoundary.h"
 #include "IAPIBoundaryEventManager.h"
-#include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "IAPIVectorMutable.h"
 #include "LammpsSimulation.h"
@@ -43,7 +42,6 @@ namespace lammpssnifferwrappers
             IAPIBoundaryEventManager *getEventManager();
 
         protected:
-            LammpsSpace *mSpace;
             LammpsSimulation *mSim;
             IAPIVectorMutable *mVector;
             IAPIVector *mCenter;

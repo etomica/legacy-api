@@ -44,17 +44,5 @@ namespace lammpssnifferwrappers
         return false;
     }
 
-    /*
-     * lammpsSetup()
-     */
-    void LammpsBoundaryFixed::lammpsSetup() {
-
-        char command[512];
-
-printf("lammps_command : boundary f f f\n"); fflush(stdout);
-        lammps_command(mSim->getLammpsSim(), "boundary f f f");
-
-    }
-
 }
 

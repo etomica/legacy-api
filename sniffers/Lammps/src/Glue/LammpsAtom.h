@@ -9,7 +9,7 @@
 
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtom.h"
-#include "IAPIVector.h"
+#include "IAPIMolecule.h"
 #include "IAPIVectorMutable.h"
 #include "LammpsSimulation.h"
 
@@ -21,7 +21,7 @@ namespace lammpssnifferwrappers
     class LammpsAtom : public virtual IAPIAtom, public virtual IAPIAtomKinetic {
 
         public:
-            LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at, int nIndex);
+            LammpsAtom(LammpsSimulation *sim, IAPIAtomType *at, IAPIMolecule *mole, int nIndex);
 
             // API Compliance
             int getIndex();
@@ -39,8 +39,7 @@ namespace lammpssnifferwrappers
             int getNativeIndex();
 
         private:
-//            void init(LammpsSimulation *sim, double x, double y, double z, IAPIAtomType *at);
-            void init(LammpsSimulation *sim, IAPIAtomType *at, int nIndex);
+            void init(LammpsSimulation *sim, IAPIAtomType *at, IAPIMolecule *mole, int nIndex);
 
             // atoms are tagged starting at 1 in Lammps.  Our leaf index
             // starts at 0.  So, when using mLeafIndex to access Lammps

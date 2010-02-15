@@ -9,7 +9,6 @@
 #include "library.h"
 
 #include "LammpsAtom.h"
-#include "LammpsAtomList.h"
 #include "LammpsMolecule.h"
 
 namespace lammpssnifferwrappers
@@ -20,7 +19,6 @@ namespace lammpssnifferwrappers
         mSpecies = NULL;
         nativeMoleculeID = nIndex;
         mAtoms = new LammpsAtomList();
-//        for(int i = 0; i < atomCount; i++) mAtoms->addAtom(atoms[i]);
         mIndex = -1;
     }
 
@@ -42,6 +40,7 @@ namespace lammpssnifferwrappers
      * addChildAtom
      */
     void LammpsMolecule::addChildAtom(IAPIAtom *atom) {
+        printf("WARNING : LammpsMolecule::addChildAtom(IAPIAtom *) is implemented but should not be.\n");
         mAtoms->addAtom(atom);
     }
 
@@ -49,7 +48,7 @@ namespace lammpssnifferwrappers
      * removeChildAtom
      */
     void LammpsMolecule::removeChildAtom(IAPIAtom *atom) {
-printf("WARNING : LammpsMolecule::removeChildAtom() is NOT implemented yet\n");
+        printf("ERROR : LammpsMolecule::removeChildAtom(IAPIAtom *) is not implemented yet\n");
     }
 
     /*
