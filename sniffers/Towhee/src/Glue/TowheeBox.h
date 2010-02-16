@@ -7,7 +7,6 @@
 #ifndef TOWHEE_BOX_WRAPPER_H
 #define TOWHEE_BOX_WRAPPER_H
 
-#include "IAPIAtom.h"
 #include "IAPIBoundary.h"
 #include "IAPIBox.h"
 #include "IAPIBoxEventManager.h"
@@ -15,7 +14,6 @@
 #include "IAPIMolecule.h"
 #include "IAPIMoleculeList.h"
 #include "IAPISpecies.h"
-#include "IAPISimulation.h"
 #include "TowheeAtomList.h"
 #include "TowheeMoleculeList.h"
 
@@ -28,7 +26,7 @@ namespace towheesnifferwrappers
 
         public:
 
-            TowheeBox();
+            TowheeBox(IAPIBoundary *b);
 
             void setIndex(int newIndex);
             int getIndex();

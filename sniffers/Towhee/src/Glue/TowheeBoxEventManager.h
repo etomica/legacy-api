@@ -9,8 +9,12 @@
 
 #include <vector>
 
+#include "IAPIAtom.h"
+#include "IAPIBox.h"
 #include "IAPIBoxEventManager.h"
 #include "IAPIBoxListener.h"
+#include "IAPIMolecule.h"
+#include "IAPISpecies.h"
 
 using namespace molesimAPI;
 

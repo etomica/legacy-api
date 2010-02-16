@@ -23,7 +23,7 @@ namespace towheesnifferwrappers
      * position()
      */
     IAPIVector *TowheeNativeAtomPositionDefinition::position(IAPIMolecule *atom) {
-        printf("TowheeNativeAtomPositionDefinition::position() This method should NOT be called\n");
+        printf("ERROR : TowheeNativeAtomPositionDefinition::position() is not implemented.\n");
     }
 
     /*

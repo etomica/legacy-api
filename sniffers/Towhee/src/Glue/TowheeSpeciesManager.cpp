@@ -20,6 +20,7 @@ namespace towheesnifferwrappers
      * removeSpecies
      */
     void TowheeSpeciesManager::removeSpecies(IAPISpecies *delSpecies) {
+        printf("TowheeSpeciesManager::removeSpecies(IAPISpecies *) is not implemented.\n");
 /*
         int index = -1;
 
@@ -46,7 +47,7 @@ namespace towheesnifferwrappers
      * boxAddedNotify
      */
     void TowheeSpeciesManager::boxAddedNotify(IAPIBox *box) {
-        printf("WARNING : TowheeSpeciesManager::boxAddedNotify() is NOT implemented\n");
+        printf("TowheeSpeciesManager::boxAddedNotify() is NOT implemented\n");
     }
 
     /*

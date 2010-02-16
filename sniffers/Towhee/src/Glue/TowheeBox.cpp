@@ -6,12 +6,6 @@
 
 #include "preproc.h"
 
-#include "IAPIAtom.h"
-#include "IAPIBox.h"
-#include "IAPISimulation.h"
-#include "IAPIVector.h"
-#include "IAPIMolecule.h"
-
 #include "TowheeBox.h"
 #include "TowheeBoxEventManager.h"
 
@@ -20,12 +14,13 @@ extern "C" { void twh_initmol_(int *, int *, int *, int *); }
 namespace towheesnifferwrappers
 {
 
-    TowheeBox::TowheeBox() {
+    TowheeBox::TowheeBox(IAPIBoundary *b) {
         mIndex = -1;
         mEventManager = new TowheeBoxEventManager();
         mMoleList = new TowheeMoleculeList();
         mMoleListBySpecies = new TowheeMoleculeList();
         mLeafList = new TowheeAtomList();
+        mBoundary = b;
     }
 
     /*
@@ -46,6 +41,7 @@ namespace towheesnifferwrappers
      * addMolecule()
      */
     void TowheeBox::addMolecule(IAPIMolecule *mole) {
+printf("WARNING : TowheeBox::addMolecule(IAPIMolecule *) is implemented but should not be.\n");
         mMoleList->addMolecule(mole);
         mole->setIndex(mMoleList->getMoleculeCount()-1);
         TowheeAtomList *atomList = dynamic_cast<TowheeAtomList *>(mole->getChildList());
@@ -59,7 +55,7 @@ namespace towheesnifferwrappers
      * removeMolecule()
      */
     void TowheeBox::removeMolecule(IAPIMolecule *mole) {
-        // Do not implement this method
+        printf("ERROR : TowheeBox::removeMolecule(IAPIMolecule *) is not implemented.\n");
     }
 
     /*
@@ -67,7 +63,7 @@ namespace towheesnifferwrappers
      * This method will intentionally be left blank.
      */
     void TowheeBox::setNMolecules(IAPISpecies *species, int numMolecules) {
-        // Do not implement this method
+        printf("ERROR : TowheeBox::removeMolecule(IAPISpecies *, int) is not implemented.\n");
     }
 
     /*
@@ -123,7 +119,7 @@ namespace towheesnifferwrappers
      * setBoundary()
      */
     void TowheeBox::setBoundary(IAPIBoundary *boundary) {
-        mBoundary = boundary;
+        printf("ERROR : TowheeBox::setBoundary(IAPIBoundary *) is not implemented.\n");
     }
 
     /*
@@ -137,12 +133,14 @@ namespace towheesnifferwrappers
      * addSpeciesNotify()
      */
     void TowheeBox::addSpeciesNotify(IAPISpecies *species) {
+        printf("TowheeBox::addSpeciesNotify(IAPISpecies *) is not implemented.\n");
     }
 
     /*
      * removeSpeciesNotify()
      */
     void TowheeBox::removeSpeciesNotify(IAPISpecies *species) {
+        printf("TowheeBox::removeSpeciesNotify(IAPISpecies *) is not implemented.\n");
     }
 
 

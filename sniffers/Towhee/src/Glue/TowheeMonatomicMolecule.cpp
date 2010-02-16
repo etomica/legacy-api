@@ -4,13 +4,17 @@
  *
  */
 
+#include "stdio.h"
+
 #include "TowheeMonatomicMolecule.h"
 #include "TowheeAtomList.h"
 
 namespace towheesnifferwrappers
 {
 
-    TowheeMonatomicMolecule:: TowheeMonatomicMolecule(IAPISpecies *species) {
+    TowheeMonatomicMolecule::TowheeMonatomicMolecule
+                                     (IAPISpecies *species, IAPIBox *box)  :
+                                        TowheeMolecule::TowheeMolecule(box) {
         mSpecies = species;
         mAtoms = new TowheeAtomList();
     }
@@ -19,20 +23,16 @@ namespace towheesnifferwrappers
      * addChildAtom()
      */
     void TowheeMonatomicMolecule::addChildAtom(IAPIAtom *atom) {
-//        if(mAtoms->getAtomCount() == 0) {
-            mAtoms->addChildAtom(atom);
-            atom->setIndex(mAtoms->getAtomCount()-1);
-//        }
-//        else {
-//printf("TowheeMonatomicMolecule::addChildAtom -> The monatomic molecule already has a child atom.\n"); fflush(stdout);
-//        }
+        printf("WARNING : TowheeMonatomicMolecule::addChildAtom(IAPIAtom *) is implemented but should NOT be.\n");
+        mAtoms->addChildAtom(atom);
+        atom->setIndex(mAtoms->getAtomCount()-1);
     }
 
     /*
      * removeChildAtom()
      */
     void TowheeMonatomicMolecule::removeChildAtom(IAPIAtom *atom) {
-        // do not implement this method
+        printf("ERROR : TowheeMonatomicMolecule::removeChildAtom(IAPIAtom *) is not implemented.\n");
     }
 
     /*

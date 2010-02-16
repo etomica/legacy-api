@@ -11,7 +11,8 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeBoxMoleculeCountEvent::TowheeBoxMoleculeCountEvent(IAPISpecies *species, int count, IAPIBox *box) :
+    TowheeBoxMoleculeCountEvent::TowheeBoxMoleculeCountEvent
+                       (IAPISpecies *species, int count, IAPIBox *box) :
                                                TowheeBoxEvent(box) {
         mSpecies = species;
         mCount = count;

@@ -4,6 +4,8 @@
  *
  */
 
+#include "stdio.h"
+
 #include "TowheeBoxAtomIndexEvent.h"
 
 namespace towheesnifferwrappers
@@ -13,6 +15,7 @@ namespace towheesnifferwrappers
      * getIndex()
      */
     int TowheeBoxAtomIndexEvent::getIndex() {
+        printf("TowheeBoxAtomIndexEvent::getIndex() is not implemented.\n");
     }
 
 }

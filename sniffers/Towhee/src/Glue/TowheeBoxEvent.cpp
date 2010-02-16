@@ -19,6 +19,7 @@ namespace towheesnifferwrappers
      * getBox()
      */
     IAPIBox *TowheeBoxEvent::getBox() {
+        return mBox;
     }
 
 

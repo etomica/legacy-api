@@ -12,21 +12,22 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeBoundary::TowheeBoundary(TowheeSpace *space) {
+    TowheeBoundary::TowheeBoundary(TowheeSpace *space, IAPIVector *size) {
         mSpace = space;
         mDimensions = space->makeVector();
         mCenter = space->makeVector();
         mEdgeVector = space->makeVector();
+        for(int i = 0; i < size->getD(); i++) {
+            mDimensions->setX(i, size->getX(i));
+            mCenter->setX(i, size->getX(i) / 2.0);
+        }
     }
 
     /*
      * setBoxSize()
      */
     void TowheeBoundary::setBoxSize(IAPIVector *v) {
-        for(int i = 0; i < v->getD(); i++) {
-            mDimensions->setX(i, v->getX(i));
-            mCenter->setX(i, v->getX(i) / 2.0);
-        }
+        printf("TowheeBoundary::setBoxSize(IAPIVector *) is not implemented.\n");
     }
 
     /*
@@ -40,12 +41,14 @@ namespace towheesnifferwrappers
      * setBox()
      */
     void TowheeBoundary::setBox(IAPIBox *box) {
+        mBox = box;
     }
 
     /*
      * getBox()
      */
     IAPIBox *TowheeBoundary::getBox() {
+        return mBox;
     }
 
     /*

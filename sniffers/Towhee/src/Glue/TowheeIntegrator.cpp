@@ -24,7 +24,6 @@ namespace towheesnifferwrappers
      */
     void TowheeIntegrator::doStep() {
         int failure = 0;
-//printf("Calling doStep!\n"); fflush(stdout);
         mEventManager->stepStartedNotify();
         main_do_mc_move_(&failure);
         mEventManager->stepCompletedNotify();
@@ -34,18 +33,21 @@ namespace towheesnifferwrappers
      * getStepCount()
      */
     long long TowheeIntegrator::getStepCount() {
+        printf("TowheeIntegrator::getStepCount() is not implemented.\n");
     }
 
     /*
      * reset()
      */
     void TowheeIntegrator::reset() {
+        printf("TowheeIntegrator::reset() is not implemented.\n");
     }
 
     /*
      * resetStepCount()
      */
     void TowheeIntegrator::resetStepCount() {
+        printf("TowheeIntegrator::resetStepCount() is not implemented.\n");
     }
 
     /*

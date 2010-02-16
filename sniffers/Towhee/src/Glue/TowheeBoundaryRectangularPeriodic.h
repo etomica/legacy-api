@@ -22,7 +22,7 @@ namespace towheesnifferwrappers
 
         public:
 
-            TowheeBoundaryRectangularPeriodic(TowheeSpace *space);
+            TowheeBoundaryRectangularPeriodic(TowheeSpace *space, IAPIVector *size);
 
             virtual void nearestImage(IAPIVectorMutable *v);
             virtual IAPIVector *centralImage(IAPIVector *v);

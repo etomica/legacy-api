@@ -385,38 +385,26 @@ printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
         // Get number of boxes and allocate API box objects
         int boxCount = 0;
         twh_numboxes_(&get, &boxCount);
-printf("NUMBER OF BOXES : %d\n", boxCount); fflush(stdout);
-        for(int i = 0; i < boxCount; i++) {
-            IAPIBox *box = new TowheeBox();
-            addBox(box);
-            box->setIndex(i);
-        }
-
-        // Get each box boundary (assuming rectangular and periodic)
         double value[mSpace->getD()];
-        for(int i = 1; i <= boxCount; i++) {
-            IAPIBoundary *boundary = new TowheeBoundaryRectangularPeriodic(mSpace);
-            IAPIBox *box = getBox(i-1);
-            boundary->setBox(box);
 
-printf("GETTING BOUNDARY\n"); fflush(stdout);
+        for(int i = 1; i <= boxCount; i++) {
+            // Create boundary
             for(int j = 1; j <= mSpace->getD(); j++) {
                 twh_hmatrix_(&get, &i, &j, &j, &value[j-1]);
-printf("  %f\n", value[j-1]); fflush(stdout);
             }
-
-// This is not making values stored in towhee mutable,
-// which is the way the vector should really operate
             IAPIVectorMutable *v = mSpace->makeVector();
-printf("VECTOR : %x\n", v); fflush(stdout);
-
             for(int j = 0; j < mSpace->getD(); j++) {
                 v->setX(j, value[j]);
             }
+            // assuming rectangular and periodic
+            IAPIBoundary *boundary = new TowheeBoundaryRectangularPeriodic(mSpace, v);
 
-            boundary->setBoxSize(v);
+            // Create Box
+            IAPIBox *box = new TowheeBox(boundary);
+            addBox(box);
+            box->setIndex(i-1);
 
-            box->setBoundary(boundary);
+            boundary->setBox(box);
         }
 
     }

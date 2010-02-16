@@ -9,8 +9,9 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeSimulationSpeciesIndexEvent::TowheeSimulationSpeciesIndexEvent(IAPISimulation *sim, IAPISpecies *box, int idx) :
-                                                         TowheeSimulationSpeciesEvent(sim, box) {
+    TowheeSimulationSpeciesIndexEvent::TowheeSimulationSpeciesIndexEvent
+                          (IAPISimulation *sim, IAPISpecies *box, int idx) :
+                                     TowheeSimulationSpeciesEvent(sim, box) {
         mIndex = idx;
     }
 

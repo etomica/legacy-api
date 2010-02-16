@@ -23,7 +23,6 @@ namespace towheesnifferwrappers
         mFunction = fnct;
         iArg1 = ia1;
         iArg3 = ia3;
-//        offset = offsetVector;
         mAtom = atom;
     }
 
@@ -65,10 +64,6 @@ namespace towheesnifferwrappers
         int set = GLB_SET;
         int moleIndex = mAtom->getParentGroup()->getIndex()+1;
         int atomIndex = mAtom->getIndex()+1;
-//printf("SETTING ---------------------\n");
-//printf("  args : %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
-//printf("  vals : %f  %f  %f\n", vecPos[0], vecPos[1], vecPos[2]); fflush(stdout);
-//printf("DONE SETTING ---------------------\n");
 
         (*mFunction)(&set, &iArg1, &moleIndex, &atomIndex, &vecPos[0], &vecPos[1], &vecPos[2]);
 
@@ -78,7 +73,6 @@ namespace towheesnifferwrappers
         int ctrInitial = CTR_INITIAL;
         int failFlag;
         int ibox = dynamic_cast<TowheeMolecule *>(mAtom->getParentGroup())->getBox()->getIndex()+1;
-//printf("ibox : %d  moleIndex : %d\n", ibox, moleIndex); fflush(stdout);
         twh_ctrmas_(&failFlag, &tCoord, &ibox, &moleIndex, &ctrInitial);
 
     }
@@ -90,11 +84,7 @@ namespace towheesnifferwrappers
         int get = GLB_GET;
         int moleIndex = mAtom->getParentGroup()->getIndex()+1;
         int atomIndex = mAtom->getIndex()+1;
-//printf("UPDATE:: %d  %d  %d\n", iArg1, moleIndex, atomIndex); fflush(stdout);
-//printf("UPDATE:: %d  %d  %d\n", iArg1, iArg2, iArg3); fflush(stdout);
         (*mFunction)(&get, &iArg1, &moleIndex, &atomIndex, &vecPos[0], &vecPos[1], &vecPos[2]);
-//        (*mFunction)(&get, &iArg1, &iArg2, &iArg3, &vecPos[0], &vecPos[1], &vecPos[2]);
-//printf("  POSITION : %f  %f  %f\n", vecPos[0], vecPos[1], vecPos[2]); fflush(stdout);
     }
 
     /*

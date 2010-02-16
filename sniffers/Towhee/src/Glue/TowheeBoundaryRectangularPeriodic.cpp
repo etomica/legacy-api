@@ -11,32 +11,29 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeBoundaryRectangularPeriodic::TowheeBoundaryRectangularPeriodic(TowheeSpace *space) :
-                                              TowheeBoundary(space) {
+    TowheeBoundaryRectangularPeriodic::TowheeBoundaryRectangularPeriodic
+                                      (TowheeSpace *space, IAPIVector *size) :
+                                              TowheeBoundary(space, size) {
     }
 
     /*
      * nearestImage()
      */
     void TowheeBoundaryRectangularPeriodic::nearestImage(IAPIVectorMutable *v) {
+        printf("TowheeBoundaryRectangularPeriodic::nearestImage(IAPIVectorMutable *) is not implemented.\n");
     }
 
     /*
      * centralImage()
      */
     IAPIVector *TowheeBoundaryRectangularPeriodic::centralImage(IAPIVector *v) {
+        printf("TowheeBoundaryRectangularPeriodic::centralImage(IAPIVectorMutable *) is not implemented.\n");
     }
 
     /*
      * getEdgeVector()
      */
     IAPIVector *TowheeBoundaryRectangularPeriodic::getEdgeVector(int d) {
-//if(mSpace == NULL) {
-//printf("mspace is NULL\n"); fflush(stdout);
-//}
-//else {
-//printf("mspace is OK\n"); fflush(stdout);
-//}
         if(d < mSpace->getD()) {
             double vals[mSpace->getD()];
             for(int i = 0; i < mSpace->getD(); i++) {
@@ -46,7 +43,6 @@ namespace towheesnifferwrappers
             mEdgeVector->E(vals);
         }
 
-//printf(" -- complete\n"); fflush(stdout);
         return mEdgeVector;
 
     }

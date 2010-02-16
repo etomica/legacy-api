@@ -4,6 +4,8 @@
  *
  */
 
+#include "stdio.h"
+
 #include "preproc.h"
 
 #include "TowheeRandom.h"
@@ -31,18 +33,21 @@ namespace towheesnifferwrappers
      * nextDouble()
      */
     double TowheeRandom::nextDouble() {
+        printf("TowheeRandom::nextDouble() is not implemented.\n");
     }
 
     /*
      * nextInt()
      */
     int TowheeRandom::nextInt(int maxInt) {
+        printf("TowheeRandom::nextInt() is not implemented.\n");
     }
 
     /*
      * nextGaussian()
      */
     double TowheeRandom::nextGaussian() {
+        printf("TowheeRandom::nextGaussian() is not implemented.\n");
     }
 
 }

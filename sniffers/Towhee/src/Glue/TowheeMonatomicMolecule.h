@@ -9,6 +9,7 @@
 #define TOWHEE_MONATOMICMOLECULE_WRAPPER_H
 
 #include "IAPIAtom.h"
+#include "IAPIBox.h"
 #include "IAPISpecies.h"
 
 #include "TowheeAtomList.h"
@@ -22,7 +23,7 @@ namespace towheesnifferwrappers
     class TowheeMonatomicMolecule : public TowheeMolecule {
 
         public:
-            TowheeMonatomicMolecule(IAPISpecies *species);
+            TowheeMonatomicMolecule(IAPISpecies *species, IAPIBox *box);
 
             // API Compliance
             virtual void addChildAtom(IAPIAtom *atom);

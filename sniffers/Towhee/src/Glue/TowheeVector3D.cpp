@@ -38,6 +38,7 @@ namespace towheesnifferwrappers
      * equals
      */
     bool TowheeVector3D::equals(IAPIVector *v) {
+        printf("TowheeVector3D::equals(IAPIVector *) is not implemented.\n");
     }
 
     /*
@@ -202,48 +203,58 @@ namespace towheesnifferwrappers
      * isZero
      */
     bool TowheeVector3D::isZero() {
+        printf("TowheeVector3D::isZero() is not implemented.\n");
     }
 
     /*
      * dot
      */
     double TowheeVector3D::dot(IAPIVector *v) {
+        printf("TowheeVector3D::dot(IAPIVector *) is not implemented.\n");
     }
 
     /*
      * isNaN
      */
     bool TowheeVector3D::isNaN() {
+        printf("TowheeVector3D::isNaN() is not implemented.\n");
     }
 
     /*
      * Mv1Squared
      */
     double TowheeVector3D::Mv1Squared(IAPIVector *v) {
+        printf("TowheeVector3D::Mv1Squared(IAPIVector *) is not implemented.\n");
     }
 
     /*
      * normalize
      */
     void TowheeVector3D::normalize() {
+        printf("TowheeVector3D::normalize() is not implemented.\n");
     }
 
     /*
      * map
      */
     void TowheeVector3D::map(IAPIFunction *f) {
+        printf("TowheeVector3D::map(IAPIFunction *) is not implemented.\n");
     }
 
     /*
      * XE
      */
    void TowheeVector3D::XE(IAPIVector *v) {
+        printf("TowheeVector3D::XE(IAPIVector *) is not implemented.\n");
    }
 
     /*
      * E
      */
    void TowheeVector3D::E(double a, double b, double c) {
+        vecPos[0] = a;
+        vecPos[1] = b;
+        vecPos[2] = c;
    }
 
 

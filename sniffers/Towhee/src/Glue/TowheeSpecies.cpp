@@ -45,6 +45,7 @@ namespace towheesnifferwrappers
      * initializeConformation()
      */
     void TowheeSpecies::initializeConformation(IAPIMolecule *molecule) {
+        mConformation->initializePositions(molecule->getChildList());
     }
 
 }

@@ -10,8 +10,7 @@
 #include "IAPIAtom.h"
 #include "IAPIAtomKinetic.h"
 #include "IAPIAtomType.h"
-#include "IAPISimulation.h"
-#include "IAPIVector.h"
+#include "IAPIMolecule.h"
 #include "IAPIVectorMutable.h"
 #include "TowheeVector3DAtom.h"
 
@@ -25,7 +24,7 @@ namespace towheesnifferwrappers
 
         public:
 
-            TowheeAtom(IAPIAtomType *at, int tIndex);
+            TowheeAtom(IAPIAtomType *at, int tIndex, IAPIMolecule *p);
 
             int getIndex();
             void setIndex(int index);

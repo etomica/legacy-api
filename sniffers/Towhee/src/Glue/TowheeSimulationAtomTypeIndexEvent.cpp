@@ -11,8 +11,9 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeSimulationAtomTypeIndexEvent::TowheeSimulationAtomTypeIndexEvent(IAPISimulation *sim, IAPIAtomType *atomType, int idx) :
-                                                         TowheeSimulationAtomTypeEvent(sim, atomType) {
+    TowheeSimulationAtomTypeIndexEvent::TowheeSimulationAtomTypeIndexEvent
+                      (IAPISimulation *sim, IAPIAtomType *atomType, int idx) :
+                                 TowheeSimulationAtomTypeEvent(sim, atomType) {
         mIndex = idx;
     }
 

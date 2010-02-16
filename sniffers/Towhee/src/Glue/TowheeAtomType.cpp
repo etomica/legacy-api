@@ -50,12 +50,14 @@ namespace towheesnifferwrappers
      * setChildIndex()
      */
     void TowheeAtomType::setChildIndex(int newChildIndex) {
+        printf("TowheeAtomType::setChildIndex(int) not implemented.\n");
     }
 
     /*
      * getChildIndex()
      */
     int TowheeAtomType::getChildIndex() {
+        printf("TowheeAtomType::getChildIndex(int) not implemented.\n");
     }
 
     /*
@@ -73,6 +75,7 @@ namespace towheesnifferwrappers
      * rm()
      */
     double TowheeAtomType::rm() {
+        return 1.0/getMass();
     }
 
     /*

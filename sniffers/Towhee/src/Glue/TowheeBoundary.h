@@ -10,7 +10,6 @@
 
 #include "IAPIBoundary.h"
 #include "IAPIBoundaryEventManager.h"
-#include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "IAPIVectorMutable.h"
 
@@ -25,7 +24,7 @@ namespace towheesnifferwrappers
 
         public:
 
-            TowheeBoundary(TowheeSpace *space);
+            TowheeBoundary(TowheeSpace *space, IAPIVector *size);
 
             void setBoxSize(IAPIVector *v);
             IAPIVector *getBoxSize();
@@ -43,6 +42,7 @@ namespace towheesnifferwrappers
             IAPIVectorMutable *mDimensions;
             IAPIVectorMutable *mCenter;
             IAPIVectorMutable *mEdgeVector;
+            IAPIBox *mBox;
             TowheeSpace *mSpace;
     };
 }

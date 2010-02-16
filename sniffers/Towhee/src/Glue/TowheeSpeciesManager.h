@@ -9,7 +9,6 @@
 
 #include "IAPIBox.h"
 #include "IAPISpecies.h"
-#include "IAPIAtomType.h"
 
 #include <vector>
 

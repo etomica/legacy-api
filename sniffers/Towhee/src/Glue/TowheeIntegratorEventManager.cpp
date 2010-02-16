@@ -23,7 +23,7 @@ namespace towheesnifferwrappers
      * removeListener
      */
     void TowheeIntegratorEventManager::removeListener(IAPIIntegratorListener *listener) {
-printf("TowheeIntegratorEventManager::removeListener() NOT implemented yet.\n"); fflush(stdout);
+printf("TowheeIntegratorEventManager::removeListener() is not implemented.\n"); fflush(stdout);
     }
 
     /*

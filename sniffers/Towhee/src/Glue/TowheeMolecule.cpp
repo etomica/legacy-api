@@ -4,10 +4,16 @@
  *
  */
 
+#include "stdio.h"
+
 #include "TowheeMolecule.h"
 
 namespace towheesnifferwrappers
 {
+
+    TowheeMolecule::TowheeMolecule(IAPIBox *box) {
+        mBox = box;
+    }
 
     /*
      * getIndex()
@@ -27,18 +33,21 @@ namespace towheesnifferwrappers
      * addChildAtom
      */
     void TowheeMolecule::addChildAtom(IAPIAtom *atom) {
+        printf("ERROR : TowheeMolecule::addChildAtom(IAPIAtom *) is not implemented.\n");
     }
 
     /*
      * removeChildAtom
      */
     void TowheeMolecule::removeChildAtom(IAPIAtom *atom) {
+        printf("ERROR : TowheeMolecule::removeChildAtom(IAPIAtom *) is not implemented.\n");
     }
 
     /*
      * getChildList
      */
     IAPIAtomList *TowheeMolecule::getChildList() {
+        printf("TowheeMolecule::getChildList() is not implemented.\n");
     }
 
     /*

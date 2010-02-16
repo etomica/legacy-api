@@ -11,8 +11,9 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeSimulationBoxEvent::TowheeSimulationBoxEvent(IAPISimulation *sim, IAPIBox *box) :
-                                                         TowheeSimulationEvent(sim) {
+    TowheeSimulationBoxEvent::TowheeSimulationBoxEvent
+                                      (IAPISimulation *sim, IAPIBox *box) :
+                                                TowheeSimulationEvent(sim) {
         mBox = box;
     }
 

@@ -10,6 +10,12 @@
 #include "jni.h"
 
 #include "IAPIBoxEvent.h"
+#include "IAPIBoxAtomEvent.h"
+#include "IAPIBoxAtomIndexEvent.h"
+#include "IAPIBoxIndexEvent.h"
+#include "IAPIBoxMoleculeEvent.h"
+#include "IAPIBoxMoleculeIndexEvent.h"
+#include "IAPIBoxMoleculeCountEvent.h"
 #include "IAPIBoxListener.h"
 
 using namespace molesimAPI;

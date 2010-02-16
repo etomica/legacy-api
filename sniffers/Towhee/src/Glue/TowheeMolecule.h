@@ -10,7 +10,6 @@
 #include "IAPIAtom.h"
 #include "IAPIAtomList.h"
 #include "IAPIBox.h"
-#include "IAPISimulation.h"
 #include "IAPISpecies.h"
 #include "IAPIMolecule.h"
 
@@ -22,7 +21,7 @@ namespace towheesnifferwrappers
     class TowheeMolecule : public virtual IAPIMolecule {
 
         public:
-            TowheeMolecule() {};
+            TowheeMolecule(IAPIBox *box);
 
             virtual int getIndex();
             virtual void setIndex(int);

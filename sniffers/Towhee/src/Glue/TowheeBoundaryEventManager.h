@@ -7,7 +7,6 @@
 #ifndef TOWHEE_BOUNDARYEVENTMGR_WRAPPER_H
 #define TOWHEE_BOUNDARYEVENTMGR_WRAPPER_H
 
-#include "IAPIBoundary.h"
 #include "IAPIBoundaryEventManager.h"
 #include "IAPIBoundaryListener.h"
 

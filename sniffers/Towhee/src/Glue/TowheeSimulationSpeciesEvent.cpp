@@ -11,8 +11,9 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeSimulationSpeciesEvent::TowheeSimulationSpeciesEvent(IAPISimulation *sim, IAPISpecies *species) :
-                                                         TowheeSimulationEvent(sim) {
+    TowheeSimulationSpeciesEvent::TowheeSimulationSpeciesEvent
+                              (IAPISimulation *sim, IAPISpecies *species) :
+                                                TowheeSimulationEvent(sim) {
         mSpecies = species;
     }
 

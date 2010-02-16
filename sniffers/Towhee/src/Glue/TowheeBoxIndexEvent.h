@@ -7,7 +7,6 @@
 #ifndef TOWHEE_BOXINDEXEVENT_WRAPPER_H
 #define TOWHEE_BOXINDEXEVENT_WRAPPER_H
 
-#include "IAPIAtom.h"
 #include "IAPIBox.h"
 #include "IAPIBoxIndexEvent.h"
 #include "TowheeBoxEvent.h"

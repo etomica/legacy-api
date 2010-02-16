@@ -12,8 +12,8 @@
 #include "IAPISpecies.h"
 #include "IAPIAtomType.h"
 #include "IAPIMolecule.h"
-#include "IAPISimulation.h"
 #include "TowheeSimulationSniffer.h"
+#include "TowheeInterfaceConformation.h"
 
 using namespace molesimAPI;
 
@@ -41,7 +41,7 @@ namespace towheesnifferwrappers
 
         private:
             int mIndex;
-
+            TowheeInterfaceConformation *mConformation;
     };
 }
 
