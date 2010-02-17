@@ -12,6 +12,7 @@
 #include "TowheeSimulationSniffer.h"
 #include "TowheeBox.h"
 #include "TowheeBoundaryRectangularPeriodic.h"
+#include "TowheeIntegrator.h"
 #include "TowheeMolecule.h"
 #include "TowheeSpeciesManager.h"
 #include "TowheeSpeciesSpheresHetero.h"
@@ -71,6 +72,8 @@ printf("INPUT FILE : %s\n", inputFile); fflush(stdout);
         twh_readinput_(&lfinish, &atomCount);
 printf("lfinish : %d\n", lfinish); fflush(stdout);
         sniff();
+
+        mIntegrator = new TowheeIntegrator();
     }
 
     /*
@@ -156,8 +159,7 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
      * setIntegrator()
      */
     void TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *integrator) {
-        printf("TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *) is implemented but should not be.\n");
-        mIntegrator = integrator;
+        printf("ERROR : TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *) is not implemented.\n");
     }
 
     /*
