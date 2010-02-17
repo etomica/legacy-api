@@ -12,7 +12,7 @@ public class LXYZ2MSDOrderN {
 		String outputFile = inputFile+".msd";
 		int dtmax = Integer.parseInt(args[1]);
 		
-		LMSDProcessor msdproc =  new LMSDProcessor(Space3D.getInstance(), inputFile, outputFile);
+		LMSDProcessorOrderN msdproc =  new LMSDProcessorOrderN(Space3D.getInstance(), inputFile, outputFile);
 		msdproc.setDeltaTmax(dtmax);
 		msdproc.fillArrays();
 			

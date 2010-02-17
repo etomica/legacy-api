@@ -146,7 +146,10 @@ public class LMSDProcessorOrderN {
 	                for (int l=1; l<coordString.length; l++) {
 	                    coord = Double.valueOf(coordString[l]).doubleValue();
 	                    coordBlocks[0][0][k].setX(l-1,coord);
+        			
 	                }
+	            	//DENSITY PROFILE
+	                histz.addValue(coordBlocks[0][0][k].getX(2));
                 }
                 
                 //LOOP OVER BUFFERS TO COPY TIME-RELEVANT CONFIGURATION DATA- 1deltaT, 10deltaT, 100deltaT....
@@ -185,13 +188,6 @@ public class LMSDProcessorOrderN {
         			for(int j=1; j<maxj+1; j++){
         				
         				jcount[b][j]++;
-        				
-        				//DENSITY PROFILE
-            			if(b==1){
-            				for(int a=0; a<numAtoms; a++){
-            					histz.addValue(coordBlocks[b][0][a].getX(2));
-            				}
-            			}
         				
             			//if (b==1) System.out.println(">>Calculating MSD of dt "+j+" for buffer "+b);
         				
@@ -292,11 +288,11 @@ public class LMSDProcessorOrderN {
             	fileWriter.write("\n");
             }
             
-            fileWriter.write("rho\n");
+            fileWriter.write("atoms-perdz\n");
             fileWriter.write("+range: "+histz.getXRange().minimum()+" - "+histz.getXRange().maximum()+"\n");
             fileWriter.write("+bins: "+histz.getNBins()+"\n");
             for(int i=0;i<histz.getHistogram().length;i++){
-            	fileWriter.write(histz.getHistogram()[i]+"\n");	
+            	fileWriter.write(histz.getHistogram()[i]*numAtoms+"\n");	
             }
             
             fileWriter.write("zplane-diff\n");
