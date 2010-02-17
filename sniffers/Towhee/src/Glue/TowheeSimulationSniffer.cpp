@@ -77,20 +77,21 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
      * addBox()
      */
     void TowheeSimulationSniffer::addBox(IAPIBox *box) {
-        mBox.push_back(box);
+        printf("ERROR : TowheeSimulationSniffer::addBox(IAPIBox *) is not implemented.\n");
     }
 
     /*
      * removeBox()
      */
     void TowheeSimulationSniffer::removeBox(IAPIBox *box) {
-        printf("TowheeSimulationSniffer::removeBox() -> Cannot remove a box.\n"); fflush(stdout);
+        printf("ERROR : TowheeSimulationSniffer::removeBox() is not implemented.\n"); fflush(stdout);
     }
 
     /*
      * getRandom()
      */
     IAPIRandom *TowheeSimulationSniffer::getRandom() {
+        printf("WARNING : TowheeSimulationSniffer::getRandom() is not implemented.\n");
     }
 
     /*
@@ -118,6 +119,7 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
      * addSpecies()
      */
     void TowheeSimulationSniffer::addSpecies(IAPISpecies *species) {
+        printf("TowheeSimulationSniffer::addSpecies(IAPISpecies *) is implemented but should not be.\n");
         mSpeciesMgr->addSpecies(species);
     }
 
@@ -125,6 +127,7 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
      * removeSpecies()
      */
     void TowheeSimulationSniffer::removeSpecies(IAPISpecies *removedSpecies) {
+        printf("TowheeSimulationSniffer::removeSpecies(IAPISpecies *) is implemented but should not be.\n");
         mSpeciesMgr->removeSpecies(removedSpecies);
     }
 
@@ -153,6 +156,7 @@ printf("lfinish : %d\n", lfinish); fflush(stdout);
      * setIntegrator()
      */
     void TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *integrator) {
+        printf("TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *) is implemented but should not be.\n");
         mIntegrator = integrator;
     }
 
@@ -247,15 +251,15 @@ printf("COMPLETE\n"); fflush(stdout);
         int uniqueIndices = 0;
 
         // Number of species
-        int x;
-        twh_nmolty_(&get, &x);
-printf("specie count : %d\n", x); fflush(stdout);
-        for(int i = 1; i <= x; i++) {
+        int specieCount;
+        twh_nmolty_(&get, &specieCount);
+printf("specie count : %d\n", specieCount); fflush(stdout);
+        for(int i = 1; i <= specieCount; i++) {
             // Number of atoms in a molecule of the species
-            int y;
-            twh_nunit_(&get, &i, &y);
-printf("  atoms in species : %d\n", y); fflush(stdout);
-            for(int j = 1; j <= y; j++) {
+            int numAtoms;
+            twh_nunit_(&get, &i, &numAtoms);
+printf("  atoms in species : %d\n", numAtoms); fflush(stdout);
+            for(int j = 1; j <= numAtoms; j++) {
                 int at;
                 twh_ntype_(&get, &i, &j, &at);
 printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
@@ -401,7 +405,7 @@ printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
 
             // Create Box
             IAPIBox *box = new TowheeBox(boundary);
-            addBox(box);
+            mBox.push_back(box);
             box->setIndex(i-1);
 
             boundary->setBox(box);
