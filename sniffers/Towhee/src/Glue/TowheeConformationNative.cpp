@@ -29,7 +29,7 @@ namespace towheesnifferwrappers
         (jvm)->AttachCurrentThread((void **)&jenv, NULL);
 
 
-        jclass atomSetClass = (jenv)->FindClass("towhee/wrapper/TowheeAtomList");
+        jclass atomSetClass = (jenv)->FindClass("towhee/sniffer/wrapper/TowheeAtomList");
         jmethodID atomSetCtor = (jenv)->GetMethodID(atomSetClass, "<init>", "(JZ)V");
         jobject as = (jenv)->NewObject(atomSetClass, atomSetCtor, (jlong)atomSet, false);
 

@@ -48,4 +48,11 @@ namespace towheesnifferwrappers
         mConformation->initializePositions(molecule->getChildList());
     }
 
+    /*
+     * setConformation()
+     */
+    void TowheeSpecies::setConformation(TowheeInterfaceConformation *c) {
+        mConformation = c;
+    }
+
 }

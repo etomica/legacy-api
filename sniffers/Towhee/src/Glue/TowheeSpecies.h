@@ -35,6 +35,9 @@ namespace towheesnifferwrappers
             IAPIAtomType *getAtomType(int index);
             void initializeConformation(IAPIMolecule *molecule);
 
+            // Non-API methods
+            void setConformation(TowheeInterfaceConformation *c);
+
         protected:
             std::vector<IAPIAtomType *> mTypeList;
             TowheeSimulationSniffer *mSim;

@@ -233,6 +233,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPISimulationListener.h"
 #include "IAPISimulationEventManager.h"
 #include "IAPISimulation.h"
+#include "TowheeInterfaceConformation.h"
 #include "TowheeConformationNative.h"
 #include "TowheeMolecule.h"
 #include "TowheeMoleculeList.h"
@@ -263,7 +264,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "TowheeIntegrator.h"
 #include "TowheeInterfaceAtomPositionDefinition.h"
 #include "TowheeNativeAtomPositionDefinition.h"
-#include "TowheeInterfaceConformation.h"
 #include "TowheeMonatomicMolecule.h"
 #include "TowheeRandom.h"
 #include "TowheeSimulationEvent.h"
@@ -3531,6 +3531,29 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1IAPISimulat
 }
 
 
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeInterfaceConformation_1initializePositions(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheesnifferwrappers::TowheeInterfaceConformation *arg1 = (towheesnifferwrappers::TowheeInterfaceConformation *) 0 ;
+  molesimAPI::IAPIAtomList *arg2 = (molesimAPI::IAPIAtomList *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeInterfaceConformation **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIAtomList **)&jarg2; 
+  (arg1)->initializePositions(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeInterfaceConformation(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  towheesnifferwrappers::TowheeInterfaceConformation *arg1 = (towheesnifferwrappers::TowheeInterfaceConformation *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeInterfaceConformation **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_new_1TowheeConformationNative(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg2) {
   jlong jresult = 0 ;
   JNIEnv *arg1 = (JNIEnv *) 0 ;
@@ -4249,6 +4272,18 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpecies_1init
   arg1 = *(towheesnifferwrappers::TowheeSpecies **)&jarg1; 
   arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
   (arg1)->initializeConformation(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeSpecies_1setConformation(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheesnifferwrappers::TowheeSpecies *arg1 = (towheesnifferwrappers::TowheeSpecies *) 0 ;
+  towheesnifferwrappers::TowheeInterfaceConformation *arg2 = (towheesnifferwrappers::TowheeInterfaceConformation *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeSpecies **)&jarg1; 
+  arg2 = *(towheesnifferwrappers::TowheeInterfaceConformation **)&jarg2; 
+  (arg1)->setConformation(arg2);
 }
 
 
@@ -5946,29 +5981,6 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeNativ
   (void)jenv;
   (void)jcls;
   arg1 = *(towheesnifferwrappers::TowheeNativeAtomPositionDefinition **)&jarg1; 
-  delete arg1;
-  
-}
-
-
-JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeInterfaceConformation_1initializePositions(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  towheesnifferwrappers::TowheeInterfaceConformation *arg1 = (towheesnifferwrappers::TowheeInterfaceConformation *) 0 ;
-  molesimAPI::IAPIAtomList *arg2 = (molesimAPI::IAPIAtomList *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheesnifferwrappers::TowheeInterfaceConformation **)&jarg1; 
-  arg2 = *(molesimAPI::IAPIAtomList **)&jarg2; 
-  (arg1)->initializePositions(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeInterfaceConformation(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  towheesnifferwrappers::TowheeInterfaceConformation *arg1 = (towheesnifferwrappers::TowheeInterfaceConformation *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheesnifferwrappers::TowheeInterfaceConformation **)&jarg1; 
   delete arg1;
   
 }
@@ -8429,6 +8441,14 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_SWIGIAPISimulation
     (void)jenv;
     (void)jcls;
     *(molesimAPI::IAPISimulationEvent **)&baseptr = *(molesimAPI::IAPISimulationIndexEvent **)&jarg1;
+    return baseptr;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_SWIGTowheeConformationNativeUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+    jlong baseptr = 0;
+    (void)jenv;
+    (void)jcls;
+    *(towheesnifferwrappers::TowheeInterfaceConformation **)&baseptr = *(towheesnifferwrappers::TowheeConformationNative **)&jarg1;
     return baseptr;
 }
 
