@@ -16,7 +16,7 @@ namespace towheesnifferwrappers
     TowheeNativeAtomPositionDefinition::TowheeNativeAtomPositionDefinition
                                                (JNIEnv *jenv, jobject jobj, IAPISimulation *sim) {
         nativeObject = jenv->NewGlobalRef(jobj);
-        mSim = dynamic_cast<TowheeSimulation *>(sim);
+        mSim = sim;
     }
 
     /*

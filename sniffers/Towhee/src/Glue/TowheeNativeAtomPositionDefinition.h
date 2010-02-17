@@ -13,7 +13,6 @@
 #include "IAPISimulation.h"
 #include "IAPIVector.h"
 #include "TowheeInterfaceAtomPositionDefinition.h"
-#include "TowheeSimulation.h"
 
 using namespace molesimAPI;
 
@@ -63,7 +62,7 @@ namespace towheesnifferwrappers
 
         private:
             jobject nativeObject;
-            TowheeSimulation *mSim;
+            IAPISimulation *mSim;
     };
 }
 #endif
