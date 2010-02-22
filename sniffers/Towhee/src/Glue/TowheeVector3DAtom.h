@@ -9,6 +9,7 @@
 
 #include "IAPIVectorMutable.h"
 #include "IAPIAtom.h"
+#include "IAPIBox.h"
 #include "TowheeVector3D.h"
 
 using namespace molesimAPI;
@@ -21,7 +22,7 @@ namespace towheesnifferwrappers
     class TowheeVector3DAtom : public TowheeVector3D {
         public:
 
-            TowheeVector3DAtom(TowheeAtom *atom,
+            TowheeVector3DAtom(TowheeAtom *atom, IAPIBox *box,
                                void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
                                    int ia1, int ia3);
 
@@ -56,6 +57,7 @@ namespace towheesnifferwrappers
             int iArg1;
             int iArg3;
             TowheeAtom *mAtom;
+            IAPIBox *mBox;
     };
 }
 

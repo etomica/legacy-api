@@ -17,13 +17,14 @@ extern "C" { void twh_ctrmas_(int *, int *, int *, int *, int *); }
 namespace towheesnifferwrappers
 {
 
-    TowheeVector3DAtom::TowheeVector3DAtom(TowheeAtom *atom,
+    TowheeVector3DAtom::TowheeVector3DAtom(TowheeAtom *atom, IAPIBox *box,
                                            void (*fnct)(int *, int *, int *, int *, double *, double *, double *),
                                            int ia1, int ia3/*, IAPIVector *offsetVector*/) {
         mFunction = fnct;
         iArg1 = ia1;
         iArg3 = ia3;
         mAtom = atom;
+        mBox = box;
     }
 
     /*
@@ -72,7 +73,7 @@ namespace towheesnifferwrappers
         int tCoord = CRD_REAL;
         int ctrInitial = CTR_INITIAL;
         int failFlag;
-        int ibox = dynamic_cast<TowheeMolecule *>(mAtom->getParentGroup())->getBox()->getIndex()+1;
+        int ibox = mBox->getIndex()+1;
         twh_ctrmas_(&failFlag, &tCoord, &ibox, &moleIndex, &ctrInitial);
 
     }
@@ -236,8 +237,9 @@ namespace towheesnifferwrappers
      */
     IAPIVector *TowheeVector3DAtom::getOffset() {
 
-        IAPIBoundary *boundary = dynamic_cast<TowheeMolecule *>
-                     (mAtom->getParentGroup())->getBox()->getBoundary();
+//        IAPIBoundary *boundary = dynamic_cast<TowheeMolecule *>
+//                     (mAtom->getParentGroup())->getBox()->getBoundary();
+        IAPIBoundary *boundary = mBox->getBoundary();
         IAPIVector *offsetVector = boundary->getCenter();
 
         return offsetVector;

@@ -17,13 +17,12 @@ extern "C" { void twh_coordinates_(int *, int *, int *, int *, double *, double 
 namespace towheesnifferwrappers
 {
 
-    TowheeAtom::TowheeAtom(IAPIAtomType *at, int tIndex, IAPIMolecule *p) {
+    TowheeAtom::TowheeAtom(IAPIAtomType *at, IAPIBox *box, int tIndex) {
         mAtomType = at;
         mLeafIndex = -1;
-        mParent = p;
         int tCoord = CRD_REAL;
         int one = 1;
-        mPosition = new TowheeVector3DAtom(this, &twh_coordinates_, tCoord, one);
+        mPosition = new TowheeVector3DAtom(this, box, &twh_coordinates_, tCoord, one);
     }
 
     /*
@@ -75,7 +74,9 @@ namespace towheesnifferwrappers
      * setParent()
      */
     void TowheeAtom::setParent(IAPIMolecule *newParent) {
-        printf("ERROR : TowheeAtom::setParent(IAPIMolecule *) is not implemeted.\n");
+//        printf("ERROR : TowheeAtom::setParent(IAPIMolecule *) is not implemeted.\n");
+        printf("WARNING : TowheeAtom::setParent(IAPIMolecule *) is implemeted but should not be.\n");
+        mParent = newParent;
     }
 
     /*

@@ -13,19 +13,28 @@ namespace towheesnifferwrappers
 {
 
     TowheeMonatomicMolecule::TowheeMonatomicMolecule
-                                     (IAPISpecies *species, IAPIBox *box)  :
-                                        TowheeMolecule::TowheeMolecule(box) {
-        mSpecies = species;
+                     (std::vector<TowheeAtom *>atoms, IAPISpecies *species) :
+                                                    TowheeMolecule(species) {
         mAtoms = new TowheeAtomList();
+        for(int i = 0; i < atoms.size(); i++) {
+            mAtoms->addChildAtom(atoms[i]);
+            atoms[i]->setIndex(mAtoms->getAtomCount()-1);
+        }
+
     }
+
+//    TowheeMonatomicMolecule::TowheeMonatomicMolecule
+//                                     (IAPISpecies *species, IAPIBox *box)  :
+//                                        TowheeMolecule::TowheeMolecule(box) {
+//        mSpecies = species;
+//        mAtoms = new TowheeAtomList();
+//    }
 
     /*
      * addChildAtom()
      */
     void TowheeMonatomicMolecule::addChildAtom(IAPIAtom *atom) {
-        printf("WARNING : TowheeMonatomicMolecule::addChildAtom(IAPIAtom *) is implemented but should NOT be.\n");
-        mAtoms->addChildAtom(atom);
-        atom->setIndex(mAtoms->getAtomCount()-1);
+        printf("ERROR : TowheeMonatomicMolecule::addChildAtom(IAPIAtom *) is not implemented.\n");
     }
 
     /*

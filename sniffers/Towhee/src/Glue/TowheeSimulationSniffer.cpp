@@ -6,48 +6,31 @@
 
 #include "stdlib.h"
 #include <typeinfo>
+#include <vector>
 
 #include "preproc.h"
 
 #include "TowheeSimulationSniffer.h"
+#include "TowheeAtom.h"
 #include "TowheeBox.h"
 #include "TowheeBoundaryRectangularPeriodic.h"
 #include "TowheeIntegrator.h"
-#include "TowheeMolecule.h"
-#include "TowheeSpeciesManager.h"
+#include "TowheeMonatomicMolecule.h"
 #include "TowheeSpeciesSpheresHetero.h"
 #include "TowheeSpeciesSpheresMono.h"
 #include "TowheeAtomTypeSphere.h"
-#include "TowheeSimulationEventManager.h"
 
 
 extern "C" { void twh_readinput_(int *, int *); }
 extern "C" { void twh_nmolty_(int *, int *); }
 extern "C" { void twh_nunit_(int *, int *, int *); }
 extern "C" { void twh_ntype_(int *, int *, int *, int *); }
-//extern "C" { void twh_nmolectyp_(int *, int *, int *); }
-//extern "C" { void twh_nchain_(int *, int *); }
-//extern "C" { void twh_allocate_maxchain_(int *); }
 extern "C" { void twh_numboxes_(int *, int *); }
-//extern "C" { void twh_allocate_numboxes_(int *); }
-//extern "C" { void twh_stepstyle_(int *, char *); }
-//extern "C" { void twh_nstep_(int *, int *); }
-//extern "C" { void twh_controlstyle_(int *, char *); }
-//extern "C" { void twh_scalecut_(int *, double *); }
-//extern "C" { void twh_scalelolog_(int *, double *); }
-//extern "C" { void twh_scalehilog_(int *, double *); }
-//extern "C" { void twh_vequiv_(int *, double *); }
-//extern "C" { void twh_linit_(int *, logical *); }
-//extern "C" { void twh_initboxtype_(int *, char *); }
-//extern "C" { void twh_initstyle_(int *, int *, int *, char *); }
-//extern "C" { void twh_initlattice_(int *, int *, int *, char *); }
-//extern "C" { void twh_initmol_(int *, int *, int *, int *); }
 extern "C" { void twh_hmatrix_(int *, int *, int *, int *, double *); }
 extern "C" { void set_towhee_input_file(char *); }
 extern "C" { void twh_io_directory_c_(int *, char *, int *); }
 extern "C" { void twh_initialize_(int *); }
-extern "C" { void twh_temperature_(int *, double *); }
-extern "C" { void twh_boxvclassic_(int *, int *, double *); }
+extern "C" { void twh_initmol_(int *, int *, int *, int *); }
 
 
 namespace towheesnifferwrappers
@@ -55,7 +38,6 @@ namespace towheesnifferwrappers
 
     TowheeSimulationSniffer::TowheeSimulationSniffer(char *inputFile) {
 
-        numBoxes = 0;
         char blankString = '\0';
         int set = GLB_SET;
         char baseDir[6] = "/tmp/";
@@ -73,130 +55,12 @@ printf("INPUT FILE : %s\n", inputFile); fflush(stdout);
 printf("lfinish : %d\n", lfinish); fflush(stdout);
         sniff();
 
-        mIntegrator = new TowheeIntegrator();
-    }
-
-    /*
-     * addBox()
-     */
-    void TowheeSimulationSniffer::addBox(IAPIBox *box) {
-        printf("ERROR : TowheeSimulationSniffer::addBox(IAPIBox *) is not implemented.\n");
-    }
-
-    /*
-     * removeBox()
-     */
-    void TowheeSimulationSniffer::removeBox(IAPIBox *box) {
-        printf("ERROR : TowheeSimulationSniffer::removeBox() is not implemented.\n"); fflush(stdout);
-    }
-
-    /*
-     * getRandom()
-     */
-    IAPIRandom *TowheeSimulationSniffer::getRandom() {
-        printf("WARNING : TowheeSimulationSniffer::getRandom() is not implemented.\n");
-    }
-
-    /*
-     * getEventManager()
-     */
-    IAPISimulationEventManager *TowheeSimulationSniffer::getEventManager() {
-        return mEventMgr;
-    }
-
-    /*
-     * getBox()
-     */
-    IAPIBox *TowheeSimulationSniffer::getBox(int index) {
-        return mBox.at(index);
-    }
-
-    /*
-     * getBoxCount()
-     */
-    int TowheeSimulationSniffer::getBoxCount() {
-        return mBox.size();
-    }
-
-    /*
-     * addSpecies()
-     */
-    void TowheeSimulationSniffer::addSpecies(IAPISpecies *species) {
-        printf("TowheeSimulationSniffer::addSpecies(IAPISpecies *) is implemented but should not be.\n");
-        mSpeciesMgr->addSpecies(species);
-    }
-
-    /*
-     * removeSpecies()
-     */
-    void TowheeSimulationSniffer::removeSpecies(IAPISpecies *removedSpecies) {
-        printf("TowheeSimulationSniffer::removeSpecies(IAPISpecies *) is implemented but should not be.\n");
-        mSpeciesMgr->removeSpecies(removedSpecies);
-    }
-
-    /*
-     * getSpeciesCount()
-     */
-    int TowheeSimulationSniffer::getSpeciesCount() {
-        return mSpeciesMgr->getSpeciesCount();
-    }
-
-    /*
-     * getSpecies()
-     */
-    IAPISpecies *TowheeSimulationSniffer::getSpecies(int index) {
-        return mSpeciesMgr->getSpecies(index);
-    }
-
-    /*
-     * getIntegrator()
-     */
-    IAPIIntegrator *TowheeSimulationSniffer::getIntegrator() {
-        return mIntegrator;
-    }
-
-    /*
-     * setIntegrator()
-     */
-    void TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *integrator) {
-        printf("ERROR : TowheeSimulationSniffer::setIntegrator(IAPIIntegrator *) is not implemented.\n");
-    }
-
-    /*
-     * getTemp()
-     */
-    double TowheeSimulationSniffer::getTemp() {
-        double temp;
-        int get = GLB_GET;
-
-        twh_temperature_(&get, &temp);
-
-        return temp;
-    }
-
-    /*
-     * getgetTotalEnergy()
-     */
-    double TowheeSimulationSniffer::getTotalEnergy(IAPIBox *box) {
-        double energy;
-        int ibox = box->getIndex() + 1;
-        int get = GLB_GET;
-
-        twh_boxvclassic_(&get, &ibox, &energy);
-
-        return energy;
-
     }
 
     /*
      * sniff()
      */
     void TowheeSimulationSniffer::sniff() {
-
-        mEventMgr = new TowheeSimulationEventManager();
-        mSpeciesMgr = new TowheeSpeciesManager();
-        mSpace = new TowheeSpace(3);
-        atomIDMgr = new IndexManager(1);
 
         int get = GLB_GET;
 
@@ -213,34 +77,7 @@ printf("WARNING : ALL ATOM TYPES ARE OF TowheeAtomTypeSphere\n"); fflush(stdout)
 
         sniffBoxes();
 
-        // Create the molecules by species
-printf("SPECIES COUNT : %d\n", getSpeciesCount()); fflush(stdout);
-printf("BOX COUNT     : %d\n", getBoxCount()); fflush(stdout);
-        for(int i = 0; i < getSpeciesCount(); i++) {
-            IAPISpecies *species = getSpecies(i);
-            for(int j = 0; j < getBoxCount(); j++) {
-                IAPIBox *box = getBox(j);
-//printf("  number of molecules : %d\n", box->getNMolecules(species)); fflush(stdout);
-
-                for(int k = 0; k < box->getNMolecules(species); k++)  {
-                     IAPIMolecule *mole;
-                     if(typeid(*species) == typeid(TowheeSpeciesSpheresMono)) {
-//printf("    mono species\n"); fflush(stdout);
-                         mole =
-                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule();
-                     }
-                     else if(typeid(*species) == typeid(TowheeSpeciesSpheresHetero)) {
-//printf("    hetero species\n"); fflush(stdout);
-                         mole =
-                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule();
-                     }
-
-                     box->addMolecule(mole);
-                     dynamic_cast<TowheeMolecule *>(mole)->setBox(box);
-                }
-            }
-        }
-printf("COMPLETE\n"); fflush(stdout);
+        sniffMolecules(atomType);
     }
 
     /*
@@ -255,39 +92,36 @@ printf("COMPLETE\n"); fflush(stdout);
         // Number of species
         int specieCount;
         twh_nmolty_(&get, &specieCount);
-printf("specie count : %d\n", specieCount); fflush(stdout);
+//printf("specie count : %d\n", specieCount); fflush(stdout);
         for(int i = 1; i <= specieCount; i++) {
             // Number of atoms in a molecule of the species
             int numAtoms;
             twh_nunit_(&get, &i, &numAtoms);
-printf("  atoms in species : %d\n", numAtoms); fflush(stdout);
+//printf("  atoms in species : %d\n", numAtoms); fflush(stdout);
             for(int j = 1; j <= numAtoms; j++) {
                 int at;
                 twh_ntype_(&get, &i, &j, &at);
-printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
+//printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
 
                 bool inList = false;
                 for(int idx = 0; idx < uniqueIndices; idx++) {
                     if(atomTypeIndex[idx] == at) {
                         inList = true;
-printf("  already in list...\n"); fflush(stdout);
+//printf("  already in list...\n"); fflush(stdout);
                         break;
                     }
                 }
                 if(inList == false) {
-printf("  adding to list...\n"); fflush(stdout);
+//printf("  adding to list...\n"); fflush(stdout);
                     uniqueIndices++;
                     atomTypeIndex = (int *)realloc(atomTypeIndex, (uniqueIndices * sizeof(int)));
                     atomTypeIndex[uniqueIndices-1] = at;
-printf("  ... done\n"); fflush(stdout);
+//printf("  ... done\n"); fflush(stdout);
                 }
             }
         }
 
 printf("NUMBER OF UNIQUE ATOM TYPES : %d\n", uniqueIndices);
-for(int idx = 0; idx < uniqueIndices; idx++) {
-printf("  Index : %d\n", atomTypeIndex[idx]); fflush(stdout);
-}
 
         return uniqueIndices;
     }
@@ -339,44 +173,9 @@ printf("TYPE INDEX : %d\n", typeIndex); fflush(stdout);
                 species->setIndex(i-1);
             }
 
-            addSpecies(species);
+            mSpeciesMgr->addSpecies(species);
 
         }
-
-/*
-            // Set number of molcules per species for each box
-            for(int i = 1; i <= mBox.size(); i++) {
-                for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
-                    int numSpecies = mBox.at(i-1)->getNMolecules(mSpeciesManager->getSpecies(j-1));
-printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
-                    twh_initmol_(&set, &i, &j, &numSpecies);
-
-                    IAPIMoleculeList *moleList = mBox.at(i-1)->getMoleculeList(mSpeciesManager->getSpecies(j-1));
-
-                    int numAtoms = moleList->getMolecule(0)->getChildList()->getAtomCount();
-
-                    // Set number of atoms for the molecule
-                    twh_nunit_(&set, &j, &numAtoms);
-
-                    // Set the mass for the molecule (sum of its atom's mass)
-                    for(int k = 0; k < moleList->getMoleculeCount(); k++) {
-                        double mass = 0.0;
-                        int idx = moleList->getMolecule(k)->getIndex() + 1;
-                        for(int l = 0;
-                            l < moleList->getMolecule(k)->getChildList()->getAtomCount();
-                            l++) {
-                            mass += moleList->getMolecule(k)->getChildList()->getAtom(l)->getType()->getMass();
-                        }
-                        twh_masstotal_(&set, &idx, &mass);
-                    }
-
-                } // species loop
-            } // box loop
-*/
-
-
-
-
 
     }
 
@@ -415,4 +214,73 @@ printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
 
     }
 
+    /*
+     * sniffMolecules()
+     */
+    void TowheeSimulationSniffer::sniffMolecules(TowheeAtomTypeSphere **atomType) {
+
+        int get = GLB_GET;
+
+        // Create the molecules by species
+        int boxCount = 0;
+        twh_numboxes_(&get, &boxCount);
+        int specieCount;
+        twh_nmolty_(&get, &specieCount);
+printf("SPECIES COUNT : %d\n", specieCount); fflush(stdout);
+printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
+
+        for(int i = 1; i <= specieCount; i++) {
+            IAPISpecies *species = getSpecies(i-1);
+
+            for(int j = 1; j <= boxCount; j++) {
+
+//                IAPIBox *box = getBox(j);
+//printf("  number of molecules : %d\n", box->getNMolecules(species)); fflush(stdout);
+
+                int numMolecules;
+                twh_initmol_(&get, &j, &i, &numMolecules);
+
+                for(int k = 0; k < numMolecules; k++)  {
+                    int numAtoms = 0;
+                    twh_nunit_(&get, &i, &numAtoms);
+
+                    std::vector<TowheeAtom *>atoms;
+
+                    // Make atoms with correct atom type
+                    for(int atIdx = 1; atIdx <= numAtoms; atIdx++)  {
+                        twh_ntype_(&get, &i, &j, &atIdx);
+                        atoms.push_back(new TowheeAtom(atomType[atIdx-1],
+                                                       getBox(j-1),
+                                                       getAtomIDMgr()->getNextIndex()));
+                    }
+
+                    // Make molecule and pass atoms into molecule ctor
+                    IAPIMolecule *mole = new TowheeMonatomicMolecule(atoms, species);
+
+                    for(int atIdx = 0; atIdx < numAtoms; atIdx++)  {
+                        atoms[atIdx]->setParent(mole);
+                    }
+
+/*
+                    IAPIMolecule *mole;
+                    if(typeid(*species) == typeid(TowheeSpeciesSpheresMono)) {
+//printf("    mono species\n"); fflush(stdout);
+                         mole =
+                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule();
+                    }
+                    else if(typeid(*species) == typeid(TowheeSpeciesSpheresHetero)) {
+//printf("    hetero species\n"); fflush(stdout);
+                         mole =
+                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule();
+                    }
+
+                    box->addMolecule(mole);
+                    dynamic_cast<TowheeMolecule *>(mole)->setBox(box);
+*/
+                    getBox(j-1)->addMolecule(mole);
+                }
+            }
+        }
+
+    }
 }

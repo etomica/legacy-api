@@ -20,6 +20,7 @@ namespace towheesnifferwrappers
 
     /*
      * setIndex
+     *   NOTE : Towhee's atom type index would be this index + 1
      */
     void TowheeAtomType::setIndex(int newIndex) {
         mIndex = newIndex;
@@ -27,6 +28,7 @@ namespace towheesnifferwrappers
 
     /*
      * getIndex
+     *   NOTE : Towhee's atom type index would be this index + 1
      */
     int TowheeAtomType::getIndex() {
         return mIndex;

@@ -11,8 +11,8 @@
 namespace towheesnifferwrappers
 {
 
-    TowheeMolecule::TowheeMolecule(IAPIBox *box) {
-        mBox = box;
+    TowheeMolecule::TowheeMolecule(IAPISpecies *species) {
+        mSpecies = species;
     }
 
     /*
@@ -60,16 +60,16 @@ namespace towheesnifferwrappers
     /*
      * setBox()
      */
-    void TowheeMolecule::setBox(IAPIBox *box) {
-        mBox = box;
-    }
+//    void TowheeMolecule::setBox(IAPIBox *box) {
+//        mBox = box;
+//    }
 
     /*
      * getBox()
      */
-    IAPIBox *TowheeMolecule::getBox() {
-        return mBox;
-    }
+//    IAPIBox *TowheeMolecule::getBox() {
+//        return mBox;
+//    }
 
 
 }

@@ -21,7 +21,7 @@ namespace towheesnifferwrappers
     class TowheeMolecule : public virtual IAPIMolecule {
 
         public:
-            TowheeMolecule(IAPIBox *box);
+            TowheeMolecule(IAPISpecies *species);
 
             virtual int getIndex();
             virtual void setIndex(int);
@@ -31,15 +31,15 @@ namespace towheesnifferwrappers
             virtual IAPISpecies *getType();
 
             // Non-API
-            void setBox(IAPIBox *box);
-            IAPIBox *getBox();
+//            void setBox(IAPIBox *box);
+//            IAPIBox *getBox();
 
         protected:
             IAPISpecies *mSpecies;
             int mIndex;
 
-        private:
-            IAPIBox *mBox;
+//        private:
+//            IAPIBox *mBox;
     };
 }
 #endif
