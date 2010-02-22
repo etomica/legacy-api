@@ -45,14 +45,10 @@ namespace towheesnifferwrappers
         int lfinish = 0;
         int atomCount;
         twh_initialize_(&lfinish);
-printf("lfinish : %d\n", lfinish); fflush(stdout);
-printf("BASE DIRECTORY : %s\n", baseDir);
         int len = strlen(baseDir);
         twh_io_directory_c_(&set, baseDir, &len);
         set_towhee_input_file(inputFile);
-printf("INPUT FILE : %s\n", inputFile); fflush(stdout);
         twh_readinput_(&lfinish, &atomCount);
-printf("lfinish : %d\n", lfinish); fflush(stdout);
         sniff();
 
     }
@@ -234,12 +230,9 @@ printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
 
             for(int j = 1; j <= boxCount; j++) {
 
-//                IAPIBox *box = getBox(j);
-//printf("  number of molecules : %d\n", box->getNMolecules(species)); fflush(stdout);
 
                 int numMolecules;
                 twh_initmol_(&get, &j, &i, &numMolecules);
-
                 for(int k = 0; k < numMolecules; k++)  {
                     int numAtoms = 0;
                     twh_nunit_(&get, &i, &numAtoms);
@@ -248,8 +241,10 @@ printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
 
                     // Make atoms with correct atom type
                     for(int atIdx = 1; atIdx <= numAtoms; atIdx++)  {
-                        twh_ntype_(&get, &i, &j, &atIdx);
-                        atoms.push_back(new TowheeAtom(atomType[atIdx-1],
+                        int atomIndex;
+                        twh_ntype_(&get, &i, &atIdx, &atomIndex);
+
+                        atoms.push_back(new TowheeAtom(atomType[atomIndex-1],
                                                        getBox(j-1),
                                                        getAtomIDMgr()->getNextIndex()));
                     }
@@ -261,22 +256,6 @@ printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
                         atoms[atIdx]->setParent(mole);
                     }
 
-/*
-                    IAPIMolecule *mole;
-                    if(typeid(*species) == typeid(TowheeSpeciesSpheresMono)) {
-//printf("    mono species\n"); fflush(stdout);
-                         mole =
-                             dynamic_cast<TowheeSpeciesSpheresMono *>(species)->makeMolecule();
-                    }
-                    else if(typeid(*species) == typeid(TowheeSpeciesSpheresHetero)) {
-//printf("    hetero species\n"); fflush(stdout);
-                         mole =
-                             dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->makeMolecule();
-                    }
-
-                    box->addMolecule(mole);
-                    dynamic_cast<TowheeMolecule *>(mole)->setBox(box);
-*/
                     getBox(j-1)->addMolecule(mole);
                 }
             }

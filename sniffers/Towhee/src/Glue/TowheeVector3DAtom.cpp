@@ -237,8 +237,6 @@ namespace towheesnifferwrappers
      */
     IAPIVector *TowheeVector3DAtom::getOffset() {
 
-//        IAPIBoundary *boundary = dynamic_cast<TowheeMolecule *>
-//                     (mAtom->getParentGroup())->getBox()->getBoundary();
         IAPIBoundary *boundary = mBox->getBoundary();
         IAPIVector *offsetVector = boundary->getCenter();
 
