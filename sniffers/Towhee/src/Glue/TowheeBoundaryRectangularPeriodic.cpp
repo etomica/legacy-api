@@ -20,7 +20,17 @@ namespace towheesnifferwrappers
      * nearestImage()
      */
     void TowheeBoundaryRectangularPeriodic::nearestImage(IAPIVectorMutable *v) {
-        printf("TowheeBoundaryRectangularPeriodic::nearestImage(IAPIVectorMutable *) is not implemented.\n");
+        IAPIVector *dimensions = getBoxSize();
+        IAPIVectorMutable *dimensionsHalf = mSpace->makeVector();
+        dimensionsHalf->E(dimensions);
+        IAPIVectorMutable *half = mSpace->makeVector();
+        half->E(2);
+        dimensionsHalf->DE(half);
+
+        v->PE(dimensionsHalf);
+        v->mod(dimensions);
+        v->ME(dimensionsHalf);
+
     }
 
     /*
