@@ -21,7 +21,8 @@ namespace lammpssnifferwrappers
 
             int getD();
             IAPIVectorMutable *makeVector();
-            IAPIVectorMutable *makeVector(double **vals);
+            IAPIVectorMutable *makeVector(double ***vals);
+            IAPIVectorMutable *makeVector(double ***vals, int idx);
 
         private:
             int D;

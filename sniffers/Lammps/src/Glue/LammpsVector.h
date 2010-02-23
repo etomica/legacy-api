@@ -48,13 +48,11 @@ namespace lammpssnifferwrappers
             virtual void map(IAPIFunction *f) = 0;
 
             // Non-api method
-            double **getLammpsVector();
-double **pos;
+            double ***getLammpsVector();
 
         protected:
             int D;
-//            double **pos;
-bool debug;
+            double ***pos;
 
     };
 }

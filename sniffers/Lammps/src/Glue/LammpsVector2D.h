@@ -19,7 +19,8 @@ namespace lammpssnifferwrappers
     class LammpsVector2D : public LammpsVector, public virtual IAPIVectorMutable {
         public:
             LammpsVector2D();
-            LammpsVector2D(double **v);
+            LammpsVector2D(double ***v);
+            LammpsVector2D(double ***v, int idx);
 
             // API Compliance
             int getD();
@@ -53,6 +54,8 @@ namespace lammpssnifferwrappers
             // NON-Api methods
             void E(double a, double b);
 
+        private:
+            int mIndex;
     };
 }
 

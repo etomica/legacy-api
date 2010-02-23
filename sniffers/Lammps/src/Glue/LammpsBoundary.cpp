@@ -15,15 +15,16 @@ namespace lammpssnifferwrappers
 
     LammpsBoundary::LammpsBoundary(LammpsSimulation *sim) {
         mSim = sim;
-        double **vec = (double **) malloc (sim->getSpace()->getD() * sizeof(double *));
+        double ***vec = (double ***) malloc(1 * sizeof(double **));
+        vec[0] = (double **) malloc (sim->getSpace()->getD() * sizeof(double *));
         if(sim->getSpace()->getD() == 2) {
-            vec[0] = &mSim->getLammpsSim()->domain->xprd;
-            vec[1] = &mSim->getLammpsSim()->domain->yprd;
+            vec[0][0] = &mSim->getLammpsSim()->domain->xprd;
+            vec[0][1] = &mSim->getLammpsSim()->domain->yprd;
         }
         else {
-            vec[0] = &mSim->getLammpsSim()->domain->xprd;
-            vec[1] = &mSim->getLammpsSim()->domain->yprd;
-            vec[2] = &mSim->getLammpsSim()->domain->zprd;
+            vec[0][0] = &mSim->getLammpsSim()->domain->xprd;
+            vec[0][1] = &mSim->getLammpsSim()->domain->yprd;
+            vec[0][2] = &mSim->getLammpsSim()->domain->zprd;
         }
         mVector = sim->getSpace()->makeVector(vec);
         mBox = NULL;

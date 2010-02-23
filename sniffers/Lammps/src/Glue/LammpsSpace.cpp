@@ -49,7 +49,7 @@ namespace lammpssnifferwrappers
     /*
      * makeVector()
      */
-    IAPIVectorMutable *LammpsSpace::makeVector(double **vals) {
+    IAPIVectorMutable *LammpsSpace::makeVector(double ***vals) {
 
         IAPIVectorMutable *vec;
 
@@ -63,4 +63,20 @@ namespace lammpssnifferwrappers
         return vec;
     }
 
+    /*
+     * makeVector()
+     */
+    IAPIVectorMutable *LammpsSpace::makeVector(double ***vals, int idx) {
+
+        IAPIVectorMutable *vec;
+
+        if(D == 2) {
+            vec = new LammpsVector2D(vals, idx);
+        }
+        else if(D == 3) {
+            vec = new LammpsVector3D(vals, idx);
+        }
+
+        return vec;
+    }
 }

@@ -12,7 +12,7 @@ namespace lammpssnifferwrappers
     LammpsVector::LammpsVector() {
     }
 
-    double **LammpsVector::getLammpsVector() {
+    double ***LammpsVector::getLammpsVector() {
         return pos;
     }
 

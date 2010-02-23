@@ -28,11 +28,6 @@ namespace lammpssnifferwrappers
         sprintf(command, "run 1");
         lammps_command(mSimulation->getLammpsSim(), command);
         stepCount++;
-printf("LammpsIntegrator::doStep()++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-for(int i = 0; i < mSimulation->getBox(0)->getLeafList()->getAtomCount(); i++) {
-mSimulation->getBox(0)->getLeafList()->getAtom(i)->getPosition();
-}
-printf("++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");fflush(stdout);
     }
 
     /*

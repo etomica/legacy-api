@@ -25,17 +25,26 @@ namespace lammpssnifferwrappers
 
     LammpsVector2D::LammpsVector2D() {
         D = 2;
-        pos = (double **) malloc (1 * sizeof(double *));
-        pos[0] = (double *) malloc (D * sizeof(double));
+        mIndex = 0;
+        pos = (double ***) malloc (1 * sizeof(double **));
+        pos[0] = (double **) malloc (1 * sizeof(double *));
+        pos[0][0] = (double *) malloc (D * sizeof(double));
 
         for(int i = 0; i < D; i++) {
-            pos[0][i] = 0.0;
+            pos[0][0][i] = 0.0;
         }
     }
 
-    LammpsVector2D::LammpsVector2D(double **v) {
+    LammpsVector2D::LammpsVector2D(double ***v) {
         pos = v;
         D = 2;
+        mIndex = 0;
+    }
+
+    LammpsVector2D::LammpsVector2D(double ***v, int idx) {
+        pos = v;
+        D = 2;
+        mIndex = idx;
     }
 
     /*
@@ -49,8 +58,8 @@ namespace lammpssnifferwrappers
      * assignTo
      */
     void LammpsVector2D::assignTo(double values[]) {
-        values[0] = pos[0][0];
-        values[1] = pos[0][1];
+        values[0] = pos[0][mIndex][0];
+        values[1] = pos[0][mIndex][1];
     }
 
     /*
@@ -59,8 +68,8 @@ namespace lammpssnifferwrappers
     bool LammpsVector2D::equals(IAPIVector *v) {
         bool eq = false;
 
-        if(v->getX(0) == pos[0][0] &&
-           v->getX(1) == pos[0][1]) {
+        if(v->getX(0) == pos[0][mIndex][0] &&
+           v->getX(1) == pos[0][mIndex][1]) {
             eq = true;
         }
 
@@ -73,10 +82,10 @@ namespace lammpssnifferwrappers
     double LammpsVector2D::getX(int index) {
         double value = 0.0;
         if(index == 0) {
-            value = pos[0][0];
+            value = pos[0][mIndex][0];
         }
         else if(index == 1) {
-            value = pos[0][1];
+            value = pos[0][mIndex][1];
         }
 
         return value;
@@ -87,10 +96,10 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::setX(int index, double value) {
         if(index == 0) {
-            pos[0][0] = value;
+            pos[0][mIndex][0] = value;
         }
         else if(index == 1) {
-            pos[0][1] = value;
+            pos[0][mIndex][1] = value;
         }
     }
 
@@ -98,24 +107,24 @@ namespace lammpssnifferwrappers
      * E
      */
     void LammpsVector2D::E(IAPIVector *v) {
-        pos[0][0] = v->getX(0);
-        pos[0][1] = v->getX(1);
+        pos[0][mIndex][0] = v->getX(0);
+        pos[0][mIndex][1] = v->getX(1);
     }
 
     /*
      * E
      */
     void LammpsVector2D::E(double d) {
-        pos[0][0] = d;
-        pos[0][1] = d;
+        pos[0][mIndex][0] = d;
+        pos[0][mIndex][1] = d;
     }
 
     /*
      * E
      */
     void LammpsVector2D::E(double d[]) {
-        pos[0][0] = d[0];
-        pos[0][1] = d[1];
+        pos[0][mIndex][0] = d[0];
+        pos[0][mIndex][1] = d[1];
     }
 
     /*
@@ -123,16 +132,16 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::PE(IAPIVector *v) {
 
-        pos[0][0] += v->getX(0);
-        pos[0][1] += v->getX(1);
+        pos[0][mIndex][0] += v->getX(0);
+        pos[0][mIndex][1] += v->getX(1);
     }
 
     /*
      * PE
      */
     void LammpsVector2D::PE(double d) {
-        pos[0][0] += d;
-        pos[0][1] += d;
+        pos[0][mIndex][0] += d;
+        pos[0][mIndex][1] += d;
     }
 
     /*
@@ -140,8 +149,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::ME(IAPIVector *v) {
 
-        pos[0][0] -= v->getX(0);
-        pos[0][1] -= v->getX(1);
+        pos[0][mIndex][0] -= v->getX(0);
+        pos[0][mIndex][1] -= v->getX(1);
     }
 
     /*
@@ -149,16 +158,16 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::TE(IAPIVector *v) {
 
-        pos[0][0] *= v->getX(0);
-        pos[0][1] *= v->getX(1);
+        pos[0][mIndex][0] *= v->getX(0);
+        pos[0][mIndex][1] *= v->getX(1);
     }
 
     /*
      * TE
      */
     void LammpsVector2D::TE(double d) {
-        pos[0][0] *= d;
-        pos[0][1] *= d;
+        pos[0][mIndex][0] *= d;
+        pos[0][mIndex][1] *= d;
     }
 
     /*
@@ -166,8 +175,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::DE(IAPIVector *v) {
 
-        pos[0][0] /= v->getX(0);
-        pos[0][1] /= v->getX(1);
+        pos[0][mIndex][0] /= v->getX(0);
+        pos[0][mIndex][1] /= v->getX(1);
     }
 
     /*
@@ -175,8 +184,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::Ea1Tv1(double d, IAPIVector *v) {
 
-        pos[0][0] = d * v->getX(0);
-        pos[0][1] = d * v->getX(1);
+        pos[0][mIndex][0] = d * v->getX(0);
+        pos[0][mIndex][1] = d * v->getX(1);
     }
 
     /*
@@ -184,8 +193,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::PEa1Tv1(double d, IAPIVector *v) {
 
-        pos[0][0] += d * v->getX(0);
-        pos[0][1] += d * v->getX(1);
+        pos[0][mIndex][0] += d * v->getX(0);
+        pos[0][mIndex][1] += d * v->getX(1);
     }
 
     /*
@@ -193,8 +202,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::Ev1Pv2(IAPIVector *v1, IAPIVector *v2) {
 
-        pos[0][0] = v1->getX(0) + v2->getX(0);
-        pos[0][1] = v1->getX(1) + v2->getX(1);
+        pos[0][mIndex][0] = v1->getX(0) + v2->getX(0);
+        pos[0][mIndex][1] = v1->getX(1) + v2->getX(1);
     }
 
     /*
@@ -202,8 +211,8 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::Ev1Mv2(IAPIVector *v1, IAPIVector *v2)
  {
-        pos[0][0] = v1->getX(0) - v2->getX(0);
-        pos[0][1] = v1->getX(1) - v2->getX(1);
+        pos[0][mIndex][0] = v1->getX(0) - v2->getX(0);
+        pos[0][mIndex][1] = v1->getX(1) - v2->getX(1);
     }
 
     /*
@@ -211,14 +220,14 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::mod(IAPIVector *v) {
 
-        while (pos[0][0] > v->getX(0))
-            pos[0][0] -= v->getX(0);
-        while (pos[0][0] < 0.0)
-            pos[0][0] += v->getX(0);
-        while (pos[0][1] > v->getX(1))
-            pos[0][1] -= v->getX(1);
-        while (pos[0][1] < 0.0)
-            pos[0][1] += v->getX(1);
+        while (pos[0][mIndex][0] > v->getX(0))
+            pos[0][mIndex][0] -= v->getX(0);
+        while (pos[0][mIndex][0] < 0.0)
+            pos[0][mIndex][0] += v->getX(0);
+        while (pos[0][mIndex][1] > v->getX(1))
+            pos[0][mIndex][1] -= v->getX(1);
+        while (pos[0][mIndex][1] < 0.0)
+            pos[0][mIndex][1] += v->getX(1);
     }
 
     /*
@@ -226,8 +235,8 @@ namespace lammpssnifferwrappers
      */
     double LammpsVector2D::squared() {
 
-        return ((pos[0][0] * pos[0][0]) +
-                (pos[0][1] * pos[0][1]));
+        return ((pos[0][mIndex][0] * pos[0][mIndex][0]) +
+                (pos[0][mIndex][1] * pos[0][mIndex][1]));
     }
 
     /*
@@ -237,7 +246,7 @@ namespace lammpssnifferwrappers
 
         bool zero = false;
 
-        if(pos[0][0] == 0.0 && pos[0][1] == 0.0) {
+        if(pos[0][mIndex][0] == 0.0 && pos[0][mIndex][1] == 0.0) {
             zero = true;
         }
 
@@ -249,8 +258,8 @@ namespace lammpssnifferwrappers
      */
     double LammpsVector2D::dot(IAPIVector *v) {
 
-        return ((pos[0][0] * v->getX(0)) +
-                (pos[0][1] * v->getX(1)));
+        return ((pos[0][mIndex][0] * v->getX(0)) +
+                (pos[0][mIndex][1] * v->getX(1)));
     }
 
     /*
@@ -265,8 +274,8 @@ namespace lammpssnifferwrappers
      */
     double LammpsVector2D::Mv1Squared(IAPIVector *v) {
 
-        double dx = pos[0][0] - v->getX(0);
-        double dy = pos[0][1] - v->getX(1);
+        double dx = pos[0][mIndex][0] - v->getX(0);
+        double dy = pos[0][mIndex][1] - v->getX(1);
 
         return ((dx * dx) + (dy * dy));
     }
@@ -276,10 +285,10 @@ namespace lammpssnifferwrappers
      */
     void LammpsVector2D::normalize() {
         double norm = 1.0 / sqrt(
-                            ((pos[0][0] * pos[0][0]) +
-                             (pos[0][1] * pos[0][1])));
-        pos[0][0] *= norm;
-        pos[0][1] *= norm;
+                            ((pos[0][mIndex][0] * pos[0][mIndex][0]) +
+                             (pos[0][mIndex][1] * pos[0][mIndex][1])));
+        pos[0][mIndex][0] *= norm;
+        pos[0][mIndex][1] *= norm;
     }
 
     /*
@@ -300,8 +309,8 @@ namespace lammpssnifferwrappers
      * E
      */
     void LammpsVector2D::E(double x, double y) {
-        pos[0][0] = x;
-        pos[0][1] = y;
+        pos[0][mIndex][0] = x;
+        pos[0][mIndex][1] = y;
     }
 
 }

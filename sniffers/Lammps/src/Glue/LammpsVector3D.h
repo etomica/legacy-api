@@ -19,7 +19,8 @@ namespace lammpssnifferwrappers
     class LammpsVector3D : public LammpsVector, public virtual IAPIVectorMutable {
         public:
             LammpsVector3D();
-            LammpsVector3D(double **v);
+            LammpsVector3D(double ***v);
+            LammpsVector3D(double ***v, int idx);
 
             // API Compliance
             void assignTo(double values[]);
@@ -54,6 +55,8 @@ namespace lammpssnifferwrappers
             void E(double a, double b, double c);
             double *make3DArray(double x, double y, double z);
 
+        private:
+            int mIndex;
     };
 }
 
