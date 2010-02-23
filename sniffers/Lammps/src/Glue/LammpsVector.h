@@ -49,10 +49,11 @@ namespace lammpssnifferwrappers
 
             // Non-api method
             double **getLammpsVector();
+double **pos;
 
         protected:
             int D;
-            double **pos;
+//            double **pos;
 bool debug;
 
     };

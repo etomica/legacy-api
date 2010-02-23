@@ -43,9 +43,16 @@ namespace lammpssnifferwrappers
      * assignTo
      */
     void LammpsVector3D::assignTo(double values[]) {
+/*
+printf("START\n"); fflush(stdout);
+printf("  this     -> %x\n", this); fflush(stdout);
+printf("  assignTo -> %x  %x  %x\n", &(pos[0][0]), &(pos[0][1]), &(pos[0][2])); fflush(stdout);
+printf("           -> %f  %f  %f\n", pos[0][0], pos[0][1], pos[0][2]); fflush(stdout);
+*/
         values[0] = pos[0][0];
         values[1] = pos[0][1];
         values[2] = pos[0][2];
+//printf("END\n"); fflush(stdout);
     }
 
     /*

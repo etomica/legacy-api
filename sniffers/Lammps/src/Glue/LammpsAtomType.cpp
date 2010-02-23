@@ -49,6 +49,7 @@ namespace lammpssnifferwrappers
      * setSpecies()
      */
     void LammpsAtomType::setSpecies(IAPISpecies *newParent) {
+        printf("WARNING : LammpsAtomType::setSpecies(IAPISpecies *) is implemented but should not be.\n");
         mSpecies = newParent;
     }
 

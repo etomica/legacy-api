@@ -10,6 +10,7 @@
 #include "atom.h"
 
 #include "LammpsAtom.h"
+#include "LammpsVector3D.h"
 
 namespace lammpssnifferwrappers
 {
@@ -101,6 +102,31 @@ namespace lammpssnifferwrappers
      * getPosition()
      */
     IAPIVectorMutable *LammpsAtom::getPosition() {
+printf("::getPosition() -> ");
+printf(" %x  (%x)\n",
+       &mSim->getLammpsSim()->atom->x,
+       mSim->getLammpsSim()->atom->x);
+
+printf("%x  ==  %x\n",
+ &(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][0]),
+ &mSim->getLammpsSim()->atom->x[nativeIndex][0]);
+printf("%x  ==  %x\n",
+ &(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][1]),
+       &mSim->getLammpsSim()->atom->x[nativeIndex][1]);
+printf("%x  ==  %x\n",
+ &(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][2]),
+       &mSim->getLammpsSim()->atom->x[nativeIndex][2]);
+
+fflush(stdout);
+/*
+printf(" pos                    %x %x    %x  %x  %x\n",
+dynamic_cast<LammpsVector3D *>(mPosition)->pos,
+&(dynamic_cast<LammpsVector3D *>(mPosition)->pos),
+&(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][0]),
+&(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][1]),
+&(dynamic_cast<LammpsVector3D *>(mPosition)->pos[0][2]));
+fflush(stdout);
+*/
         return mPosition;
     }
 
