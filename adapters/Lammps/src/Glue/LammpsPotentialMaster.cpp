@@ -140,7 +140,7 @@ printf("lammps_command : %s\n", command); fflush(stdout);
                 printf("ERROR : Unknown potential.  Expected a PotentialGroup\n"); fflush(stdout);
             }
         }
-//printf("command : %d  %s\n", bondCount, data_bonds_arg); fflush(stdout);
+printf("command : %d  %s\n", bondCount, data_bonds_arg); fflush(stdout);
         mSim->getLammpsSim()->atom->data_bonds(bondCount, data_bonds_arg);
 //printf("Back from command\n"); fflush(stdout);
 

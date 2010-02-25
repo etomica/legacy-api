@@ -33,19 +33,19 @@ namespace lammpswrappers
 
         IAPIVector *bound = getBoxSize();
 
-        IAPIVectorMutable *edge = NULL;
-
         if(d < mSim->getSpace()->getD()) {
-            edge = mSim->getSpace()->makeVector();
+            mEdge = mSim->getSpace()->makeVector();
             double vals[mSim->getSpace()->getD()];
             for(int i = 0; i < mSim->getSpace()->getD(); i++) {
                 vals[i] = 0.0;
             }
             vals[d] = bound->getX(d);
-            edge->E(vals);
+            mEdge->E(vals);
         }
+        else
+            return NULL;
 
-        return edge;
+        return mEdge;
 
     }
 

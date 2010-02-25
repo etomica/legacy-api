@@ -36,6 +36,7 @@ namespace lammpswrappers
         private:
             IAPIVectorMutable *dimensions;
             IAPIVectorMutable *dimensionsHalf;
+            IAPIVectorMutable *mEdge;
 
     };
 }
