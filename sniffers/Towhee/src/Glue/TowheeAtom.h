@@ -37,6 +37,9 @@ namespace towheesnifferwrappers
             IAPIMolecule *getParentGroup();
             IAPIAtomType *getType();
 
+            // Non-API
+            void setSnifferMolecule(IAPIMolecule *parent);
+
         private:
             IAPIAtomType *mAtomType;
             IAPIMolecule *mParent;

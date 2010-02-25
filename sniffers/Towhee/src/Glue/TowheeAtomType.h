@@ -32,6 +32,9 @@ namespace towheesnifferwrappers
             double rm();
             IAPIElement *getElement();
 
+            // Non-API
+            void setSnifferSpecies(IAPISpecies *newParent);
+
         private:
             int mIndex;
             IAPIElement *mElement;

@@ -3957,6 +3957,18 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeAtomType_1ge
 }
 
 
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeAtomType_1setSnifferSpecies(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheesnifferwrappers::TowheeAtomType *arg1 = (towheesnifferwrappers::TowheeAtomType *) 0 ;
+  molesimAPI::IAPISpecies *arg2 = (molesimAPI::IAPISpecies *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeAtomType **)&jarg1; 
+  arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
+  (arg1)->setSnifferSpecies(arg2);
+}
+
+
 JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_delete_1TowheeAtomType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   towheesnifferwrappers::TowheeAtomType *arg1 = (towheesnifferwrappers::TowheeAtomType *) 0 ;
   
@@ -4154,6 +4166,18 @@ JNIEXPORT jlong JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeAtom_1getTyp
   result = (molesimAPI::IAPIAtomType *)(arg1)->getType();
   *(molesimAPI::IAPIAtomType **)&jresult = result; 
   return jresult;
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeAtom_1setSnifferMolecule(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheesnifferwrappers::TowheeAtom *arg1 = (towheesnifferwrappers::TowheeAtom *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeAtom **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->setSnifferMolecule(arg2);
 }
 
 
@@ -5634,6 +5658,18 @@ JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeBox_1removeSp
   arg1 = *(towheesnifferwrappers::TowheeBox **)&jarg1; 
   arg2 = *(molesimAPI::IAPISpecies **)&jarg2; 
   (arg1)->removeSpeciesNotify(arg2);
+}
+
+
+JNIEXPORT void JNICALL Java_towhee_sniffer_wrapper_towheeJNI_TowheeBox_1addMoleculeToList(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
+  towheesnifferwrappers::TowheeBox *arg1 = (towheesnifferwrappers::TowheeBox *) 0 ;
+  molesimAPI::IAPIMolecule *arg2 = (molesimAPI::IAPIMolecule *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(towheesnifferwrappers::TowheeBox **)&jarg1; 
+  arg2 = *(molesimAPI::IAPIMolecule **)&jarg2; 
+  (arg1)->addMoleculeToList(arg2);
 }
 
 

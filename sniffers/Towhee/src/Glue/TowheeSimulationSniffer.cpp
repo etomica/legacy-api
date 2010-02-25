@@ -88,36 +88,28 @@ printf("WARNING : ALL ATOM TYPES ARE OF TowheeAtomTypeSphere\n"); fflush(stdout)
         // Number of species
         int specieCount;
         twh_nmolty_(&get, &specieCount);
-//printf("specie count : %d\n", specieCount); fflush(stdout);
         for(int i = 1; i <= specieCount; i++) {
             // Number of atoms in a molecule of the species
             int numAtoms;
             twh_nunit_(&get, &i, &numAtoms);
-//printf("  atoms in species : %d\n", numAtoms); fflush(stdout);
             for(int j = 1; j <= numAtoms; j++) {
                 int at;
                 twh_ntype_(&get, &i, &j, &at);
-//printf("%d  %d  ATOM TYPE : %d\n", i, j, at); fflush(stdout);
 
                 bool inList = false;
                 for(int idx = 0; idx < uniqueIndices; idx++) {
                     if(atomTypeIndex[idx] == at) {
                         inList = true;
-//printf("  already in list...\n"); fflush(stdout);
                         break;
                     }
                 }
                 if(inList == false) {
-//printf("  adding to list...\n"); fflush(stdout);
                     uniqueIndices++;
                     atomTypeIndex = (int *)realloc(atomTypeIndex, (uniqueIndices * sizeof(int)));
                     atomTypeIndex[uniqueIndices-1] = at;
-//printf("  ... done\n"); fflush(stdout);
                 }
             }
         }
-
-printf("NUMBER OF UNIQUE ATOM TYPES : %d\n", uniqueIndices);
 
         return uniqueIndices;
     }
@@ -132,17 +124,11 @@ printf("NUMBER OF UNIQUE ATOM TYPES : %d\n", uniqueIndices);
         // Create species and add to species manager
         int nmolty;
         twh_nmolty_(&get, &nmolty);
-printf("NUM UNIQUE MOLECULE TYPES : %d\n", nmolty);
         for(int i = 1; i <= nmolty; i++) {
 
             // Get number of atoms for the molecule
             int numAtoms = 0;
             twh_nunit_(&get, &i, &numAtoms);
-printf("  species : %d   num atoms : %d\n", i, numAtoms); fflush(stdout);
-
-            // Molecules of different species do not share an atom of the
-            // same atom type.
-//            TowheeAtomTypeSphere *atomType = new TowheeAtomTypeSphere(i);
 
             IAPISpecies *species;
             int typeIndex;
@@ -151,7 +137,7 @@ printf("  species : %d   num atoms : %d\n", i, numAtoms); fflush(stdout);
                 twh_ntype_(&get, &i, &one, &typeIndex);
                 atomType[typeIndex-1]->setDiameter(1.0);
                 species = new TowheeSpeciesSpheresMono(this, atomType[typeIndex-1]);
-                atomType[typeIndex-1]->setSpecies(species);
+                atomType[typeIndex-1]->setSnifferSpecies(species);
                 species->setIndex(i-1);
             }
             else {
@@ -161,9 +147,8 @@ printf("  species : %d   num atoms : %d\n", i, numAtoms); fflush(stdout);
                 for(int j = 1; j <= numAtoms; j++) {
                     twh_ntype_(&get, &i, &j, &typeIndex);
                     atomType[typeIndex-1]->setDiameter(1.0);
-                    atomType[typeIndex-1]->setSpecies(species);
+                    atomType[typeIndex-1]->setSnifferSpecies(species);
                     dynamic_cast<TowheeSpeciesSpheresHetero *>(species)->addAtomType(atomType[typeIndex-1]);
-printf("TYPE INDEX : %d\n", typeIndex); fflush(stdout);
                 }
 
                 species->setIndex(i-1);
@@ -222,8 +207,6 @@ printf("TYPE INDEX : %d\n", typeIndex); fflush(stdout);
         twh_numboxes_(&get, &boxCount);
         int specieCount;
         twh_nmolty_(&get, &specieCount);
-printf("SPECIES COUNT : %d\n", specieCount); fflush(stdout);
-printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
 
         for(int i = 1; i <= specieCount; i++) {
             IAPISpecies *species = getSpecies(i-1);
@@ -253,10 +236,10 @@ printf("BOX COUNT     : %d\n", boxCount); fflush(stdout);
                     IAPIMolecule *mole = new TowheeMonatomicMolecule(atoms, species);
 
                     for(int atIdx = 0; atIdx < numAtoms; atIdx++)  {
-                        atoms[atIdx]->setParent(mole);
+                        atoms[atIdx]->setSnifferMolecule(mole);
                     }
 
-                    getBox(j-1)->addMolecule(mole);
+                   dynamic_cast<TowheeBox *>(getBox(j-1))->addMoleculeToList(mole);
                 }
             }
         }

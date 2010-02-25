@@ -38,7 +38,13 @@ namespace towheesnifferwrappers
      * setSpecies()
      */
     void TowheeAtomType::setSpecies(IAPISpecies *newParent) {
-        printf("WARNING : TowheeAtomType::setSpecies(IAPISpecies *) is implemented but should not be.\n");
+        printf("WARNING : TowheeAtomType::setSpecies(IAPISpecies *) is not implemented.\n");
+    }
+
+    /*
+     * setSnifferSpecies()
+     */
+    void TowheeAtomType::setSnifferSpecies(IAPISpecies *newParent) {
         mSpecies = newParent;
     }
 

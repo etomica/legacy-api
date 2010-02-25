@@ -74,9 +74,7 @@ namespace towheesnifferwrappers
      * setParent()
      */
     void TowheeAtom::setParent(IAPIMolecule *newParent) {
-//        printf("ERROR : TowheeAtom::setParent(IAPIMolecule *) is not implemeted.\n");
-        printf("WARNING : TowheeAtom::setParent(IAPIMolecule *) is implemeted but should not be.\n");
-        mParent = newParent;
+        printf("ERROR : TowheeAtom::setParent(IAPIMolecule *) is not implemeted.\n");
     }
 
     /*
@@ -91,6 +89,13 @@ namespace towheesnifferwrappers
      */
     IAPIAtomType *TowheeAtom::getType() {
         return mAtomType;
+    }
+
+    /*
+     * setSnifferMolecule()
+     */
+    void TowheeAtom::setSnifferMolecule(IAPIMolecule *newParent) {
+        mParent = newParent;
     }
 
 

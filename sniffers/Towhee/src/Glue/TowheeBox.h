@@ -43,6 +43,9 @@ namespace towheesnifferwrappers
             void addSpeciesNotify(IAPISpecies *species);
             void removeSpeciesNotify(IAPISpecies *species);
 
+            // Non-API
+            void addMoleculeToList(IAPIMolecule *mole);
+
         private:
             IAPIBoxEventManager *mEventManager;
             IAPIBoundary *mBoundary;

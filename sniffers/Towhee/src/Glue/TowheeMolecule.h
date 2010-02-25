@@ -30,16 +30,10 @@ namespace towheesnifferwrappers
             virtual IAPIAtomList *getChildList() = 0;
             virtual IAPISpecies *getType();
 
-            // Non-API
-//            void setBox(IAPIBox *box);
-//            IAPIBox *getBox();
-
         protected:
             IAPISpecies *mSpecies;
             int mIndex;
 
-//        private:
-//            IAPIBox *mBox;
     };
 }
 #endif

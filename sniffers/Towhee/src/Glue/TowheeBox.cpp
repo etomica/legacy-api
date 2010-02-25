@@ -41,14 +41,7 @@ namespace towheesnifferwrappers
      * addMolecule()
      */
     void TowheeBox::addMolecule(IAPIMolecule *mole) {
-printf("WARNING : TowheeBox::addMolecule(IAPIMolecule *) is implemented but should not be.\n");
-        mMoleList->addMolecule(mole);
-        mole->setIndex(mMoleList->getMoleculeCount()-1);
-        TowheeAtomList *atomList = dynamic_cast<TowheeAtomList *>(mole->getChildList());
-        for(int i = 0; i < atomList->getAtomCount(); i++) {
-            mLeafList->addChildAtom(atomList->getAtom(i));
-            atomList->getAtom(i)->setLeafIndex(mLeafList->getAtomCount()-1);
-        }
+        printf("WARNING : TowheeBox::addMolecule(IAPIMolecule *) is not implemented.\n");
     }
 
     /*
@@ -143,5 +136,17 @@ printf("WARNING : TowheeBox::addMolecule(IAPIMolecule *) is implemented but shou
         printf("TowheeBox::removeSpeciesNotify(IAPISpecies *) is not implemented.\n");
     }
 
+    /*
+     * addMoleculeToList()
+     */
+    void TowheeBox::addMoleculeToList(IAPIMolecule *mole) {
+        mMoleList->addMolecule(mole);
+        mole->setIndex(mMoleList->getMoleculeCount()-1);
+        TowheeAtomList *atomList = dynamic_cast<TowheeAtomList *>(mole->getChildList());
+        for(int i = 0; i < atomList->getAtomCount(); i++) {
+            mLeafList->addChildAtom(atomList->getAtom(i));
+            atomList->getAtom(i)->setLeafIndex(mLeafList->getAtomCount()-1);
+        }
+    }
 
 }
