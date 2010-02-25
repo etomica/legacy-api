@@ -28,7 +28,6 @@ namespace lammpssnifferwrappers
             void setBoxSize(IAPIVector *v);
             void nearestImage(IAPIVectorMutable *v);
             IAPIVector *centralImage(IAPIVector *v);
-            virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
 
         private:

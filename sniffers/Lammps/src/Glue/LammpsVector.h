@@ -18,6 +18,7 @@ namespace lammpssnifferwrappers
     class LammpsVector : public virtual IAPIVectorMutable {
         public:
             LammpsVector();
+            ~LammpsVector();
 
             // API Compliance
             virtual void assignTo(double values[]) = 0;
@@ -53,6 +54,7 @@ namespace lammpssnifferwrappers
         protected:
             int D;
             double ***pos;
+            bool memoryOwn;
 
     };
 }

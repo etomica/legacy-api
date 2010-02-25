@@ -25,7 +25,6 @@ namespace lammpssnifferwrappers
                                  int yLower, int yUpper, int zLower, int zUpper);
 
             // API Compliance
-            virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
 
             // Non-API methods

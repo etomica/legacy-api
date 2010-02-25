@@ -19,30 +19,7 @@ namespace lammpssnifferwrappers
      * setBoxSize()
      */
     void LammpsBoundaryPeriodic::setBoxSize(IAPIVector *v) {
-printf(" LammpsBoundaryPeriodic::setBoxSize(IAPIVector) is not impelemented.\n"); fflush(stdout);
-    }
-
-    /*
-     * getEdgeVector()
-     */
-    IAPIVector *LammpsBoundaryPeriodic::getEdgeVector(int d) {
-
-        IAPIVector *bound = getBoxSize();
-
-        IAPIVectorMutable *edge = NULL;
-
-        if(d < mSim->getSpace()->getD()) {
-            edge = mSim->getSpace()->makeVector();
-            double vals[mSim->getSpace()->getD()];
-            for(int i = 0; i < mSim->getSpace()->getD(); i++) {
-                vals[i] = 0.0;
-            }
-            vals[d] = bound->getX(d);
-            edge->E(vals);
-        }
-
-        return edge;
-
+        printf("ERROR : LammpsBoundaryPeriodic::setBoxSize(IAPIVector) is not impelemented.\n"); fflush(stdout);
     }
 
     /*
@@ -66,6 +43,9 @@ printf(" LammpsBoundaryPeriodic::setBoxSize(IAPIVector) is not impelemented.\n")
         v->PE(dimensionsHalf);
         v->mod(dimensions);
         v->ME(dimensionsHalf);
+
+        delete dimensionsHalf;
+        delete half;
     }
 
     /*

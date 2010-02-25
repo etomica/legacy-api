@@ -29,6 +29,8 @@ namespace lammpssnifferwrappers
         mVector = sim->getSpace()->makeVector(vec);
         mBox = NULL;
         mEventMgr = NULL;
+        mCenter = sim->getSpace()->makeVector();
+        dynamic_cast<IAPIVectorMutable *>(mCenter)->E(0.0);
     }
 
     /*
@@ -92,7 +94,7 @@ namespace lammpssnifferwrappers
      * getCenter()
      */
     IAPIVector *LammpsBoundary::getCenter() {
-        printf("WARNING : LammpsBoundary::getCenter() is not implemented, but should be!\n");
+        return mCenter;
     }
 
     /*
@@ -107,6 +109,28 @@ namespace lammpssnifferwrappers
      */
     IAPIBox *LammpsBoundary::getBox() {
         return mBox;
+    }
+
+    /*
+     * getEdgeVector()
+     */
+    IAPIVector *LammpsBoundary::getEdgeVector(int d) {
+
+        IAPIVector *bound = getBoxSize();
+
+        if(d < mSim->getSpace()->getD()) {
+            mEdge = mSim->getSpace()->makeVector();
+            double vals[mSim->getSpace()->getD()];
+            for(int i = 0; i < mSim->getSpace()->getD(); i++) {
+                vals[i] = 0.0;
+            }
+            vals[d] = bound->getX(d);
+            mEdge->E(vals);
+        }
+        else
+            return NULL;
+
+        return mEdge;
     }
 
     /*

@@ -33,18 +33,21 @@ namespace lammpssnifferwrappers
         for(int i = 0; i < D; i++) {
             pos[0][0][i] = 0.0;
         }
+        memoryOwn = true;
     }
 
     LammpsVector2D::LammpsVector2D(double ***v) {
         pos = v;
         D = 2;
         mIndex = 0;
+        memoryOwn = false;
     }
 
     LammpsVector2D::LammpsVector2D(double ***v, int idx) {
         pos = v;
         D = 2;
         mIndex = idx;
+        memoryOwn = false;
     }
 
     /*

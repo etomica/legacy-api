@@ -10,7 +10,6 @@
 #include "IAPIVector.h"
 #include "LammpsConformation.h"
 #include "LammpsAtom.h"
-#include "LammpsVector3D.h"
 
 namespace lammpssnifferwrappers
 {

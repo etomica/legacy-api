@@ -10,7 +10,6 @@
 #include "atom.h"
 
 #include "LammpsAtom.h"
-#include "LammpsVector3D.h"
 
 namespace lammpssnifferwrappers
 {

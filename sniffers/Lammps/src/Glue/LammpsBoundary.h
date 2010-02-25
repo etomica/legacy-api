@@ -36,7 +36,7 @@ namespace lammpssnifferwrappers
             IAPIVector *centralImage(IAPIVector *v);
             void setBox(IAPIBox *box);
             IAPIBox *getBox();
-            virtual IAPIVector *getEdgeVector(int d) = 0;
+            virtual IAPIVector *getEdgeVector(int d);
             IAPIVector *getCenter();
             virtual bool getPeriodicity(int d) = 0;
             IAPIBoundaryEventManager *getEventManager();
@@ -44,9 +44,13 @@ namespace lammpssnifferwrappers
         protected:
             LammpsSimulation *mSim;
             IAPIVectorMutable *mVector;
-            IAPIVector *mCenter;
+            IAPIVectorMutable *mEdge;
             IAPIBox *mBox;
             IAPIBoundaryEventManager *mEventMgr;
+
+        private:
+            IAPIVector *mCenter;
+
     };
 }
 

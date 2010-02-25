@@ -24,7 +24,6 @@ namespace lammpssnifferwrappers
             LammpsBoundaryFixed(LammpsSimulation *sim);
 
             // API Compliance
-            virtual IAPIVector *getEdgeVector(int d);
             virtual bool getPeriodicity(int d);
 
 
