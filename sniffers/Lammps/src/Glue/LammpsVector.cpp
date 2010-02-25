@@ -19,9 +19,11 @@ namespace lammpssnifferwrappers
     }
 
     LammpsVector::~LammpsVector() {
-        free(pos[0][0]);
-        free(pos[0]);
-        free(pos);
+        if(memoryOwn) {
+            free(pos[0][0]);
+            free(pos[0]);
+            free(pos);
+        }
     }
 
     double ***LammpsVector::getLammpsVector() {

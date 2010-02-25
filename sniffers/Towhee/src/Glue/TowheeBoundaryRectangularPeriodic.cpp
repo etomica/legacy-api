@@ -31,6 +31,8 @@ namespace towheesnifferwrappers
         v->mod(dimensions);
         v->ME(dimensionsHalf);
 
+        delete dimensionsHalf;
+        delete half;
     }
 
     /*
