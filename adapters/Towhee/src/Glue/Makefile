@@ -5,36 +5,19 @@ TOWHEE_LIB = -L/usr/users/rrassler/API/lib -ltowhee
 LIBFLAG = -shared
 TOWHEE_INSTALL_DIR = /usr/users/rrassler/API/lib
 
-SRC =  TowheeAtom.cpp \
-	TowheeAtomList.cpp \
-	TowheeAtomPositionDefinitionNative.cpp \
-	TowheeAtomType.cpp \
+SRC =  TowheeAtomType.cpp \
 	TowheeAtomTypeSphere.cpp \
-	TowheeBasicConnectivityMap.cpp \
 	TowheeBoundary.cpp \
 	TowheeBoundaryRectangularPeriodic.cpp \
 	TowheeBox.cpp \
-	TowheeBoxEventManager.cpp \
-	TowheeForceField.cpp \
 	TowheeIntegrator.cpp \
 	TowheeIntegratorEventManager.cpp \
-	TowheeIntegratorListenerNative.cpp \
-	TowheeIntegratorMC.cpp \
 	TowheeIntegratorNPT.cpp \
 	TowheeIntegratorNVT.cpp \
 	TowheeIntegratorPseudoBubble.cpp \
 	TowheeIntegratorUVT.cpp \
-	TowheeMolecule.cpp \
-	TowheeMCMove.cpp \
-	TowheeMCMoveCOMTranslation.cpp \
-	TowheeMoleculeList.cpp \
-	TowheeMonatomicMolecule.cpp \
-	TowheePotential.cpp \
-	TowheePotentialLennardJones.cpp \
-	TowheePotentialMaster.cpp \
 	TowheeRandom.cpp \
 	TowheeSimulation.cpp \
-	TowheeSimulationEventManager.cpp \
 	TowheeSpace.cpp \
 	TowheeSpecies.cpp \
 	TowheeSpeciesManager.cpp \
@@ -42,8 +25,6 @@ SRC =  TowheeAtom.cpp \
 	TowheeVector.cpp \
 	TowheeVector2D.cpp \
 	TowheeVector3D.cpp \
-	TowheeVector3DAtom.cpp \
-	IndexManager.cpp \
 	towhee_wrap.cpp
 
 LIB = libtowhee_adapter.so

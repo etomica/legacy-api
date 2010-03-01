@@ -8472,6 +8472,342 @@ JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeVector_1instanceType(
   return jresult;
 }
 
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_create_1TowheeAtomPositionDefinitionNative(JNIEnv *jenv, jclass jcls, ) {
+
+
+  jlong jresult = 0;
+  towheewrappers::TowheeAtomPositionDefinitionNative *result = 0 ;
+
+  result = (towheewrappers::TowheeAtomPositionDefinitionNative *)new towheewrappers::TowheeAtomPositionDefinitionNative(jenv, );
+  *(towheewrappers::TowheeAtomPositionDefinitionNative **)&jresult = result;
+
+  return jresult;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_create_1TowheeIntegratorListenerNative(JNIEnv *jenv, jclass jcls, ) {
+
+
+  jlong jresult = 0;
+  towheewrappers::TowheeIntegratorListenerNative *result = 0 ;
+
+  result = (towheewrappers::TowheeIntegratorListenerNative *)new towheewrappers::TowheeIntegratorListenerNative(jenv, );
+  *(towheewrappers::TowheeIntegratorListenerNative **)&jresult = result;
+
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomPositionDefinition_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  towheewrappers::TowheeInterfaceAtomPositionDefinition *arg1 = (towheewrappers::TowheeInterfaceAtomPositionDefinition *) 0;
+  int instanceType;
+
+  arg1 = *(towheewrappers::TowheeInterfaceAtomPositionDefinition **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeAtomPositionDefinition)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeAtomPositionDefinitionNative)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIAtomType **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeAtomType)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeAtomTypeSphere)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundary_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIBoundary *arg1 = (molesimAPI::IAPIBoundary *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIBoundary **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeBoundary)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeBoundaryRectangularPeriodic)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorNPT_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIVector *arg1 = (molesimAPI::IAPIVector *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIVector **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeIntegratorNPT)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorNVT)) {
+    instanceType = 1;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorPseudoBubble)) {
+    instanceType = 2;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorUVT)) {
+    instanceType = 3;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector2D)) {
+    instanceType = 4;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector3DAtom)) {
+    instanceType = 5;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector3D)) {
+    instanceType = 6;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector)) {
+    instanceType = 7;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIMolecule *arg1 = (molesimAPI::IAPIMolecule *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIMolecule **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeMolecule)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeMonatomicMolecule)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheePotential_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIPotential *arg1 = (molesimAPI::IAPIPotential *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIPotential **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheePotential)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheePotentialLennardJones)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPISpecies *arg1 = (molesimAPI::IAPISpecies *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPISpecies **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeSpecies)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeSpeciesSpheresMono)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_create_1TowheeAtomPositionDefinitionNative(JNIEnv *jenv, jclass jcls, ) {
+
+
+  jlong jresult = 0;
+  towheewrappers::TowheeAtomPositionDefinitionNative *result = 0 ;
+
+  result = (towheewrappers::TowheeAtomPositionDefinitionNative *)new towheewrappers::TowheeAtomPositionDefinitionNative(jenv, );
+  *(towheewrappers::TowheeAtomPositionDefinitionNative **)&jresult = result;
+
+  return jresult;
+}
+
+JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_create_1TowheeIntegratorListenerNative(JNIEnv *jenv, jclass jcls, ) {
+
+
+  jlong jresult = 0;
+  towheewrappers::TowheeIntegratorListenerNative *result = 0 ;
+
+  result = (towheewrappers::TowheeIntegratorListenerNative *)new towheewrappers::TowheeIntegratorListenerNative(jenv, );
+  *(towheewrappers::TowheeIntegratorListenerNative **)&jresult = result;
+
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomPositionDefinition_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  towheewrappers::TowheeInterfaceAtomPositionDefinition *arg1 = (towheewrappers::TowheeInterfaceAtomPositionDefinition *) 0;
+  int instanceType;
+
+  arg1 = *(towheewrappers::TowheeInterfaceAtomPositionDefinition **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeAtomPositionDefinition)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeAtomPositionDefinitionNative)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeAtomType_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIAtomType *arg1 = (molesimAPI::IAPIAtomType *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIAtomType **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeAtomType)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeAtomTypeSphere)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeBoundary_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIBoundary *arg1 = (molesimAPI::IAPIBoundary *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIBoundary **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeBoundary)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeBoundaryRectangularPeriodic)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeIntegratorNPT_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIVector *arg1 = (molesimAPI::IAPIVector *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIVector **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeIntegratorNPT)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorNVT)) {
+    instanceType = 1;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorPseudoBubble)) {
+    instanceType = 2;
+  }
+  else if(typeid(*arg1) == typeid(TowheeIntegratorUVT)) {
+    instanceType = 3;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector2D)) {
+    instanceType = 4;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector3DAtom)) {
+    instanceType = 5;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector3D)) {
+    instanceType = 6;
+  }
+  else if(typeid(*arg1) == typeid(TowheeVector)) {
+    instanceType = 7;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeMolecule_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIMolecule *arg1 = (molesimAPI::IAPIMolecule *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIMolecule **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeMolecule)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeMonatomicMolecule)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheePotential_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPIPotential *arg1 = (molesimAPI::IAPIPotential *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPIPotential **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheePotential)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheePotentialLennardJones)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
+JNIEXPORT jint JNICALL Java_towhee_wrapper_towheeJNI_TowheeSpecies_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jint jresult = 0;
+  molesimAPI::IAPISpecies *arg1 = (molesimAPI::IAPISpecies *) 0;
+  int instanceType;
+
+  arg1 = *(molesimAPI::IAPISpecies **)&jarg1;
+
+  if(typeid(*arg1) == typeid(TowheeSpecies)) {
+    instanceType = 0;
+  }
+  else if(typeid(*arg1) == typeid(TowheeSpeciesSpheresMono)) {
+    instanceType = 1;
+  }
+
+  jresult = (jint)instanceType;
+  return jresult;
+}
+
 #ifdef __cplusplus
 }
 #endif
