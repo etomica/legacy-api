@@ -13,7 +13,6 @@
 #include "IAPIAtomType.h"
 #include "LammpsInterfaceConformation.h"
 #include "IAPISimulation.h"
-#include "IAPISpeciesManager.h"
 #include "LammpsSpecies.h"
 #include "LammpsAtomTypeSphere.h"
 #include "LammpsNativeConformation.h"

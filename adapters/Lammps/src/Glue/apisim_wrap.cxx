@@ -1137,6 +1137,17 @@ JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1IAPIVector(JNIEnv *je
 }
 
 
+JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_IAPIVectorMutable_1setX(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2, jdouble jarg3) {
   molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
   int arg2 ;
@@ -1361,17 +1372,6 @@ JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_IAPIVectorMutable_1XE(JNIEnv 
   arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
   arg2 = *(molesimAPI::IAPIVector **)&jarg2; 
   (arg1)->XE(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
-  delete arg1;
-  
 }
 
 
