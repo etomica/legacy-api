@@ -9,7 +9,6 @@
 
 #include "IAPIAtomType.h"
 #include "IAPIMolecule.h"
-#include "IAPISpeciesManager.h"
 
 namespace molesimAPI
 {

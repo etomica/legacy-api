@@ -15,6 +15,8 @@ namespace molesimAPI
     class IAPIVectorMutable : public virtual IAPIVector {
 
         public:
+            virtual ~IAPIVectorMutable() {};
+
             virtual void setX(int, double) = 0;
             virtual void E(IAPIVector *) = 0;
             virtual void E(double) = 0;

@@ -7,6 +7,8 @@
 #ifndef API_IATOM_WRAPPER_H
 #define API_IATOM_WRAPPER_H
 
+#include "IAPIVectorMutable.h"
+
 namespace molesimAPI
 {
 
@@ -24,6 +26,7 @@ namespace molesimAPI
             virtual void setParent(IAPIMolecule *newParent) = 0;
             virtual IAPIMolecule *getParentGroup() = 0;
             virtual IAPIAtomType *getType() = 0;
+            virtual IAPIVectorMutable *getPosition() = 0;
     };
 }
 #endif

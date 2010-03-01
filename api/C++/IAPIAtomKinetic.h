@@ -7,13 +7,13 @@
 #ifndef API_IATOMKINETIC_WRAPPER_H
 #define API_IATOMKINETIC_WRAPPER_H
 
-#include "IAPIAtomPositioned.h"
+#include "IAPIAtom.h"
 #include "IAPIVectorMutable.h"
 
 namespace molesimAPI
 {
 
-    class IAPIAtomKinetic : public virtual IAPIAtomPositioned {
+    class IAPIAtomKinetic : public virtual IAPIAtom {
 
         public:			
             virtual IAPIVectorMutable *getVelocity() = 0;

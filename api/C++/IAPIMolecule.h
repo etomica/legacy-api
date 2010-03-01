@@ -8,7 +8,6 @@
 #define API_IMOLECULE_WRAPPER_H
 
 #include "IAPIAtom.h"
-#include "IAPIAtomPositioned.h"
 #include "IAPIAtomList.h"
 #include "IAPISpecies.h"
 
