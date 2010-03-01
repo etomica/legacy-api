@@ -5,19 +5,36 @@ TOWHEE_LIB = @TOWHEE_LIB@
 LIBFLAG = @LIBFLAG@
 TOWHEE_INSTALL_DIR = @TOWHEE_INSTALL_DIR@
 
-SRC =  TowheeAtomType.cpp \
+SRC =  TowheeAtom.cpp \
+	TowheeAtomList.cpp \
+	TowheeAtomPositionDefinitionNative.cpp \
+	TowheeAtomType.cpp \
 	TowheeAtomTypeSphere.cpp \
+	TowheeBasicConnectivityMap.cpp \
 	TowheeBoundary.cpp \
 	TowheeBoundaryRectangularPeriodic.cpp \
 	TowheeBox.cpp \
+	TowheeBoxEventManager.cpp \
+	TowheeForceField.cpp \
 	TowheeIntegrator.cpp \
 	TowheeIntegratorEventManager.cpp \
+	TowheeIntegratorListenerNative.cpp \
+	TowheeIntegratorMC.cpp \
 	TowheeIntegratorNPT.cpp \
 	TowheeIntegratorNVT.cpp \
 	TowheeIntegratorPseudoBubble.cpp \
 	TowheeIntegratorUVT.cpp \
+	TowheeMCMove.cpp \
+	TowheeMCMoveCOMTranslation.cpp \
+	TowheeMolecule.cpp \
+	TowheeMoleculeList.cpp \
+	TowheeMonatomicMolecule.cpp \
+	TowheePotential.cpp \
+	TowheePotentialLennardJones.cpp \
+	TowheePotentialMaster.cpp \
 	TowheeRandom.cpp \
 	TowheeSimulation.cpp \
+	TowheeSimulationEventManager.cpp \
 	TowheeSpace.cpp \
 	TowheeSpecies.cpp \
 	TowheeSpeciesManager.cpp \
@@ -25,6 +42,8 @@ SRC =  TowheeAtomType.cpp \
 	TowheeVector.cpp \
 	TowheeVector2D.cpp \
 	TowheeVector3D.cpp \
+	TowheeVector3DAtom.cpp \
+	IndexManager.cpp \
 	towhee_wrap.cpp
 
 LIB = libtowhee_adapter.so
