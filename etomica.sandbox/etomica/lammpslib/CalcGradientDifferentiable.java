@@ -72,9 +72,9 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         IVectorMutable workVector = space.makeVector();
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
             workVector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
-            LammpsInterface.setAtomPosition(lammps, i, workVector.x(0), workVector.x(1), workVector.x(2));
+            LammpsInterface2.setAtomPosition(lammps, i, workVector.x(0), workVector.x(1), workVector.x(2));
         }
-        LammpsInterface.doLammpsStep(lammps, 1);
+        LammpsInterface2.doLammpsStep(lammps, 1);
         
         //not used
         //return ((IntegratorVelocityVerlet.MyAgent)atomAgent.getAgent((IAtomLeaf)movableSet.getMolecule(gradDcomponent/3).getChildList().getAtom(0))).force().x(gradDcomponent%3);
@@ -121,7 +121,7 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
         	if(loopSet.getMolecule(i).getType()==movableSet.getMolecule(0).getType()){
         		workvector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
-            	LammpsInterface.getForce(lammps, i, workvector);
+            	LammpsInterface2.getForce(lammps, i, workvector);
 	        	for(int l=0; l<3; l++){
 	                forceRow[rowCount] = -ElectronVolt.UNIT.toSim(workvector.x(l));
 	                rowCount++;
@@ -143,7 +143,7 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
         	if(loopSet.getMolecule(i).getType()==movableSet.getMolecule(0).getType()){
 	        	workvector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
-	        	LammpsInterface.getForce(lammps, i, workvector);
+	        	LammpsInterface2.getForce(lammps, i, workvector);
 	            for(int l=0; l<3; l++){
 	                forceRow[rowCount]-= -ElectronVolt.UNIT.toSim(workvector.x(l));
 	                forceRow[rowCount]/= (2.0*newH);

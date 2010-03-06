@@ -201,7 +201,7 @@ public class LMSDProcessorOrderN {
 
         				}
         				
-        				//PER-ATOM DISPLACEMENT IN XY (deltaT=500, must have at least 1000 configurations to use) 
+        				//PER-ATOM DISPLACEMENT IN XY (deltaT=700, must have at least 1000 configurations to use) 
         				if(b==2){
         					if(j==2){
             					for(int a=0; a<numAtoms; a++){

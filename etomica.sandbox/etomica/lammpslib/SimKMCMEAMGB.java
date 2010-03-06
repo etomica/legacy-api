@@ -65,7 +65,7 @@ public class SimKMCMEAMGB extends Simulation{
         this.millerPlane = amillerPlane;
         potentialMaster = new PotentialMasterList(this, space);
         potentialMasterD = new PotentialMaster();
-        lammpsSim = LammpsInterface.makeLammpsSim("/usr/users/msellers/simulation/lammps-couple/in.sngb101");
+        lammpsSim = LammpsInterface2.makeLammpsSim("/usr/users/msellers/simulation/lammps-couple/in.sngb101");
       //SIMULATION BOX
         box = new Box(new BoundaryRectangularSlit(2, 5, space), space);
         addBox(box);

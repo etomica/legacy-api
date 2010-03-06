@@ -26,6 +26,7 @@ public class MeterStructureFactor extends DataSourceScalar {
     protected double[] struct;
     protected IVectorMutable [] waveVec;
     protected IMoleculeList moleculeList;
+    protected int callCount;
 
 	/**
 	 * Creates meter with default to compute the structure factor
@@ -79,6 +80,7 @@ public class MeterStructureFactor extends DataSourceScalar {
 			}
 			struct[k] = ((term1*term1) + (term2*term2))/(numAtoms*numAtoms);
 		}
+		callCount++;
 	}
 	
 	/**

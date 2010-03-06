@@ -20,8 +20,7 @@ import etomica.graphics.DisplayBox;
 import etomica.graphics.SimulationGraphic;
 import etomica.integrator.IntegratorVelocityVerlet;
 import etomica.lattice.BravaisLatticeCrystal;
-import etomica.lattice.crystal.BasisBetaSnA5;
-import etomica.lattice.crystal.PrimitiveTetragonal;
+import etomica.lattice.crystal.PrimitiveMonoclinic;
 import etomica.listener.IntegratorListenerAction;
 import etomica.nbr.list.PotentialMasterList;
 import etomica.potential.PotentialMaster;
@@ -63,7 +62,7 @@ public class SimDimerMEAMBlock extends Simulation{
     public double [] lambdas, frequencies;
     public IVectorMutable adAtomPos;
     public IMoleculeList movableSet;
-    public BravaisLatticeCrystal crystal;
+    public BravaisLatticeCrystal crystalCu, crystalSn;
     public long lammpsSim;
     //public Boolean saddleFine, calcModes, minSearch, normalDir;
     
@@ -96,6 +95,7 @@ public class SimDimerMEAMBlock extends Simulation{
         potential.setParameters(fixed.getLeafType(), ParameterSetMEAM.Sn);
         potential.setParameters(movable.getLeafType(), ParameterSetMEAM.Sn);
 
+        box.setNMolecules(movable,200);
         
         //Sn
         //beta-Sn box
@@ -104,15 +104,29 @@ public class SimDimerMEAMBlock extends Simulation{
         //the unit cell to prevent distortion of the lattice.  The values for the 
         //lattice parameters for tin's beta box (a = 5.8314 angstroms, c = 3.1815 
         //angstroms) are taken from the ASM Handbook. 
-              
+        /*     
         double a = 5.921; 
         double c = 0.546*a;
         box.getBoundary().setBoxSize(new Vector3D(a*6, a*6, c*10));
         PrimitiveTetragonal primitive = new PrimitiveTetragonal(space, a, c);
         crystal = new BravaisLatticeCrystal(primitive, new BasisBetaSnA5());
-		
-        Configuration config = new ConfigurationLattice(crystal, space);
-        config.initializeCoordinates(box);
+		*/
+        
+        double a = 11.022;
+        double b = 7.282;
+        double c = 9.827;
+        double beta = 98.84*Math.PI/180.0;
+        
+        box.getBoundary().setBoxSize(new Vector3D(a*4, b*4, c*4));
+        
+        PrimitiveMonoclinic primitive = new PrimitiveMonoclinic(space, a, b, c, beta);
+        crystalCu = new BravaisLatticeCrystal(primitive, new BasisCu6IMC());
+        crystalSn = new BravaisLatticeCrystal(primitive, new BasisSn5IMC());
+        
+        Configuration configCu = new ConfigurationLattice(crystalCu, space);
+        configCu.initializeCoordinates(box);
+        Configuration configSn = new ConfigurationLattice(crystalSn, space);
+        configSn.initializeCoordinates(box);
         
         /*
         this.potentialMaster.addPotential(potential, new IAtomTypeLeaf[]{movable.getLeafType(), potentialSpecies.getLeafType()});
@@ -339,14 +353,14 @@ public class SimDimerMEAMBlock extends Simulation{
         //				1900K Cu 57705.255  38.643084817
   
         
-        Vector3D move2 = new Vector3D(61.55784, 61.55784, 40.332697);
-        sim.box.getBoundary().setBoxSize(move2);
+        //Vector3D move2 = new Vector3D(61.55784, 61.55784, 40.332697);
+        //sim.box.getBoundary().setBoxSize(move2);
         
         
-        LXYZ2PropertyReader xyz2prop = new LXYZ2PropertyReader("/home/msellers/simulation/block/Sn/1700-1.xyz","blank",10,sim.box,sim,sim.space);
-	    xyz2prop.actionPerformed();
+        //LXYZ2PropertyReader xyz2prop = new LXYZ2PropertyReader("/home/msellers/simulation/block/Sn/1700-1.xyz","blank",10,sim.box,sim,sim.space);
+	    //xyz2prop.actionPerformed();
 	    
-	    System.exit(1);
+	    //System.exit(1);
         //sim.setMovableAtoms(500.0, vect);   
         
         //System.out.println(sim.movableSet.getMoleculeCount());
@@ -365,8 +379,8 @@ public class SimDimerMEAMBlock extends Simulation{
       //  vib.actionPerformed();
       //  System.out.println(vib.getHarmonicEntropy(300.0));
         
-        //sim.enableMolecularDynamics(1000);
-        sim.enableDimerSearch("snblock2", 4000, false, false);             
+        sim.enableMolecularDynamics(1000);
+        //sim.enableDimerSearch("snblock2", 4000, false, false);             
         //sim.enableMinimumSearch("snblock2", false);
         
 	    //move2.setX(1,75.0);
@@ -414,7 +428,7 @@ public class SimDimerMEAMBlock extends Simulation{
 	    
         SimulationGraphic simGraphic = new SimulationGraphic(sim, SimulationGraphic.TABBED_PANE, APP_NAME, 1, sim.space, sim.getController());
         simGraphic.getController().getReinitButton().setPostAction(simGraphic.getPaintAction(sim.box));        
-        sim.integratorDimer.getEventManager().addListener(new IntegratorListenerAction(simGraphic.getPaintAction(sim.box)));
+        sim.integratorMD.getEventManager().addListener(new IntegratorListenerAction(simGraphic.getPaintAction(sim.box)));
         //simGraphic.add(plotPE);
     	ColorSchemeByType colorScheme = ((ColorSchemeByType)((DisplayBox)simGraphic.displayList().getFirst()).getColorScheme());
     	

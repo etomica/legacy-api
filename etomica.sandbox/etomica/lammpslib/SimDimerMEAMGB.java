@@ -2,6 +2,7 @@ package etomica.lammpslib;
 
 import etomica.action.WriteConfiguration;
 import etomica.action.activity.ActivityIntegrate;
+import etomica.api.IAtom;
 import etomica.api.IAtomType;
 import etomica.api.IAtomTypeSphere;
 import etomica.api.IBox;
@@ -25,7 +26,7 @@ import etomica.lattice.crystal.PrimitiveTetragonal;
 import etomica.listener.IntegratorListenerAction;
 import etomica.potential.PotentialMaster;
 import etomica.simulation.Simulation;
-import etomica.space.BoundaryRectangularSlit;
+import etomica.space.BoundaryRectangularPeriodic;
 import etomica.space3d.Space3D;
 import etomica.space3d.Vector3D;
 import etomica.species.SpeciesSpheresMono;
@@ -79,7 +80,8 @@ public class SimDimerMEAMGB extends Simulation{
     	potentialMasterD = new PotentialMaster();
     	//lammpsSim = LammpsInterface.makeLammpsSim("/home/msellers/simulation/lammps-couple/in.sngb210");
     	//SIMULATION BOX
-        box = new Box(new BoundaryRectangularSlit(2, 5, space), space);
+        box = new Box(new BoundaryRectangularPeriodic(space), space);
+    	//box = new Box(new BoundaryRectangularSlit(2, 5, space), space);
         addBox(box);
         //SPECIES
         
@@ -105,8 +107,8 @@ public class SimDimerMEAMGB extends Simulation{
         //lattice parameters for tin's beta box (a = 5.8314 angstroms, c = 3.1815 
         //angstroms) are taken from the ASM Handbook. 
               
-        //double a = 5.921;
-        double a = 5.9305;
+        double a = 5.921;
+        //double a = 5.9305;
         //double c = 3.24;
         double c = a*0.54689;
         PrimitiveTetragonal primitive = new PrimitiveTetragonal(space, a, c);
@@ -174,7 +176,7 @@ public class SimDimerMEAMGB extends Simulation{
         gbtilt.setGBplane(millerPlane);
         gbtilt.setBoxSize(box, boxSize);
         
-        gbtilt.setRotationBOTTOM(2, Math.PI);
+        //gbtilt.setRotationBOTTOM(2, Math.PI);
         
         gbtilt.initializeCoordinates(box);        
     }
@@ -342,10 +344,10 @@ public class SimDimerMEAMGB extends Simulation{
 			    }
 			   for(int i=0; i<loopSet.getMoleculeCount(); i++){
 			        workVector.E(loopSet.getMolecule(i).getChildList().getAtom(0).getPosition());
-			        LammpsInterface.setAtomPosition(lammpsSim, i, workVector.getX(0), workVector.getX(1), workVector.getX(2));
+			        LammpsInterface2.setAtomPosition(lammpsSim, i, workVector.getX(0), workVector.getX(1), workVector.getX(2));
 			    }
-			    LammpsInterface.doLammpsStep(lammpsSim, 1);
-			    System.out.print(LammpsInterface.getEnergy(lammpsSim)+" ");
+			    LammpsInterface2.doLammpsStep(lammpsSim, 1);
+			    System.out.print(LammpsInterface2.getEnergy(lammpsSim)+" ");
 		   }
 		   System.out.println();
 		   move0.setX(0, move0.getX(0)*150);
@@ -430,62 +432,44 @@ public class SimDimerMEAMGB extends Simulation{
         */
         final String APP_NAME = "SimDimerMEAMGBCluster";
         
-        final SimDimerMEAMGB sim = new SimDimerMEAMGB(new int[] {1,0,1}, new int[] {6,6,48});        
+        final SimDimerMEAMGB sim = new SimDimerMEAMGB(new int[] {2,0,1}, new int[] {6,4,50});        
         //sim.refreshSpecies();
-   
-        IVectorMutable dimerCenter = sim.getSpace().makeVector();
-        
-        IVectorMutable cubeSize = sim.getSpace().makeVector();
-        cubeSize.setX(0, 10.0);
-        cubeSize.setX(1, 10.0);
-        cubeSize.setX(2, 3.0);
-        
+           
         Vector3D move0 = new Vector3D(0.0,0.0,0.0);  
         Vector3D move1 = new Vector3D(0.0,0.1,0.0);
-        Vector3D move2 = new Vector3D(0.0,0.0,1.5);
-        
-        
-        IVectorMutable workVector = sim.getSpace().makeVector();
-        double remove=0;
-        
-        for(int i=0; i<sim.box.getMoleculeList().getMoleculeCount();i++){
-        	if(sim.box.getMoleculeList().getMolecule(i).getChildList().getAtom(0).getPosition().getX(2)>0.0){
-	        	workVector=(sim.box.getMoleculeList().getMolecule(i).getChildList().getAtom(0).getPosition());
-	        //	workVector.PE(move2);
-        	}
-        
-        }     
-        
+        Vector3D move2 = new Vector3D(0.0,1.0,0.0);
+               
         //System.out.println(remove);
+	    for(int i=0; i<sim.box.getMoleculeList().getMoleculeCount(); i++){
+	    	//IAtom atom = sim.box.getMoleculeList().getMolecule(i).getChildList().getAtom(0);
+	    	//if(atom.getPosition().getX(2)>0.0){atom.getPosition().PE(move2);}
+	    }
 	    
+	    move2.setX(0,0.0);
+	    move2.setX(1,0.0);
+	    move2.setX(2,1.0);
+	    move2.PE(sim.box.getBoundary().getBoxSize());
+	    sim.box.getBoundary().setBoxSize(move2);
+	    //System.out.println("Interface Area: "+move2.getX(0)*move2.getX(1)+" angstroms");
 	    move2.E(sim.box.getBoundary().getBoxSize());
-	    //move2.setX(0,2.0*17.763);
-	    //move2.setX(1,2.0*17.5344);
-	    //move2.setX(2,2.0*40.00);
-	    //sim.box.getBoundary().setDimensions(move2);
-	    System.out.println("Interface Area: "+move2.getX(0)*move2.getX(1)+" angstroms");
-	    
 	    move2.TE(0.5);
 	    System.out.println("Box Dimensions: "+move2);
 	    System.out.println("Number of Atoms: "+sim.box.getMoleculeList().getMoleculeCount());
-	
+	    
 	    WriteConfiguration writer = new WriteConfiguration(sim.getSpace());
 	    writer.setBox(sim.box);
-	    writer.setConfName("tilt101-6648");
+	    writer.setConfName("equil-6450");
 	    writer.actionPerformed();
 	    
-	    /**
+	    
+	    /*
 	    //STRUCTURE FACTOR CALCULATION
         MeterStructureFactor meterS = new MeterStructureFactor(sim.getSpace(), sim.crystal, sim.box);
-	    IMolecule molecule;
-	    for(int i=0; i<1; i++){
-	    	molecule = sim.box.getMoleculeList().getMolecule(i);
-	    	//sim.box.removeMolecule(molecule);
-	    }
-	    
+	    sim.box.setNMolecules(sim.fixed, 0);
+	    sim.box.setNMolecules(sim.movable, 0);
+	    sim.box.setNMolecules(sim.movable, 3864);
 	    System.out.println(sim.box.getMoleculeList().getMoleculeCount());
-	    sim.refreshSpecies();
-	    //sim.initializeConfiguration("/home/msellers/simulation/GB/401/gb-300-1-s05");
+	    sim.initializeConfiguration("/home/msellers/simulation/GB/401/450-15");
         IVectorMutable[] waveVec;
         waveVec = sim.getSpace().makeVectorArray(5);
         
@@ -504,14 +488,14 @@ public class SimDimerMEAMGB extends Simulation{
         IMoleculeList boxList = sim.box.getMoleculeList();
         IVectorMutable rij1 = sim.getSpace().makeVector();
         System.out.println(sim.gbtilt.spacing);
-        double zvec=25.9124;
-        for(int z=0; z<30; z++){ 	
+        double zvec=26.5;
+        for(int z=0; z<45; z++){ 	
         	MoleculeArrayList structArray = new MoleculeArrayList();
 	        for (int i=0; i<boxList.getMoleculeCount(); i++){
-	        	rij1.E(((IAtomPositioned)boxList.getMolecule(i).getChildList().getAtom(0)).getPosition());
-		        	if(Math.abs(rij1.x(2)-zvec)<=sim.gbtilt.spacing/8.0){//Math.abs(rij.x(0)) < 0.5 && Math.abs(rij.x(1)) < distance && Math.abs(rij.x(2)) < distance){
+	        	rij1.E(boxList.getMolecule(i).getChildList().getAtom(0).getPosition());
+		        	if(Math.abs(rij1.getX(2)-zvec)<=sim.gbtilt.spacing/8.0){//Math.abs(rij.x(0)) < 0.5 && Math.abs(rij.x(1)) < distance && Math.abs(rij.x(2)) < distance){
 			               structArray.add(boxList.getMolecule(i));  
-			               if(zvec<14.5 && zvec>13.5)System.out.println(rij1);
+			               //if(zvec>23.0)System.out.println(rij1);
 		            }
 	        }
 	        meterS.reset();
@@ -519,14 +503,14 @@ public class SimDimerMEAMGB extends Simulation{
 	        meterS.setAtoms(structArray);
 	        meterS.actionPerformed();
 	        //System.out.println(meterS.getDataAsArray()[0]);
-	        System.out.println(structArray.getMoleculeCount()+"    "+zvec+"   "+meterS.getDataAsArray()[0]);
-	        sim.refreshSpecies();
-	        zvec=zvec-sim.gbtilt.spacing/4.0;
+	        System.out.println(meterS.getDataAsArray()[0]+"    "+meterS.getDataAsArray()[1]);
+	        //sim.refreshSpecies();
+	        zvec=zvec-sim.gbtilt.spacing;
         }
 	    
 	    
-	    //System.exit(1);
-	    **/
+	    System.exit(1);
+	    */
 	    
 	    //LXYZ2PropertyReader xyz2prop = new LXYZ2PropertyReader("310-300.xyz","blank",1000,sim.box,sim,sim.space);
 	    //xyz2prop.actionPerformed();
@@ -564,6 +548,6 @@ public class SimDimerMEAMGB extends Simulation{
 
 	static {
 	//	System.loadLibrary("LAMMPS");
-//        System.loadLibrary("lmp_thomas");
+	//  System.loadLibrary("lmp_thomas");
     }
 }

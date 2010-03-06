@@ -95,8 +95,12 @@ public class LXYZ2PropertyReader {
 					} catch (IOException e) {e.printStackTrace();
 					}
 					
+					
+					
 					//ComputeRDF
-					meterRDF.actionPerformed();
+					//meterRDF.actionPerformed();
+					//meter
+					
 					
 				}else{
 					//Reads through one block
