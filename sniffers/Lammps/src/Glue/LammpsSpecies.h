@@ -11,7 +11,6 @@
 
 #include "IAPISpecies.h"
 #include "IAPIAtomType.h"
-#include "IAPISpeciesManager.h"
 #include "IAPIMolecule.h"
 #include "LammpsInterfaceConformation.h"
 #include "LammpsAtomType.h"

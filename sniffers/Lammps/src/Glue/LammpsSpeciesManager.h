@@ -12,7 +12,6 @@
 #include "IAPIBox.h"
 #include "IAPISpecies.h"
 #include "IAPIAtomType.h"
-#include "IAPISpeciesManager.h"
 
 using namespace molesimAPI;
 
