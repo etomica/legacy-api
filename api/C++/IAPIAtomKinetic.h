@@ -15,7 +15,12 @@ namespace molesimAPI
 
     class IAPIAtomKinetic : public virtual IAPIAtom {
 
-        public:			
+        public:
+            /**
+              * @return Returns a vector holding the velocity of the atom.
+              *         The velocity of the atom can be changed by changing
+              *         the values of the returned vector.
+              */
             virtual IAPIVectorMutable *getVelocity() = 0;
 
     };

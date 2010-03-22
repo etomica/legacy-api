@@ -15,8 +15,19 @@ namespace molesimAPI
 
     class IAPIIntegratorEventManager
     {
-        public:			
-            virtual void addListener(IAPIIntegratorListener *) = 0;		
+        public:
+            /**
+              * Adds a listener that will be notified of integrator events.
+              * @param newListener The listener to be notified of the
+              *                    integrator events.
+              */
+            virtual void addListener(IAPIIntegratorListener *) = 0;
+            /**
+              * Removes a listener that was being notified of integrator
+              * events.
+              * @param listener The listener to be removed from the integrator
+              *                 event notifications.
+              */
             virtual void removeListener(IAPIIntegratorListener *) = 0;
 
     };

@@ -12,9 +12,16 @@ namespace molesimAPI
 
     class IAPIBox;
 
+    /**
+      * IAPIBoxEvent is an event superclass for events that are
+      * related to some event within a box.
+      */
     class IAPIBoxEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the box that this event is related to.
+              */
             virtual IAPIBox *getBox() = 0;
     };
 }

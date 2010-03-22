@@ -68,24 +68,9 @@ namespace glotzwrappers
               * @todo Do all the objects in the box need to be destroyed?
               */
             void removeBox(IAPIBox *box);
-            /**
-              * @return Return the simulation's random number generator.
-              */
             IAPIRandom *getRandom();
-            /**
-              * @return Return the simulation's event manager.
-              */
             IAPISimulationEventManager *getEventManager();
-            /**
-              * @param index Index into box list contained by simulation.
-              * @return Returns the box held by the simulation from the
-              *         box list at the given index.
-              */
             IAPIBox *getBox(int index);
-            /**
-              * @return Returns the number of boxes in the simulation's box
-              *         list.
-              */
             int getBoxCount();
             void addSpecies(IAPISpecies *species);
             void removeSpecies(IAPISpecies *removedSpecies);
@@ -118,6 +103,10 @@ namespace glotzwrappers
               * @return Returns the space held by the simulation.
               */
             GlotzillaSpace *getSpace();
+            /**
+              * Remove a box from the simulation.
+              * @param box Box to remove from simulation.
+              */
             void setIntegrator(IAPIIntegrator *integrator);
 
         protected:

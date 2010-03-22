@@ -15,10 +15,6 @@ using namespace molesimAPI;
 namespace glotzwrappers
 {
 
-    /**
-      * GlotzillaBoxEvent is an event superclass for events that are
-      * related to some event within a box.
-      */
     class GlotzillaBoxEvent : public virtual IAPIBoxEvent {
 
         public:
@@ -26,10 +22,6 @@ namespace glotzwrappers
               * @param box Box pertaining to this event.
               */
             GlotzillaBoxEvent(IAPIBox *box);
-
-            /**
-              * @return Returns the box that this event is related to.
-              */
             IAPIBox *getBox();
 
         protected:

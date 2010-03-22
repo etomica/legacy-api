@@ -29,18 +29,13 @@ namespace glotzwrappers
     class GlotzillaBoundaryEventManager : public virtual IAPIBoundaryEventManager {
 
         public:
-            /**
-              * Register a boundary listener to receive boundary events.
-              * @param listener Boundary listener to receive events.
-              */
             void addListener(IAPIBoundaryListener *listener);
-            /**
-              * Unregister a boundary listener from receiving boundary events.
-              * @param listener Boundary listener to unregister.
-              */
             void removeListener(IAPIBoundaryListener *listener);
 
             // Non-API
+            /**
+              * This method is not implemented.
+              */
             void inflate(IAPIBoundary *boundary);
 
         protected:

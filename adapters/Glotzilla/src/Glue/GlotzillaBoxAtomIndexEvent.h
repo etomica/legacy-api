@@ -23,15 +23,11 @@ namespace glotzwrappers
 
         public:
             /**
-              * @param atom Atom added to the box that the event pertians to.
-              * @param box Box pertaining to this event that the atom was
-              *            added to.
+              * @param atom Atom in the box that the event pertians to.
+              * @param index new index of the atom in the box.
+              * @param box Box pertaining to this event.
               */
             GlotzillaBoxAtomIndexEvent(IAPIAtom *atom, int index, IAPIBox *box);
-
-            /**
-              * @return Returns the atom related to this event.
-              */
             int getIndex();
 
         protected:

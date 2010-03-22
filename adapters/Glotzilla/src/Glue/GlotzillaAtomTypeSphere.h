@@ -40,14 +40,7 @@ namespace glotzwrappers
             GlotzillaAtomTypeSphere(int at, double mass);
 
             // API Compliance
-            /**
-              * Set the diameter of the sphere for all atoms of this type.
-              * @param d diameter of sphere
-              */
             void setDiameter(double d);
-            /**
-              * @return Returns the diamter of the sphere.
-              */
             double getDiameter();
 
         private:

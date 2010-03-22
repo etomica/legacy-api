@@ -22,7 +22,13 @@ namespace towheewrappers
         public:
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             void addListener(IAPIBoxListener *newListener);
+            /**
+              * This method is not implemented.
+              */
             void removeListener(IAPIBoxListener *listener);
 
     };

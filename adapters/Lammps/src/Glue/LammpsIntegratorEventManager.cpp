@@ -32,7 +32,6 @@ printf("lammps_command : %s\n", command); fflush(stdout);
             // Save the fix id
             mListeners.insert(std::pair<IAPIIntegratorListener *,
                                         char *>(newListener, fixID));
-printf("Add Address : %x\n", newListener); fflush(stdout);
         }
         else {
             printf("WARNING : Integrator Listener already added to integrator event manager.\n");
@@ -45,7 +44,6 @@ printf("Add Address : %x\n", newListener); fflush(stdout);
      */
     void LammpsIntegratorEventManager::removeListener(IAPIIntegratorListener *listener) {
         if(mListeners.count(listener) == NULL) {
-printf("Address : %x\n", listener); fflush(stdout);
             printf("WARNING : Integrator Listener not managed by integrator event manager.\n");
             fflush(stdout);
         }

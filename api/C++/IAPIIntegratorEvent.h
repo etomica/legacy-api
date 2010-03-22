@@ -14,7 +14,10 @@ namespace molesimAPI
 
     class IAPIIntegratorEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the integrator related to the event.
+              */
             virtual IAPIIntegrator *getIntegrator() = 0;
     };
 }

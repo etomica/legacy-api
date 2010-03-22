@@ -66,6 +66,9 @@ printf("lammps_command : %s\n", command); fflush(stdout);
         lammps_command(mSim->getLammpsSim(), command);
     }
 
+    /*
+     * init()
+     */
     void LammpsAtom::init(IAPISimulation *sim, double x, double y, double z, IAPIAtomType *at) {
         mSim = dynamic_cast<LammpsSimulation *>(sim);
 
@@ -76,8 +79,9 @@ mSim->getLammpsSim()->atom->bond_per_atom = 1;
 
         char command[512];
         sprintf(command,
-                "create_atoms %d single 0.0 0.0 0.0 units box",
-                mAtomType->getIndex());
+                "create_atoms %d single %f %f %f units box",
+                mAtomType->getIndex(),
+                x, y, z);
 printf("lammps_command : %s\n", command); fflush(stdout);
         lammps_command(mSim->getLammpsSim(), command);
 

@@ -25,18 +25,37 @@ namespace towheewrappers
 
         public:
 
+            /**
+              * Constructor for LammpsBoundary.  LammpsBoundary is
+              * a purely virtual class and the constructor is only called
+              * from its subclasses.
+              * @param space The space that should be used to generate
+              *              vectors.
+              */
             TowheeBoundary(TowheeSpace *space);
 
             void setBoxSize(IAPIVector *v);
             IAPIVector *getBoxSize();
+            /**
+              * This method is not implemented.
+              */
             double volume();
             virtual void nearestImage(IAPIVectorMutable *v) = 0;
             virtual IAPIVector *centralImage(IAPIVector *v) = 0;
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *box);
+            /**
+              * This method is not implemented.
+              */
             IAPIBox *getBox();
             virtual IAPIVector *getEdgeVector(int d) = 0;
             IAPIVector *getCenter();
             virtual bool getPeriodicity(int d) = 0;
+            /*
+              * This method is not implemented.
+              */
             IAPIBoundaryEventManager *getEventManager();
 
         protected:

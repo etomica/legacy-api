@@ -24,19 +24,14 @@ namespace glotzwrappers
 
         public:
             /**
-              * @param species 
-              * @param count 
-              * @param box 
+              * @param species Species of molecules added to box
+              * @param count Number of molecules in the box for the species
+              *              related to the event.
+              * @param box Box related to the event.
               */
             GlotzillaBoxMoleculeCountEvent(IAPISpecies *species, int count, IAPIBox *box);
 
-            /**
-              * @return
-              */
             IAPISpecies *getSpecies();
-            /**
-              * @return
-              */
             int getCount();
 
         protected:

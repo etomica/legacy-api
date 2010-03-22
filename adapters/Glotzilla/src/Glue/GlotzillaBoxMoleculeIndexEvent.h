@@ -23,15 +23,12 @@ namespace glotzwrappers
 
         public:
             /**
-              * @param species 
-              * @param count 
-              * @param box 
+              * @param mole Molecule related to the event.
+              * @param index Index related to the event.
+              * @param box Box related to the event.
               */
             GlotzillaBoxMoleculeIndexEvent(IAPIMolecule *mole, int index, IAPIBox *box);
 
-            /**
-              * @return
-              */
             int getIndex();
 
         protected:

@@ -26,8 +26,20 @@ namespace towheewrappers
             IAPIAtom *getAtom(int);
 
             // Non-API methods
+            /**
+              * Add an atom to the atom list.
+              * @param atom The atom to add to the atom list.
+              */
             void addAtom(IAPIAtom *);
+            /**
+              * Remove an atom from the atom list.
+              * @param atom The atom to remove from the atom list.
+              */
             void removeAtom(IAPIAtom *);
+            /**
+              * Remove all atoms from the atom list.  The atom list will be
+              * blank after execution of the method.
+              */
             void clear();
 
         protected:

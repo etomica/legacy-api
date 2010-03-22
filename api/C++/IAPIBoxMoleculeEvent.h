@@ -13,9 +13,17 @@
 namespace molesimAPI
 {
 
+    /**
+      * IAPIBoxMoleculeEvent is an event superclass for events that are
+      * related to an molecules's interaction with a box (addtion to, removal
+      * from, etc...).
+      */
     class IAPIBoxMoleculeEvent : public virtual IAPIBoxEvent {
 
         public:
+            /**
+              * @return Returns the molecule related to the event.
+              */
             virtual IAPIMolecule *getMolecule() = 0;
     };
 }

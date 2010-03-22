@@ -31,21 +31,64 @@ namespace lammpswrappers
             LammpsIntegrator(IAPISimulation *sim);
 
             // API Compliance
-            void doStep();		
-            long long getStepCount();		
+            /**
+              * Performs the elementary integration step, such as a
+              * molecular dynamics time step, or a Monte Carlo trial.
+              * Native Lammps calls :
+              *    run
+              */
+            void doStep();
+            long long getStepCount();
+            /**
+              * This method is not implemented.
+              */
             void reset();
             void resetStepCount();
             IAPIIntegratorEventManager *getEventManager();
 
             // Non-API methods
+            /**
+              * Native Lammps calls :
+              *    fix
+              *
+              * @param nve
+              */
             void setNVE(LammpsNVE *nve); // ARG LIST COMPELTE
+            /**
+              * Native Lammps calls :
+              *    fix
+              *    compute_modify
+              *
+              * @param nvt
+              */
             void setNVT(LammpsNVT *nvt); // ARG LIST COMPELTE
+            /**
+              * Native Lammps calls :
+              *    fix
+              *
+              * @param npt
+              */
             void setNPT(LammpsNPT *npt); // ARG LIST NOT COMPLETE
+            /**
+              * Native Lammps calls :
+              *    fix
+              *
+              * @param nph
+              */
             void setNPH(LammpsNPH *nph); // ARG LIST NOT COMPELTE
 
             void setTempRescale(LammpsTemperatureRescale *rescale);
             void setMomentum(LammpsMomentum *m);
             void setTimestep(double ts);
+            /**
+              * Performs the elementary integration step, such as a
+              * molecular dynamics time step, or a Monte Carlo trial.
+              * Performs multiple steps.
+              * Native Lammps calls :
+              *    run
+              *
+              * @param nSteps Number of steps to perform.
+              */
             void doSteps(int nSteps);
 
 

@@ -24,9 +24,8 @@ namespace glotzwrappers
 
         public:
             /**
-              * @param index 
-              * @param box Box pertaining to this event that the atom was
-              *            added to.
+              * @param index index of box pertaining to this event.
+              * @param box Box pertaining to this event.
               */
             GlotzillaBoxIndexEvent(int index, IAPIBox *box);
 

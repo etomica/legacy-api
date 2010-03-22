@@ -87,7 +87,7 @@ printf("WARNING : LammpsAtomType::getChildIndex() is NOT implemented yet.\n");
      * rm()
      */
     double LammpsAtomType::rm() {
-printf("WARNING : LammpsAtomType::rm() is NOT implemented yet.\n");
+        return 1.0 / getMass();
     }
 
     /*

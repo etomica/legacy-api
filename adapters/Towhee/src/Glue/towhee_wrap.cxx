@@ -6829,16 +6829,6 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getMolec
 }
 
 
-JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1resetCOM(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
-  (arg1)->resetCOM();
-}
-
-
 JNIEXPORT jdouble JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getTemp(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jdouble jresult = 0 ;
   towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;

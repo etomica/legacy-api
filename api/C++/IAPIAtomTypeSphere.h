@@ -15,7 +15,14 @@ namespace molesimAPI
     class IAPIAtomTypeSphere : public virtual IAPIAtomType {
 
         public:
-            virtual void setDiameter(double) = 0;
+            /**
+              * Set the diameter of the sphere for all atoms of this type.
+              * @param d diameter of sphere
+              */
+            virtual void setDiameter(double d) = 0;
+            /**
+              * @return Returns the diameter of the sphere.
+              */
             virtual double getDiameter() = 0;
 
     };

@@ -18,10 +18,15 @@ namespace lammpswrappers
     class LammpsBoxEventManager : public virtual IAPIBoxEventManager {
 
         public:
+            /**
+              * This method is not implemented.
+              */
             void addListener(IAPIBoxListener *listener);
+            /**
+              * This method is not implemented.
+              */
             void removeListener(IAPIBoxListener *listener);
 
-        protected:
 
     };
 }

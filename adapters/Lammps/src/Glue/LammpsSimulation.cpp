@@ -247,11 +247,6 @@ printf("WARNING : LammpsSimulation::removeBox() does NOT remove box from simulat
 
         char command[512]; // Any command longer than 512 characters is SOL
 
-        // Create atoms within a specified region as allowed by
-        // by the lammps create_atoms command.
-        // The following algorithm is ONLY implemented for monatomic
-        // molecules and are added to the first box held by the simulation!
-
         LammpsSpeciesManager *sm = dynamic_cast<LammpsSpeciesManager *>(mSpeciesManager);
 
         if(mSpace->getD() == 2) {
@@ -389,13 +384,6 @@ printf("lammps_command : %s\n", command);
      */
     LammpsSpace *LammpsSimulation::getSpace() {
         return mSpace;
-    }
-
-    /*
-     * addRegionWithAtoms()
-     */
-    void LammpsSimulation::addRegionWithAtoms(LammpsRegion *region) {
-        atomRegionList.push_back(region);
     }
 
 }

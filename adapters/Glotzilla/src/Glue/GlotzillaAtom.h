@@ -138,35 +138,31 @@ namespace glotzwrappers
               */
             int getLeafIndex();
             /**
-              * @return Returns the position of the atom as an IAPIVector
-              *         which, when modified, changed the atom's position.
+              * @return Returns a vector holding the position of the atom.
+              *         The position of the atom can be changed by changing
+              *         the values of the returned vector.
               * @todo Not sure if the mutability actually works by setting
               *       the Bead's position vector.
               */
             IAPIVectorMutable *getPosition();
             /**
-              * @return Returns the velocity of the atom as an IAPIVector
-              *         which, when modifyed, changed the atom's velocity.
+             * @return Returns a vector holding the velocity of the atom.
+              *         The velocity of the atom can be changed by changing
+              *         the values of the returned vector.
               * @todo Not sure if the mutability actually works by setting
               *       the Bead's velocity vector.
               */
             IAPIVectorMutable *getVelocity();
             /**
-              * @param newParent Sets the IAPIMolecule that this atom is a
-              *                  part of.
+              * An atom may be part of a molecule.  The atom holds a local
+              * copy of that molecule.
+              * @param newParent The atom's parent molecule.
+              *
               * WARNING : This method should only be called by the atom's
               *           parent (IAPIMolecule).
               */
             void setParent(IAPIMolecule *newParent);
-            /**
-              * @return Returns the IAPIMolecule that this atom is a part of.
-              */
             IAPIMolecule *getParentGroup();
-            /**
-              * @return Returns the atom type of this atoms, which holds
-              *         properties in common with other atoms of the same
-              *         type.
-              */
             IAPIAtomType *getType();
 
             // Non-API methods

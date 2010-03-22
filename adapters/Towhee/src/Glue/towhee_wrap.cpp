@@ -1079,6 +1079,17 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1IAPIVector(JNIEnv *
 }
 
 
+JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_IAPIVectorMutable_1setX(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2, jdouble jarg3) {
   molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
   int arg2 ;
@@ -1303,17 +1314,6 @@ JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_IAPIVectorMutable_1XE(JNIEn
   arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
   arg2 = *(molesimAPI::IAPIVector **)&jarg2; 
   (arg1)->XE(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
-  delete arg1;
-  
 }
 
 
@@ -6826,16 +6826,6 @@ JNIEXPORT jlong JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1getMolec
   result = (IndexManager *)(arg1)->getMoleculeIDMgr();
   *(IndexManager **)&jresult = result; 
   return jresult;
-}
-
-
-JNIEXPORT void JNICALL Java_towhee_wrapper_towheeJNI_TowheeSimulation_1resetCOM(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  towheewrappers::TowheeSimulation *arg1 = (towheewrappers::TowheeSimulation *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(towheewrappers::TowheeSimulation **)&jarg1; 
-  (arg1)->resetCOM();
 }
 
 

@@ -25,7 +25,13 @@ namespace towheewrappers
                           public virtual IAPIAtomKinetic {
 
         public:
-
+            /**
+              * TowheeAtom is an atom the represents a physical atom with
+              * a position.  Towhee atom's do not have a velocity.
+              * @param at The atom type of this atom.
+              * @param tIndex The index used to get info about the atom when
+              *               reaching into the native Towhee simulation.
+              */
             TowheeAtom(IAPIAtomType *at, int tIndex);
 
             int getIndex();
@@ -33,6 +39,11 @@ namespace towheewrappers
             void setLeafIndex(int newLeafIndex);
             int getLeafIndex();
             IAPIVectorMutable *getPosition();
+            /**
+              * Towhee atom's do not have a velocity.  This method is not
+              * implemented.
+              * @return NULL
+              */
             IAPIVectorMutable *getVelocity();
             void setParent(IAPIMolecule *newParent);
             IAPIMolecule *getParentGroup();

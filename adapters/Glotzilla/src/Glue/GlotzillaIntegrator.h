@@ -36,15 +36,7 @@ namespace glotzwrappers
             GlotzillaIntegrator(IAPISimulation *sim);
 
             // API Compliance
-            /**
-              * Performs the elementary integration step, such as a
-              * molecular dynamics time step, or a Monte Carlo trial.
-              */
             void doStep();
-            /**
-              * @return Returns the number of steps performed by the
-              *         integrator since it was initialized.
-              */
             long long getStepCount();
             /**
               * Defines the actions taken by the integrator to reset itself,
@@ -53,16 +45,14 @@ namespace glotzwrappers
               * Also invoked when the integrator is started or initialized.
               */
             void reset() = 0;
-            /**
-              * This method resets the step counter.
-              */
             void resetStepCount();
-            /**
-              * @return Returns the event manager for the integrator.
-              */
             IAPIIntegratorEventManager *getEventManager();
 
             // Non-API Method
+            /**
+              * This method is not implemented (which makes you wonder why
+              * it even exists...)
+              */
             void setTimestep(double ts);
 
         protected:

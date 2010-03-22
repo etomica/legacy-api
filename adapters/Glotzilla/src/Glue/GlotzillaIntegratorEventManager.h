@@ -39,18 +39,7 @@ namespace glotzwrappers
             GlotzillaIntegratorEventManager(IAPISimulation *sim);
 
             // API Compliance
-            /**
-              * Adds a listener that will be notified of integrator events.
-              * @param newListener The listener to be notified of the
-              *                    integrator events.
-              */
             void addListener(IAPIIntegratorListener *newListener);
-            /**
-              * Removes a listener that was being notified of integrator
-              * events.
-              * @param listener The listener to be removed from the integrator
-              *                 event notifications.
-              */
             void removeListener(IAPIIntegratorListener *listener);
 
         private:

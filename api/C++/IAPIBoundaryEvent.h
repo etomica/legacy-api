@@ -14,7 +14,11 @@ namespace molesimAPI
 
     class IAPIBoundaryEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the boundary associated with the boundary
+              *         event.
+              */
             virtual IAPIBoundary *getBoundary() = 0;
     };
 }

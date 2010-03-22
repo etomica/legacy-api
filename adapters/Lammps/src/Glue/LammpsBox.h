@@ -41,7 +41,21 @@ namespace lammpswrappers
             void setIndex(int newIndex);
             int getIndex();
             void addMolecule(IAPIMolecule *mole);
+            /**
+              * This method is not implemented.
+              */
             void removeMolecule(IAPIMolecule *mole);
+            /**
+              * Set the number of molecules for the box to the given value
+              * for the species requested.  Molecules will be added to
+              * fulfill the request.
+              * NOTE : This method cannot be used to remove molecules from
+              *        the box.
+              * @param species Add molecules of this species to process the
+              *                request.
+              * @param numMolecules The number of molecules that should
+              *                      be in the box (of the given species).
+              */
             void setNMolecules(IAPISpecies *species, int numMolecules);
             int getNMolecules(IAPISpecies *species);
             IAPIMoleculeList *getMoleculeList(IAPISpecies *);
@@ -54,6 +68,10 @@ namespace lammpswrappers
             void removeSpeciesNotify(IAPISpecies *species);
 
             // Non-API
+            /**
+              * Static method to create a towhee box.
+              * @param sim Simulation that cox should be created in.
+              */
             static LammpsBox* instance(IAPISimulation *sim);
 
         protected:

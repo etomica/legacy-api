@@ -31,16 +31,7 @@ namespace glotzwrappers
             virtual ~GlotzillaAtomList();
 
             // API Compliance
-            /**
-              * @return Returns the number of atoms in the atom list.
-              */
             int getAtomCount();			
-            /**
-              * Used to get an atom from the atom list.
-              * @param i The position of the atom in the atom list to get.
-              *          The position indices start at 0.
-              * @return Returns the number of atoms in the atom list.
-              */
             IAPIAtom *getAtom(int i);
 
             // Non-API methods

@@ -24,7 +24,24 @@ namespace lammpswrappers
             LammpsIntegratorEventManager(IAPISimulation *sim);
 
             // API Compliance
+            /**
+              * Adds a listener that will be notified of integrator events.
+              * Native Lammps calls :
+              *    fix
+              *
+              * @param newListener The listener to be notified of the
+              *                    integrator events.
+              */
             void addListener(IAPIIntegratorListener *newListener);
+            /**
+              * Removes a listener that was being notified of integrator
+              * events.
+              * Native Lammps calls :
+              *    unfix
+              *
+              * @param listener The listener to be removed from the integrator
+              *                 event notifications.
+              */
             void removeListener(IAPIIntegratorListener *listener);
 
         private:

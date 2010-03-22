@@ -26,13 +26,37 @@ namespace lammpswrappers
     class LammpsBoundary : public virtual IAPIBoundary {
 
         public:
+            /**
+              * Constructor for TowheeBoundary.  TowheeBoundary is
+              * a purely virtual class and the constructor is only called
+              * from its subclasses.
+              * @param sim The simulation that holds the boundary.
+              */
             LammpsBoundary(IAPISimulation *sim);
 
             // API Compliance
+            /**
+              * Determines the box size of the boundary by reaching into the
+              * native Lammps simulation.
+              * @return Returns the length of the boundary in each dimension
+              *         that the boundary would be inscribed in.
+              */
             IAPIVector *getBoxSize();
             void setBoxSize(IAPIVector *v);
+            /**
+              * Determines the box dimensions of the boundary by reaching
+              * into the native Lammps simulation.
+              * @return Returns the volume enclosed by the boundary.
+              *         Assumes the boundary is rectangular.
+              */
             double volume();
+            /**
+              * This method is not implemented.
+              */
             void nearestImage(IAPIVectorMutable *v);
+            /**
+              * This method is not implemented.
+              */
             IAPIVector *centralImage(IAPIVector *v);
             void setBox(IAPIBox *box);
             IAPIBox *getBox();

@@ -198,18 +198,15 @@ printf("WARNING : TowheeSimulation::removeBox() is NOT implemented.\n");
      */
     void TowheeSimulation::setup(TowheePotentialMaster *pm, IAPIVector *config) {
 
-printf("TowheeSimulation::setup()\n"); fflush(stdout);
         int set = GLB_SET;
         int get = GLB_GET;
         int zero = 0;
 
         int ensemble;
         twh_ensemble_(&get, &ensemble);
-printf("SETUP : ensemble -> %d\n", ensemble); fflush(stdout);
 
         // Set number of molecule types (species)
         int speciesCount = mSpeciesManager->getSpeciesCount();
-printf("SETUP : species count -> %d\n", mSpeciesManager->getSpeciesCount()); fflush(stdout);
         if(speciesCount > NTMAX) {
             printf("The number of species (%d) in the simulation exceeds the maximum allowed value (%d)\n",
                    speciesCount, NTMAX);
@@ -227,7 +224,6 @@ printf("SETUP : species count -> %d\n", mSpeciesManager->getSpeciesCount()); ffl
             for(int j = 0; j < mBox.size(); j++) {
                 moleculeCount += mBox.at(j)->getNMolecules(species);
             }
-printf("SETUP : molecule count for species(%d) -> %d\n", i, moleculeCount); fflush(stdout);
             twh_nmolectyp_(&set, &i, &moleculeCount);
             nchain += moleculeCount;
         }
@@ -246,7 +242,6 @@ printf("SETUP : molecule count for species(%d) -> %d\n", i, moleculeCount); fflu
 
         // Set the number of boxes
         int numBoxes = mBox.size();
-printf("SETUP : box count -> %d\n", numBoxes); fflush(stdout);
         twh_numboxes_(&set, &numBoxes);
         twh_allocate_numboxes_(&numBoxes);
         for(int i = 0; i < numBoxes; i++) {
@@ -436,7 +431,6 @@ printf("ERROR : Initialization for tmmc = TRUE not implemented.\n"); fflush(stdo
             for(int i = 1; i <= mBox.size(); i++) {
                 for(int j = 1; j <= mSpeciesManager->getSpeciesCount(); j++) {
                     int numSpecies = mBox.at(i-1)->getNMolecules(mSpeciesManager->getSpecies(j-1));
-printf("SETUP : box(%d) species(%d) -> %d\n", i, j, numSpecies); fflush(stdout);
                     twh_initmol_(&set, &i, &j, &numSpecies);
 
                     IAPIMoleculeList *moleList = mBox.at(i-1)->getMoleculeList(mSpeciesManager->getSpecies(j-1));
@@ -584,7 +578,6 @@ fflush(stdout);
             int confFail;
             int atomCount;
             twh_initconf_(&confFail, &atomCount);
-printf("ATOM COUNT : %d\n", atomCount); fflush(stdout);
         }
         else {
             printf("Cannot read initial configuration from file.\n"); fflush(stdout);
@@ -621,16 +614,6 @@ printf("ATOM COUNT : %d\n", atomCount); fflush(stdout);
 
         mState = INITIALIZED;
     }
-
-void TowheeSimulation::resetCOM() {
-        int ctrInitial = CTR_INITIAL;
-        int failFlag;
-        int zero = 0;
-        for(int ibox = 1; ibox <= getBoxCount(); ibox++) {
-            twh_ctrmas_(&failFlag, &zero, &ibox, &zero, &ctrInitial);
-        }
-
-}
 
     /*
      * getState()

@@ -14,7 +14,12 @@ namespace molesimAPI
 
     class IAPIBoundaryListener {
 
-        public:			
+        public:
+            /**
+              * Method called when the boundary event manager is propogating
+              * a boundary inflate event.
+              * @param e
+              */ 
             virtual void boundaryInflate(IAPIBoundaryEvent *e) = 0;
 
     };

@@ -4369,18 +4369,6 @@ JNIEXPORT jlong JNICALL Java_lammps_wrapper_testJNI_LammpsSimulation_1getSpace(J
 }
 
 
-JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_LammpsSimulation_1addRegionWithAtoms(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  lammpswrappers::LammpsSimulation *arg1 = (lammpswrappers::LammpsSimulation *) 0 ;
-  lammpswrappers::LammpsRegion *arg2 = (lammpswrappers::LammpsRegion *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(lammpswrappers::LammpsSimulation **)&jarg1; 
-  arg2 = *(lammpswrappers::LammpsRegion **)&jarg2; 
-  (arg1)->addRegionWithAtoms(arg2);
-}
-
-
 JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_LammpsSimulation_1setIntegrator(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
   lammpswrappers::LammpsSimulation *arg1 = (lammpswrappers::LammpsSimulation *) 0 ;
   molesimAPI::IAPIIntegrator *arg2 = (molesimAPI::IAPIIntegrator *) 0 ;

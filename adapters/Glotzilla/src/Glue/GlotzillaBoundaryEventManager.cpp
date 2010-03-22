@@ -27,7 +27,7 @@ printf("GlotzillaBoundaryEventManager::removeListener() is NOT implemented.\n");
     }
 
     /*
-     * moleculeIndexChanged()
+     * inflate()
      */
     void GlotzillaBoundaryEventManager::inflate(IAPIBoundary *boundary) {
 printf("GlotzillaBoundaryEventManager::inflate is NOT implemented.\n"); fflush(stdout);

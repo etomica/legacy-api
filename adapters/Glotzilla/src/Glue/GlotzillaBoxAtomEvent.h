@@ -31,10 +31,6 @@ namespace glotzwrappers
               *            added to.
               */
             GlotzillaBoxAtomEvent(IAPIAtom *atom, IAPIBox *box);
-
-            /**
-              * @return Returns the atom related to this event.
-              */
             IAPIAtom *getAtom();
 
         protected:

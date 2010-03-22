@@ -14,7 +14,10 @@ namespace molesimAPI
 
     class IAPIBoxAtomIndexEvent : public virtual IAPIBoxAtomEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns The index related to this event.
+              */
             virtual int getIndex() = 0;
     };
 }
