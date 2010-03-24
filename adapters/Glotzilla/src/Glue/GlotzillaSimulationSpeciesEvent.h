@@ -29,9 +29,6 @@ namespace glotzwrappers
               */
             GlotzillaSimulationSpeciesEvent(IAPISimulation *sim, IAPISpecies *species);
 
-            /**
-              * @return Returns the species that this event is related to.
-              */
             IAPISpecies *getSpecies();
 
         protected:

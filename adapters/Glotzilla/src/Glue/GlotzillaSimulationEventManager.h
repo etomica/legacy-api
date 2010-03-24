@@ -27,15 +27,7 @@ namespace glotzwrappers
     class GlotzillaSimulationEventManager : public virtual IAPISimulationEventManager {
 
         public:
-            /**
-              * Add an event listener to the event manager.
-              * @param listener The listener to notify when an event occurs.
-              */
             void addListener(IAPISimulationListener *listener);
-            /**
-              * Remove an event listener from the event manager.
-              * @param listener The listener to remove.
-              */
             void removeListener(IAPISimulationListener *listener);
 
         private:

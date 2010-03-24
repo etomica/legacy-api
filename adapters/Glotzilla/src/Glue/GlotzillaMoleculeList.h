@@ -31,16 +31,7 @@ namespace glotzwrappers
             virtual ~GlotzillaMoleculeList();
 
             // API Compliance
-            /**
-              * @return Returns the number of molecules in the molecule list.
-              */
             int getMoleculeCount();
-            /**
-              * Used to get a molecule from the molecule list.
-              * @param i The position of the molecule in the molecule list to
-              *          get.  The position indices start at 0.
-              * @return Returns the number of molecules in the molecule list.
-              */
             IAPIMolecule *getMolecule(int i);
 
             // Non-API methods

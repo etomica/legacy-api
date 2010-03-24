@@ -30,9 +30,6 @@ namespace lammpswrappers
               */
             LammpsSimulationAtomTypeIndexEvent(IAPISimulation *sim, IAPIAtomType *atomType, int idx);
 
-            /**
-              * @return Returns the index that this event is related to.
-              */
             int getIndex();
 
         protected:

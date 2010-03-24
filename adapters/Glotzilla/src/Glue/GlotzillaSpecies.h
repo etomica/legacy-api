@@ -41,42 +41,11 @@ namespace glotzwrappers
             GlotzillaSpecies(IAPISimulation *sim,
                              GlotzillaInterfaceConformation *conform);
             // API compliant methods
-            /**
-              * Get the specie's index.  The index is a number that
-              * indicates its position in the simulation's specie list.
-              * @return Returns specie's index in simulation's specie list.
-              */
             virtual int getIndex();
-            /**
-              * Set the specie's index.  The index is a number that
-              * indicates its position in the simulation's species list.
-              * The list index starts at 0.
-              * @param index atom types index
-              */
             virtual void setIndex(int index);
-            /**
-              * Build a molecule of this species.
-              * @return Returns the molecule constructed.
-              */
             virtual IAPIMolecule *makeMolecule() = 0;
-            /**
-              * @return Returns the number of atom types that a molecule of
-              *         this species contains.  Note that a molecule may
-              *         contain more than one atom with the same atom type,
-              *         so the value returned IS NOT the number of unique
-              *         atom types.
-              */
             int getAtomTypeCount();
-            /**
-              * @param index index into specie's atom type list to fetch.
-              * @return Returns the atom type from the atom type list for
-              *         the specified index.
-              */
             IAPIAtomType *getAtomType(int index);
-            /**
-              * Set the position of the atoms in a molecule.
-              * @param molecule Molecule to initialize position of atoms.
-              */
             void initializeConformation(IAPIMolecule *molecule);
 
             // Non-API methods

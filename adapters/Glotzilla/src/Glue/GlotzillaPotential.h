@@ -29,28 +29,9 @@ namespace glotzwrappers
         public:
 
             // API Compliance
-            /**
-              * @return Returns the range over which the potential applies.
-              *         Atoms with a greater separation do not interact.
-              */
             virtual double getRange() = 0;
-            /**
-              * @todo This method does not exist in IPotential.  So, either
-              *       this method is going to disappear (moved to an
-              *       appropriate subclass of IPotentialAtomic) OR this class
-              *       will implement IPotentialAtomic).
-              */
             virtual double energy(IAPIAtomList *) = 0;
-            /**
-              * @return Returns the number of atoms on which the potential
-              *         depends.
-              */
             int nBody();
-            /**
-              * Informs the potential of the box on which it acts so that it
-              * can properly consider the boundaries.
-              * @param box The box on which this potential acts.
-              */
             void setBox(IAPIBox *box);
 
             // Non-API methods

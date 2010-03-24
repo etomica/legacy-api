@@ -15,7 +15,10 @@ namespace molesimAPI
 
     class IAPISimulationAtomTypeEvent : public virtual IAPISimulationEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the atom type that this event is related to.
+              */
             virtual IAPIAtomType *getAtomType() = 0;
     };
 }

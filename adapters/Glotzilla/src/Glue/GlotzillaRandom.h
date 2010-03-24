@@ -33,21 +33,8 @@ namespace glotzwrappers
             GlotzillaRandom();
 
             // API Compliance
-            /**
-              * @return Returns a pseudorandom double, uniformly distributed
-              * between 0.0 (inclusive) and 1.0 (exclusive).
-              */
             double nextDouble();
-            /**
-             * @param Maximum value of the returned value
-             * @return Returns a pseudorandom integer, uniformly distributed
-             * between 0 (inclusive) and maxInt (exclusive).
-             */
             int nextInt(int maxInt);
-            /**
-              * @return Returns a pseudorandom double, Gaussian ("normally")
-              * distributed value with mean 0.0 and standard deviation 1.0.
-              */
             double nextGaussian();
 
         protected:

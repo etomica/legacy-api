@@ -32,7 +32,14 @@ namespace towheewrappers
             virtual IAPISpecies *getType();
 
             // Non-API
+            /**
+              * The molecule holds a handle to the box that it is inside.
+              * @param box Box as described above.
+              */
             void setBox(IAPIBox *box);
+            /**
+              * @return Returns the box that the molecule is inside.
+              */
             IAPIBox *getBox();
 
         protected:

@@ -24,24 +24,6 @@ namespace towheewrappers
     }
 
     /*
-     * addChildAtom
-     */
-    void TowheeMolecule::addChildAtom(IAPIAtom *atom) {
-    }
-
-    /*
-     * removeChildAtom
-     */
-    void TowheeMolecule::removeChildAtom(IAPIAtom *atom) {
-    }
-
-    /*
-     * getChildList
-     */
-    IAPIAtomList *TowheeMolecule::getChildList() {
-    }
-
-    /*
      * getType()
      */
     IAPISpecies *TowheeMolecule::getType() {

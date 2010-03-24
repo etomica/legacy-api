@@ -30,9 +30,6 @@ namespace glotzwrappers
               */
             GlotzillaSimulationSpeciesIndexEvent(IAPISimulation *sim, IAPISpecies *species, int idx);
 
-            /**
-              * @return Returns the index that this event is related to.
-              */
             int getIndex();
 
         protected:

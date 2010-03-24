@@ -81,6 +81,9 @@ namespace glotzwrappers
             bool isNaN();
             double Mv1Squared(IAPIVector *v);
             void normalize();
+            /**
+              * Method not implemented.
+              */
             void map(IAPIFunction *f);
             void XE(IAPIVector *v);
             void E(double a, double b, double c);

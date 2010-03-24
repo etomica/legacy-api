@@ -16,7 +16,13 @@ namespace molesimAPI
     class IAPIPotentialMolecular : public virtual IAPIPotential {
 
         public:
-          virtual double energy(IAPIMoleculeList *) = 0;
+            /**
+             * Returns the interaction energy between the given molecules.
+             * There might be 0, 1, 2 or more molecules in the molecule list.
+             * @param moleList List containing the molecules to compute the
+             *                 interaction.
+             */
+            virtual double energy(IAPIMoleculeList *moleList) = 0;
     };
 
 }

@@ -18,7 +18,13 @@ namespace lammpswrappers
     class LammpsSimulationEventManager : public virtual IAPISimulationEventManager {
 
         public:
+            /**
+              * This method is not implemented.
+              */
             void addListener(IAPISimulationListener *listener);
+            /**
+              * This method is not implemented.
+              */
             void removeListener(IAPISimulationListener *listener);
 
         protected:

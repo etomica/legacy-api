@@ -44,13 +44,6 @@ namespace glotzwrappers
 
             // API Compliance
 
-            /**
-              * @return Returns this molecules's index, which is its place in
-              * the parent AtomGroup's list of molecules (which is held by
-              * the box).
-              * @todo This method is not implemented correctly.  Currently,
-              *       it is returning the atom's atom type index.
-              */
             virtual int getIndex();
             /**
              * This method is not implemented.  When the molecule is added to
@@ -61,25 +54,9 @@ namespace glotzwrappers
              * @param index molecule's new index
              */
             virtual void setIndex(int);
-            /**
-              * Adds the given atom as a child of this Molecule.  The given
-              * child atom should be parentless when this method is called.
-              * @param atom Atom to add to molecule
-              */
             virtual void addChildAtom(IAPIAtom *atom) = 0;
-            /**
-              * Removes the given atom as a child of this Molecule.
-              * @param atom Atom to remove from molecule
-              */
             virtual void removeChildAtom(IAPIAtom *atom) = 0;
-            /**
-              *  @return Returns the atoms that belong to the molecule in a
-              *          list.
-              */
             virtual IAPIAtomList *getChildList() = 0;
-            /**
-              * @return Returns the species of the molecule.
-              */
             virtual IAPISpecies *getType();
 
            // Non-API Methods

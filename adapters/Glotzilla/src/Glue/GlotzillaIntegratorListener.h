@@ -38,21 +38,8 @@ namespace glotzwrappers
             GlotzillaIntegratorListener(IAPIIntegratorListener *listener);
 
             // API Compliance
-            /**
-              * The listener method called when the integrator is
-              * initializeing.
-              * @param event Information relating to integrator event.
-              */
             void integratorInitialized(IAPIIntegratorEvent *event);
-            /**
-              * The listener method called just prior to the integrator step.
-              * @param event Information relating to integrator event.
-              */
             void integratorStepStarted(IAPIIntegratorEvent *event);
-            /**
-              * The listener method called directly after the integrator step.
-              * @param event Information relating to integrator event.
-              */
             void integratorStepFinished(IAPIIntegratorEvent *event);
             /**
               * The method that the native Glotzilla simulation calls when

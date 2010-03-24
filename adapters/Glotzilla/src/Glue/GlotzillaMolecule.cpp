@@ -39,27 +39,6 @@ namespace glotzwrappers
     }
 
     /*
-     * addChildAtom
-     */
-    void GlotzillaMolecule::addChildAtom(IAPIAtom *atom) {
-printf("WARNING : GlotzillaMolecule::addChildAtom() is NOT implemented yet\n");
-    }
-
-    /*
-     * removeChildAtom
-     */
-    void GlotzillaMolecule::removeChildAtom(IAPIAtom *atom) {
-printf("WARNING : GlotzillaMolecule::removeChildAtom() is NOT implemented yet\n");
-    }
-
-    /*
-     * getChildList
-     */
-    IAPIAtomList *GlotzillaMolecule::getChildList() {
-printf("WARNING : GlotzillaMolecule::getChildList() is NOT implemented yet\n");
-    }
-
-    /*
      * getType()
      */
     IAPISpecies *GlotzillaMolecule::getType() {

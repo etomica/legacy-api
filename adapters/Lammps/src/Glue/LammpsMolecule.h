@@ -31,11 +31,19 @@ namespace lammpswrappers
             int getIndex();
             void setIndex(int index);
             virtual void addChildAtom(IAPIAtom *atom);
+            /**
+              * This method is not implemented.
+              */
             virtual void removeChildAtom(IAPIAtom *atom);
             virtual IAPIAtomList *getChildList();
             IAPISpecies *getType();
 
             // Non-API methods
+            /**
+              * Sets the velocity of all atoms in the molecule to the given
+              * value.
+              * @param velocity Vector containing the velocity.
+              */
             void setVelocity(IAPIVector *velocity);
 
         protected:

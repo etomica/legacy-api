@@ -32,6 +32,9 @@ namespace towheewrappers
             virtual IAPIMolecule *makeMolecule() = 0;
             int getAtomTypeCount();
             IAPIAtomType *getAtomType(int index);
+            /**
+              * This method is not implemented.
+              */
             void initializeConformation(IAPIMolecule *molecule);
 
         protected:

@@ -27,9 +27,6 @@ namespace lammpswrappers
               */
             LammpsSimulationEvent(IAPISimulation *sim);
 
-            /**
-              * @return Returns the simulation that this event is related to.
-              */
             IAPISimulation *getSimulation();
 
         protected:

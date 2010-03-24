@@ -22,9 +22,22 @@ namespace towheewrappers
         public:
 
             // API Compliance
+            /**
+              * Determines the maximum distance after which atoms will not
+              * interact by calling into the native Towhee simulation
+              * (twh_max_bond_length).
+              * @return Returns the number of atoms on which the potential
+              *         depends.
+              */
             virtual double getRange();
-            virtual double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
+            virtual double energy(IAPIAtomList *atomList);
             int nBody();
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *box);
 
             // Non-API

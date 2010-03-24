@@ -25,6 +25,13 @@ namespace lammpswrappers
 
         public:
 
+            /**
+              * Create a species.
+              * @param sim Simulation that contains the species.
+              * @param conform A conformation (see intitializeConformation)
+              *                that will be used to set the position of
+              *                atoms within the molecule.
+              */
             LammpsSpecies(IAPISimulation *sim,
                           LammpsInterfaceConformation *conform);
 

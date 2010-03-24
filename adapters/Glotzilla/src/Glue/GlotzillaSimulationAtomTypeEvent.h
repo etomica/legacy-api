@@ -29,9 +29,6 @@ namespace glotzwrappers
               */
             GlotzillaSimulationAtomTypeEvent(IAPISimulation *sim, IAPIAtomType *atomType);
 
-            /**
-              * @return Returns the atom type that this event is related to.
-              */
             IAPIAtomType *getAtomType();
 
         protected:

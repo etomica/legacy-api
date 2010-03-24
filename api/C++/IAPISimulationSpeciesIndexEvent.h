@@ -14,7 +14,10 @@ namespace molesimAPI
 
     class IAPISimulationSpeciesIndexEvent : public virtual IAPISimulationSpeciesEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the index that this event is related to.
+              */
             virtual int getIndex() = 0;
     };
 }

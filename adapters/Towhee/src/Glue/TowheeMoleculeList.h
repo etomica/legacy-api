@@ -26,8 +26,20 @@ namespace towheewrappers
             IAPIMolecule *getMolecule(int);
 
             // Non-API methods
-            void addMolecule(IAPIMolecule *);
-            void removeMolecule(IAPIMolecule *);
+            /**
+              * Add a molecule to the molecule list.
+              * @param mole The molecule to add to the molecule list.
+              */
+            void addMolecule(IAPIMolecule *mole);
+            /**
+              * Remove a molecule from the molecule list.
+              * @param mole The molecule to remove from the molecule list.
+              */
+            void removeMolecule(IAPIMolecule *mole);
+            /**
+              * Remove all molecules from the molecule list.  The molecule
+              * list will be blank after execution of the method.
+              */
             void clear();
 
         protected:

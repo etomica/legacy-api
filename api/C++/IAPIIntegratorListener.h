@@ -15,9 +15,22 @@ namespace molesimAPI
 
     class IAPIIntegratorListener
     {
-        public:			
-            virtual void integratorInitialized(IAPIIntegratorEvent *) = 0;		
-            virtual void integratorStepStarted(IAPIIntegratorEvent *) = 0;		
+        public:
+            /**
+              * The listener method called when the integrator is
+              * initializeing.
+              * @param event Information relating to integrator event.
+              */
+            virtual void integratorInitialized(IAPIIntegratorEvent *) = 0;
+            /**
+              * The listener method called just prior to the integrator step.
+              * @param event Information relating to integrator event.
+              */
+            virtual void integratorStepStarted(IAPIIntegratorEvent *) = 0;
+            /**
+              * The listener method called directly after the integrator step.
+              * @param event Information relating to integrator event.
+              */
             virtual void integratorStepFinished(IAPIIntegratorEvent *) = 0;
 
     };

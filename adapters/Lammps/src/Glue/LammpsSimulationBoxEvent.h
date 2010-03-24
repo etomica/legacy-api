@@ -29,9 +29,6 @@ namespace lammpswrappers
               */
             LammpsSimulationBoxEvent(IAPISimulation *sim, IAPIBox *box);
 
-            /**
-              * @return Returns the box that this event is related to.
-              */
             IAPIBox *getBox();
 
         protected:

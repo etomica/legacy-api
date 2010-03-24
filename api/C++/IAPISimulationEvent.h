@@ -14,7 +14,10 @@ namespace molesimAPI
 
     class IAPISimulationEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the simulation that this event is related to.
+              */
             virtual IAPISimulation *getSimulation() = 0;
     };
 }

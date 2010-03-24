@@ -28,9 +28,6 @@ namespace lammpswrappers
               */
             LammpsSimulationIndexEvent(IAPISimulation *sim, int idx);
 
-            /**
-              * @return Returns the index that this event is related to.
-              */
             int getIndex();
 
         protected:

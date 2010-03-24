@@ -16,7 +16,10 @@ namespace molesimAPI
 
     class IAPISimulationBoxEvent : public virtual IAPISimulationEvent {
 
-        public:			
+        public:
+            /**
+              * @return Returns the box that this event is related to.
+              */
             virtual IAPIBox *getBox() = 0;
     };
 }
