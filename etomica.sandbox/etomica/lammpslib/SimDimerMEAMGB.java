@@ -34,8 +34,6 @@ import etomica.util.RandomNumberGenerator;
 import etomica.util.numerical.CalcGradientDifferentiable;
 
 /**
- * Simulation using Henkelman's Dimer method to find a saddle point for
- * an adatom of Sn on a surface, modeled with MEAM.
  * 
  * @author msellers
  *
@@ -458,8 +456,8 @@ public class SimDimerMEAMGB extends Simulation{
 	    
 	    WriteConfiguration writer = new WriteConfiguration(sim.getSpace());
 	    writer.setBox(sim.box);
-	    writer.setConfName("equil-6450");
-	    writer.actionPerformed();
+	    writer.setConfName("equil-8680");
+	    //writer.actionPerformed();
 	    
 	    
 	    /*
