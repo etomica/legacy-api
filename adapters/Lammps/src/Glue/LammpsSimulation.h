@@ -17,7 +17,6 @@
 #include "IAPIRandom.h"
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
-#include "IAPIPotentialMaster.h"
 #include "LammpsBox.h"
 #include "LammpsSpace.h"
 #include "LammpsSpeciesManager.h"

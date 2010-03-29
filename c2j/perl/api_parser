@@ -286,6 +286,7 @@ sub add_implements() {
   else {
     s/$class_name/$class_name $imp_clause/;
   }
+
 }
 
 #

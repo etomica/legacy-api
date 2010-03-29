@@ -249,7 +249,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPIBox.h"
 #include "IAPIPotential.h"
 #include "IAPIPotentialAtomic.h"
-#include "IAPIPotentialMaster.h"
 #include "IAPISimulation.h"
 #include "GlotzillaInterfaceConformation.h"
 #include "GlotzillaInterfaceAtomPositionDefinition.h"
@@ -1225,6 +1224,17 @@ JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIVector(JNIEnv *jen
 }
 
 
+JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
+  delete arg1;
+  
+}
+
+
 JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPIVectorMutable_1setX(JNIEnv *jenv, jclass jcls, jlong jarg1, jint jarg2, jdouble jarg3) {
   molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
   int arg2 ;
@@ -1449,17 +1459,6 @@ JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPIVectorMutable_1XE(JNIEnv *
   arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
   arg2 = *(molesimAPI::IAPIVector **)&jarg2; 
   (arg1)->XE(arg2);
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIVectorMutable(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIVectorMutable *arg1 = (molesimAPI::IAPIVectorMutable *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIVectorMutable **)&jarg1; 
-  delete arg1;
-  
 }
 
 
@@ -3446,33 +3445,6 @@ JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIPotentialAtomic(JN
   (void)jenv;
   (void)jcls;
   arg1 = *(molesimAPI::IAPIPotentialAtomic **)&jarg1; 
-  delete arg1;
-  
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_IAPIPotentialMaster_1addPotential(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
-  molesimAPI::IAPIPotentialMaster *arg1 = (molesimAPI::IAPIPotentialMaster *) 0 ;
-  molesimAPI::IAPIPotential *arg2 = (molesimAPI::IAPIPotential *) 0 ;
-  molesimAPI::IAPIAtomType *arg3 = (molesimAPI::IAPIAtomType *) 0 ;
-  molesimAPI::IAPIAtomType *arg4 = (molesimAPI::IAPIAtomType *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIPotentialMaster **)&jarg1; 
-  arg2 = *(molesimAPI::IAPIPotentialAtomic **)&jarg2; 
-  arg3 = *(molesimAPI::IAPIAtomType **)&jarg3; 
-  arg4 = *(molesimAPI::IAPIAtomType **)&jarg4; 
-  (arg1)->addPotential(dynamic_cast<IAPIPotentialAtomic *>(arg2),arg3,arg4);
-}
-
-
-JNIEXPORT void JNICALL Java_glotz_wrapper_testJNI_delete_1IAPIPotentialMaster(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIPotentialMaster *arg1 = (molesimAPI::IAPIPotentialMaster *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIPotentialMaster **)&jarg1; 
   delete arg1;
   
 }
@@ -10877,14 +10849,6 @@ JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGGlotzillaPotentialDzuguto
     return baseptr;
 }
 
-JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGGlotzillaPotentialMasterUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-    jlong baseptr = 0;
-    (void)jenv;
-    (void)jcls;
-    *(molesimAPI::IAPIPotentialMaster **)&baseptr = *(glotzwrappers::GlotzillaPotentialMaster **)&jarg1;
-    return baseptr;
-}
-
 JNIEXPORT jlong JNICALL Java_glotz_wrapper_testJNI_SWIGGlotzillaBoundaryEventManagerUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
     jlong baseptr = 0;
     (void)jenv;
@@ -11442,60 +11406,6 @@ JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_GlotzillaMolecule_1instanceTyp
   }
   else if(typeid(*arg1) == typeid(GlotzillaPolymer)) {
     instanceType = 2;
-  }
-
-  jresult = (jint)instanceType;
-  return jresult;
-}
-
-JNIEXPORT jint JNICALL Java_glotz_wrapper_testJNI_GlotzillaPotentialMaster_1instanceType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jint jresult = 0;
-  molesimAPI::IAPIPotentialMaster *arg1 = (molesimAPI::IAPIPotentialMaster *) 0;
-  int instanceType;
-
-  arg1 = *(molesimAPI::IAPIPotentialMaster **)&jarg1;
-
-  if(typeid(*arg1) == typeid(GlotzillaPotentialMasterBruteForce)) {
-    instanceType = 0;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterBruteForceShifted)) {
-    instanceType = 1;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterCellForce)) {
-    instanceType = 2;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterCellForceMulti)) {
-    instanceType = 3;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterCellForceShifted)) {
-    instanceType = 4;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMaster)) {
-    instanceType = 5;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletCellForce)) {
-    instanceType = 6;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletCellForceMulti)) {
-    instanceType = 7;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletCellForceMultiShifted)) {
-    instanceType = 8;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletCellForceShifted)) {
-    instanceType = 9;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletForce)) {
-    instanceType = 10;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletForceMulti)) {
-    instanceType = 11;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletForceMultiShifted)) {
-    instanceType = 12;
-  }
-  else if(typeid(*arg1) == typeid(GlotzillaPotentialMasterVerletForceShifted)) {
-    instanceType = 13;
   }
 
   jresult = (jint)instanceType;

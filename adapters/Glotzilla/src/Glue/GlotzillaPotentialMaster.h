@@ -11,7 +11,6 @@
 #include "IAPIAtomType.h"
 #include "IAPIPotential.h"
 #include "IAPIPotentialAtomic.h"
-#include "IAPIPotentialMaster.h"
 #include "IAPISimulation.h"
 #include "GlotzillaSimulation.h"
 
@@ -23,7 +22,7 @@ namespace glotzwrappers
     /**
       * @todo Description of GlotzillaPotentialMaster here.
       */
-    class GlotzillaPotentialMaster : public virtual IAPIPotentialMaster {
+    class GlotzillaPotentialMaster {
 
         public:
             GlotzillaPotentialMaster(IAPISimulation *sim);

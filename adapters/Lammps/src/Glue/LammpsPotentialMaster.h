@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "IAPIBox.h"
-#include "IAPIPotentialMaster.h"
 #include "IAPIAtomType.h"
 #include "IAPIPotential.h"
 #include "IAPIPotentialAtomic.h"
@@ -23,7 +22,7 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
-    class LammpsPotentialMaster : public virtual IAPIPotentialMaster {
+    class LammpsPotentialMaster {
 
         public:			
 

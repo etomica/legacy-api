@@ -223,7 +223,6 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 #include "IAPIMolecule.h"
 #include "IAPIPotential.h"
 #include "IAPIPotentialAtomic.h"
-#include "IAPIPotentialMaster.h"
 #include "IAPIRandom.h"
 #include "IAPISpecies.h"
 #include "IAPISimulationEvent.h"
@@ -2923,33 +2922,6 @@ JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1IAPIPotentialAtomic(J
   (void)jenv;
   (void)jcls;
   arg1 = *(molesimAPI::IAPIPotentialAtomic **)&jarg1; 
-  delete arg1;
-  
-}
-
-
-JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_IAPIPotentialMaster_1addPotential(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jlong jarg3, jlong jarg4) {
-  molesimAPI::IAPIPotentialMaster *arg1 = (molesimAPI::IAPIPotentialMaster *) 0 ;
-  molesimAPI::IAPIPotential *arg2 = (molesimAPI::IAPIPotential *) 0 ;
-  molesimAPI::IAPIAtomType *arg3 = (molesimAPI::IAPIAtomType *) 0 ;
-  molesimAPI::IAPIAtomType *arg4 = (molesimAPI::IAPIAtomType *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIPotentialMaster **)&jarg1; 
-  arg2 = *(molesimAPI::IAPIPotentialAtomic **)&jarg2; 
-  arg3 = *(molesimAPI::IAPIAtomType **)&jarg3; 
-  arg4 = *(molesimAPI::IAPIAtomType **)&jarg4; 
-  (arg1)->addPotential(dynamic_cast<IAPIPotentialAtomic *>(arg2),arg3,arg4);
-}
-
-
-JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1IAPIPotentialMaster(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  molesimAPI::IAPIPotentialMaster *arg1 = (molesimAPI::IAPIPotentialMaster *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(molesimAPI::IAPIPotentialMaster **)&jarg1; 
   delete arg1;
   
 }
@@ -13158,14 +13130,6 @@ JNIEXPORT jlong JNICALL Java_lammps_wrapper_testJNI_SWIGLammpsPairTableUpcast(JN
     (void)jenv;
     (void)jcls;
     *(lammpswrappers::LammpsPair **)&baseptr = *(lammpswrappers::LammpsPairTable **)&jarg1;
-    return baseptr;
-}
-
-JNIEXPORT jlong JNICALL Java_lammps_wrapper_testJNI_SWIGLammpsPotentialMasterUpcast(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-    jlong baseptr = 0;
-    (void)jenv;
-    (void)jcls;
-    *(molesimAPI::IAPIPotentialMaster **)&baseptr = *(lammpswrappers::LammpsPotentialMaster **)&jarg1;
     return baseptr;
 }
 

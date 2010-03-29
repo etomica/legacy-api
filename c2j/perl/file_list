@@ -90,11 +90,11 @@ if($debug_output == 1) {
   $index = 0;
   $int_index = 0;
   while($index < $num_classes) {
-#    print "@classname[$index]";
-#    print "  INTERFACES : @num_interface_for_class[$index]\n";
+    print "@classname[$index]  index : $index";
+    print "  INTERFACES : @num_interface_for_class[$index]\n";
     $temp_index = 0;
     while($temp_index < @num_interface_for_class[$index]) {
-#      print "  @interface[$int_index]";
+      print "  @interface[$int_index]";
       $temp_index++;
       $int_index++;
     }
@@ -128,6 +128,7 @@ sub parse_native_class_definition() {
   $count = 0;
   /class $my_class([^{]*)/;
   $_ = $1;
+
   while(m/$API_PREFIX[^ ]*/) {
     /($API_PREFIX[^ ]*)/;
     $_ = $1;

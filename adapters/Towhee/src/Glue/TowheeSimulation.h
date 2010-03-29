@@ -15,7 +15,6 @@
 #include "IAPISimulation.h"
 #include "IAPISimulationEventManager.h"
 #include "IAPISpecies.h"
-#include "IAPIPotentialMaster.h"
 #include "TowheePotentialMaster.h"
 #include "TowheeSpeciesManager.h"
 #include "IndexManager.h"
