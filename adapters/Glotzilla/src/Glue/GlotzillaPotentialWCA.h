@@ -29,7 +29,13 @@ namespace glotzwrappers
             double energy(IAPIAtomList *as);
 
             // Non-api Methods
+            /**
+              * @param sigma Sigma value of potential
+              */
             void setSigma(double sigma);
+            /**
+              * @param cutoff Cutoff value of potential
+              */
             void setCutoff(double cutoff);
             glotzmd::Potential *getGlotzPotential();
 

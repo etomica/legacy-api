@@ -36,10 +36,9 @@ namespace glotzwrappers
 
             // API compliant methods
             /**
-              * Build a molecule of this species.
+              * Build a molecule of this species.  The molecule is an
+              * instance of a Glotzilla Polymer.
               * @return Returns the molecule constructed.
-              * @todo Describe, in more detail, how a molecule of this
-              *       species is made.
               */
             virtual IAPIMolecule *makeMolecule();
 

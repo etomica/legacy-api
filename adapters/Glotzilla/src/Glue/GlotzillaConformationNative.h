@@ -32,8 +32,8 @@ namespace glotzwrappers
         public:
             /**
               * @param jenv The Java Native Interface (JNI) environment.
-              * @param jobj The JNI object that holds the java atom positin
-              *             definitin class instance.
+              * @param jobj The JNI object that holds the java atom position
+              *             definition class instance.
               */
             GlotzillaConformationNative(JNIEnv *jenv, jobject jobj);
 

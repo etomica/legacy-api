@@ -33,8 +33,6 @@ namespace glotzwrappers
             GlotzillaSimulationListenerNative(JNIEnv *jenv, jobject jobj);
 
             // API Compliance
-            /**
-              */
             void simulationBoxAdded(IAPISimulationBoxEvent *e);
             void simulationBoxRemoved(IAPISimulationBoxEvent *e);
             void simulationSpeciesAdded(IAPISimulationSpeciesEvent *e);

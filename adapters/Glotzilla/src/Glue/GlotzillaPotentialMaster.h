@@ -28,11 +28,22 @@ namespace glotzwrappers
             GlotzillaPotentialMaster(IAPISimulation *sim);
 
             // API Compliance
+            /**
+              * Add the given interaction between the given atom types.
+              * Used for inter-molecule bonding.
+              * @param potential The interaction
+              * @param at1 First of the two atom types.
+              * @param at2 Second of the two atom types.
+              */
             void addPotential(IAPIPotentialAtomic *potential, IAPIAtomType *at1, IAPIAtomType *api2);
 
             // Non-API Method
-            // The next method is very close to the API method :
-            //  addPotential(IPotential, ISpecies[]);
+            /**
+              * Add the given interaction for atoms within a molecule of the
+              * given species.  Used for intra-molecule bonding.
+              * @param potential The interaction
+              * @param species The species
+              */
             void addPotential(IAPIPotential *potential, IAPISpecies *species);
 
             protected:

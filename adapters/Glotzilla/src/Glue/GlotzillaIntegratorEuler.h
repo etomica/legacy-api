@@ -18,7 +18,6 @@ namespace glotzwrappers
 {
 
     /**
-      * @todo Description of GlotzillaIntegratorEuler here.
       */
     class GlotzillaIntegratorEuler : public GlotzillaIntegrator {
 

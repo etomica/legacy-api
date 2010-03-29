@@ -28,6 +28,9 @@ namespace glotzwrappers
         public:			
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             IAPIVector *position(IAPIMolecule *atom) {};
 
 

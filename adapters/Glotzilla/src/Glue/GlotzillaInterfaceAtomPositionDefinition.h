@@ -18,6 +18,12 @@ namespace glotzwrappers
     class GlotzillaInterfaceAtomPositionDefinition {
 
         public:
+            /**
+              * A method that determines and returns the position of a
+              * molecule.
+              * @param atom The molecule to determine the position of.
+              * @return Returns the molecule's position.
+              */
             virtual IAPIVector *position(IAPIMolecule *atom) = 0;
     };
 }
