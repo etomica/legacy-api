@@ -18,7 +18,7 @@ namespace molesimAPI
         public:
             /**
               * The listener method called when the integrator is
-              * initializeing.
+              * initializing.
               * @param event Information relating to integrator event.
               */
             virtual void integratorInitialized(IAPIIntegratorEvent *) = 0;
