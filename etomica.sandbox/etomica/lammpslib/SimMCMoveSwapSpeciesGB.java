@@ -14,6 +14,7 @@ import etomica.api.IVectorMutable;
 import etomica.box.Box;
 import etomica.chem.elements.Silver;
 import etomica.chem.elements.Tin;
+import etomica.config.ConfigurationFile;
 import etomica.nbr.cell.Cell;
 import etomica.nbr.cell.NeighborCellManager;
 import etomica.simulation.Simulation;
@@ -38,9 +39,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	private static final String APP_NAME = "MCMoveSwapSpeciesGB";
 	public IBox box;
 	public SpeciesSpheresMono tin, silver;
-	public double e0, e1;
-	public int num, step, acc, vac;
-	public IVectorMutable workVector, lammpsVector;
+	public double e0, e1, erej, esys;
+	public int num, step, acc, rej, vac;
+	public IVectorMutable workVector, lammpsVector, boxVector;
 	public IAtom atomT, atomS;
 	public long lammpsSim;
 	public RandomNumberGenerator random;
@@ -59,19 +60,23 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 
 		e1 = 0;
 		e0 = 0;
+		erej = 0;
+		esys = 0;
 		num = 0;
 		step = 0;
 		acc = 0;
+		rej = 0;
 		vac = 0;
 		workVector = space.makeVector();
 		lammpsVector = space.makeVector();
+		boxVector = space.makeVector();
 
 		random = new RandomNumberGenerator();
 
 		beta = 1.0/(temp * (8.61734315E-5)); // in 1/(eV/K)
 
 		//INITIALIZE LAMMPS
-		lammpsSim = LammpsInterface2.makeLammpsSim("/home/msellers/workspace/sandbox/in.gbmc");
+		lammpsSim = LammpsInterface2.makeLammpsSim(infile);
 
 		// SIMULATION BOX
 		box = new Box(new BoundaryRectangularPeriodic(space), space);
@@ -99,7 +104,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 
 		moleculeList = box.getMoleculeList();
 		
-		neighborCell = new NeighborCellManager(this, box, 7.75, space);
+		neighborCell = new NeighborCellManager(this, box, 6.0, space);
 		cellVList = new ArrayList<Cell>();
 		
 		//Get Lammps Energy
@@ -126,15 +131,15 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		
 		while (step < maxsteps) {
 
-			if(step % 500==0 || vac==0) {				
-				MDlammps(20);
+			if(step % 2==0 || vac==0) {				
+				MDlammps(10);
 				step++;
 				continue;
 			}
 			
-			MCsoluteCell();
+			//MCsoluteRelaxCell();
 			
-			//MCswapNeighbors();
+			MCswapPotential();
 			
 			step++;
 		}
@@ -159,13 +164,15 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			}
 			// Set new box size
 			System.out.println("Old box size: "+box.getBoundary().getBoxSize());
-			LammpsInterface2.getBox(lammpsSim, workVector);
-			box.getBoundary().setBoxSize(workVector);
-			System.out.println("New box size: "+workVector);
+			LammpsInterface2.getBox(lammpsSim, boxVector);
+			box.getBoundary().setBoxSize(boxVector);
+			System.out.println("New box size: "+boxVector);
 			pbc.actionPerformed();
 			updateCellVList();
 		}
+		
 		return LammpsInterface2.getEnergy(lammpsSim);
+		
 	}
 
 	public void calcAverages() {
@@ -173,7 +180,6 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		if (step % 100 == 0) {
 			writer.actionPerformed();
 		}
-
 		// Z density of Solute
 		for (int i = 0; i < box.getMoleculeList(silver).getMoleculeCount(); i++) {
 			histz2.addValue(moleculeList.getMolecule(i).getChildList().getAtom(0).getPosition().getX(2));
@@ -198,7 +204,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			cell1 = cellVList.get(randCell);
 			lidx = neighborCell.lattice.latticeIndex(cell1.getLatticeArrayIndex());		
 			size = neighborCell.lattice.getCellSize();
-			for(int j=0; j<space.D();j++){
+			for(int j=0; j<3;j++){
 				randv[j] = lidx[j]*size[j] - box.getBoundary().getBoxSize().getX(j)/2.0;
 				randv[j] = randv[j] + random.nextDouble()*size[j];
 				atomS.getPosition().setX(j,randv[j]);
@@ -209,6 +215,21 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	
 	public void MDlammps(int mdsteps){
 		e0 = getLammpsEnergy(mdsteps, true, true);
+	}
+	
+	public void MCswapPotential(){
+				
+		LammpsInterface2.doCommand(lammpsSim, "pair_style hybrid meam lj/cut 4.2");
+		LammpsInterface2.doCommand(lammpsSim, "pair_coeff * * meam library.meam Ag Sn12 Ag3Sn.meam Ag Sn12");
+		LammpsInterface2.doCommand(lammpsSim, "pair_coeff 1 2 lj/cut 0.70984 2.637");
+		
+		if(checkMove()){System.out.println(step+" A - SwapNeighbors   "+e0+"   "+e1+"   "+bfactor); return;}
+        else{
+            System.out.println(step+" R - SwapNeighbors   "+e0+"   "+e1+"   "+bfactor);
+            LammpsInterface2.doCommand(lammpsSim, "pair_style meam");
+    		LammpsInterface2.doCommand(lammpsSim, "pair_coeff * * library.meam Ag Sn12 Ag3Sn.meam Ag Sn12");
+        }		
+		
 	}
 	
 	public void MCswapNeighbors(){
@@ -247,8 +268,8 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
                         atomT.getPosition().E(workVector);
         }
     }
-		
-	public void MCsoluteCell(){
+
+	public void MCsoluteRelaxCell(){
 		Cell cell1;
 		Cell cell0;
 		int randCell;
@@ -275,35 +296,50 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		//System.out.println("Cell size: "+size[0]+"   "+size[1]+"   "+size[2]);
 		//System.out.println("Cell lattice index: "+lidx[0]+"   "+lidx[1]+"   "+lidx[2]);
 		
-		//SEARCH FOR POINT WITH 5 OR MORE NEIGHBORS WITHIN 2.6 ANGRSTROMS
+		//SEARCH FOR POINT WITH 5 OR MORE NEIGHBORS WITHIN 2.8 ANGRSTROMS
 		int trials=0;
 		int count1=0;
 		IAtom nb;
 		IVectorMutable navg = space.makeVector();
-		double ncut=2.6;
+		double ncut=2.8;
+		double cellspot = 0.0;
 		while(true){
-			//Choose random point in cell
-			for(int i=0; i<space.D();i++){
-				randv.setX(i,lidx[i]*size[i]-0.5*(box.getBoundary().getBoxSize().getX(i)-size[i]));		
-				randv.setX(i,randv.getX(i)+0.5*(2.0*random.nextDouble()-1.0)*size[i]);
+			
+			for(int i=0; i<3;i++){
+				//Choose cell corner
+				cellspot = lidx[i]*size[i]-0.5*box.getBoundary().getBoxSize().getX(i);
+				//Choose random point in cell
+				cellspot += random.nextDouble()*size[i];
+				randv.setX(i,cellspot);
 			}
+			box.getBoundary().nearestImage(randv);
 			//Find nearest neighbors
 			count1=0;
-			navg.TE(0.0);
+			
+			double avx=0;
+			double avy=0;
+			double avz=0;
+			
 			for(int j=0; j<box.getMoleculeList().getMoleculeCount(); j++){
 				nb = box.getMoleculeList().getMolecule(j).getChildList().getAtom(0);
 				if(nb==atomS){continue;}
 				rij.Ev1Mv2(randv,nb.getPosition());
 				box.getBoundary().nearestImage(rij);
-				if(rij.squared()<ncut*ncut){
-					navg.PE(nb.getPosition());
+				if(rij.squared()<(ncut*ncut)){
+					avx += nb.getPosition().getX(0);
+					avy += nb.getPosition().getX(1);
+					avz += nb.getPosition().getX(2);
 					count1++;
 					//System.out.println("Found neighbor: "+count1);
-					if(count1>4){break;}
 				}
 			}
 			//Catch 2
-			if(count1>4){break;}
+			if(count1>4){
+				navg.setX(0,avx/count1);
+				navg.setX(1,avy/count1);
+				navg.setX(2,avz/count1);
+				break;
+			}
 			if(count1<5 && trials<11){
 				//System.out.println("Not enough neighbors. Trial  "+trials);
 				trials++;
@@ -311,26 +347,42 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			}
 			if(trials>10){return;}
 		}
+		
 		//CENTER OF NEIGHBORS
-		navg.TE(1.0/count1);
+		box.getBoundary().nearestImage(navg);
+		//System.out.println("Count is: "+count1);
+		//System.out.println("Neighbor Number: "+count1);
+		//System.out.println("RandomVec: "+randv);
+		//System.out.println("Neighbor Center: "+navg);
+		rij.Ev1Mv2(randv,navg);
+		box.getBoundary().nearestImage(rij);
+		//System.out.println("Distance between Rand and Neigh: "+Math.sqrt(rij.squared()));
 		//System.out.println("Neighbor Center: "+navg);
 
-		//PICK RANDOM POSITION WITHIN 0.08 ANGRSTROMS OF NEIGHBOR CENTER
-		IVectorRandom randomvec = (IVectorRandom)space.makeVector();
-		randomvec.setRandomInSphere(random);
-		randomvec.TE(0.16);
-		navg.PE(randomvec);
-		//System.out.println("Random Center: "+navg);
+		//PICK RANDOM POSITION WITHIN 0.15 ANGRSTROMS OF NEIGHBOR CENTER
+		
 		//MOVE ATOM S
 		atomS.getPosition().E(navg);
+		//System.out.println("System Energy (N-avg): "+getLammpsEnergy(0,true,false));
+		IVectorRandom randomvec = (IVectorRandom)space.makeVector();
+		randomvec.setRandomInSphere(random);
+		randomvec.TE(0.15);
+		//System.out.println("Random Vector Length: "+Math.sqrt(randomvec.squared()));
+		navg.PE(randomvec);
+		//System.out.println("Random Center: "+navg);
 		
+		//MOVE ATOM S
+		//atomS.getPosition().E(navg);
+		//System.out.println("System Energy (N-avg+R: "+getLammpsEnergy(0,true,false));
+
 		//CONTRACT AND EXPAND LATTICE AT OLD AND NEW POINTS
-		double b=1.8;
-		double xm=3.0;				
+		double xm=2.85;
+		double b=1.66;
 		double rmag;
 		IAtom neighbor;
 		int exp=0;
 		int comp=0;
+		//System.out.println("Interstitial Move Energy: "+getLammpsEnergy(0,true,false));
 		
 		//Compress atoms near old interstitial
 		for(int i=0; i<box.getMoleculeList().getMoleculeCount(); i++){
@@ -343,7 +395,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				//compression of site
 				neighbor.getPosition().Ea1Tv1((rmag-b)/(1.0-(b/xm))/rmag, rij);
 				neighbor.getPosition().PE(workVector);
-				//System.out.println(rmag+" --> "+((rmag-b)/(1.0-(b/xm)))+"   deltaE: "+getLammpsEnergy(0,true,false));
+				//System.out.println("Compress "+rmag+" --> "+((rmag-b)/(1.0-(b/xm)))+" E: "+getLammpsEnergy(0,true,false));
 				comp++;
 			}	
 		}
@@ -354,13 +406,13 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			if(atomS==neighbor){continue;}
 			rij.Ev1Mv2(neighbor.getPosition(),atomS.getPosition());
 			box.getBoundary().nearestImage(rij);
-			rmag = rij.squared();	
+			rmag = rij.squared();
 			if(rmag<(xm*xm)){
 				rmag = Math.sqrt(rmag);
 				//expansion of site
 				neighbor.getPosition().Ea1Tv1(((-b/xm)*rmag+rmag+b)/rmag, rij);
 				neighbor.getPosition().PE(atomS.getPosition());
-				//System.out.println(rmag+" --> "+((-b/xm)*rmag+rmag+b)+"   E: "+getLammpsEnergy(0,true,false));
+				//System.out.println("Expand "+rmag+" --> "+((-b/xm)*rmag+rmag+b)+" E: "+getLammpsEnergy(0,true,false));
 				exp++;
 			}
 		}
@@ -381,7 +433,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				if(atomS==neighbor){continue;}
 				rij.Ev1Mv2(neighbor.getPosition(),atomS.getPosition());
 				box.getBoundary().nearestImage(rij);
-				rmag = rij.squared();	
+				rmag = rij.squared();
 				if(rmag<(xm*xm)){
 					rmag = Math.sqrt(rmag);
 					//compression of old site
@@ -392,8 +444,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				}
 			}
 			//System.out.println("-----------------------------");
+			
 			//Move atom back
 			atomS.getPosition().E(workVector);
+			
 			//Expand atoms near old interstitial
 			for(int i=0; i<box.getMoleculeList().getMoleculeCount(); i++){
 				neighbor = box.getMoleculeList().getMolecule(i).getChildList().getAtom(0);
@@ -410,11 +464,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 					exp++;
 				}
 			}
-
-			//System.out.println("Energy (should match E0): "+getLammpsEnergy(0,true,false));			
-			return;
 		}
-		
+
+		//System.out.println("Energy (should match E0): "+getLammpsEnergy(0,true,false));			
+		return;		
 	}
 	
 	public void updateCellVList(){
@@ -441,6 +494,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			acc++;
 			return true;
 		} else {// Rejected
+			esys +=e0;
+			erej +=e1;
+			rej++;
 			return false;
 		}
 	}
@@ -455,27 +511,68 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
     	// Simulation Steps
     	int steps = 10000;
     	// Atoms Numbers
-    	int tin = 4788;
-    	int silver = 100;
+    	int tin = 1152;
+    	int silver = 1;
+    	
     	// Box
     	Vector3D boxVector = new Vector3D(2.0*17.76305,2.0*17.550016608,2.0*54.62403960); 
     	// Temperature
     	double temp1 = 300;
     	// Lammps infile
-    	String infile = "/home/msellers/workspace/sandbox/in.gbmc";
+    	String infile = "/usr/users/msellers/simulation/meam/Cu-Sn/in.aglj";
         final String APP_NAME = "SimMCMoveSwapSpeciesGB";
         final SimMCMoveSwapSpeciesGB sim = new SimMCMoveSwapSpeciesGB(tin,silver,temp1,boxVector,infile);        
         
+	    CalcVibrationalModes vib = new CalcVibrationalModes(sim.lammpsSim);
+        vib.setup(sim.box, sim.box.getMoleculeList(sim.silver), sim.space);
+                
+        LammpsInterface2.doCommand(sim.lammpsSim, "pair_style hybrid meam lj/cut 4.2");
+		LammpsInterface2.doCommand(sim.lammpsSim, "pair_coeff * * meam library.meam Ag Sn12 Ag3Sn.meam Ag Sn12");
+		//LammpsInterface2.doCommand(sim.lammpsSim, "pair_coeff 1 2 lj/cut 0.70984 2.637");
+		
+		WriteConfiguration writer = new WriteConfiguration(sim.getSpace());
+	    writer.setBox(sim.box);
+	    writer.setConfName("temp");
+	    writer.actionPerformed();
+	    
+	    ConfigurationFile config = new ConfigurationFile("temp");
+		double epsSave=10;
+		double sigmaSave=10;
+		double energySave=10;
+		double vibSave=10;
+		double eps=0.5;
+		String temp12;
+		for(int i=0; i<1000; i++){
+			double sigma=2.45;
+			for(int j=0; j<100; j++){
+				temp12 = "pair_coeff 1 2 lj/cut "+eps;
+				temp12 = temp12+" "+sigma; 
+				//System.out.println(temp12);
+				LammpsInterface2.doCommand(sim.lammpsSim, temp12);
+		        vib.actionPerformed();
+		        config.initializeCoordinates(sim.box);
+			    if(Math.abs(vib.getProductOfFrequencies()-5.15779156428)<vibSave && Math.abs(sim.getLammpsEnergy(0, true, false)+3555.5705)<energySave){
+			    	vibSave = Math.abs(vib.getProductOfFrequencies()-5.15779156428);
+			    	energySave = Math.abs(LammpsInterface2.getEnergy(sim.lammpsSim)+3555.5705);
+			    	System.out.println(eps+"   "+sigma+"   "+LammpsInterface2.getEnergy(sim.lammpsSim)+"    "+vib.getProductOfFrequencies());
+			    }
+				sigma+=0.001;
+			}
+			System.out.println(eps);
+			eps+=0.001;
+		}
+               
         // Disperse Solute
         //sim.randomizeSolute();
         // Equilibrate
-        sim.getLammpsEnergy(3000, true, true);
-        sim.doMC(1000000);
+        //sim.getLammpsEnergy(1000, false, true);
+        //sim.doMC(100);
         //sim.getLammpsEnergy(20000);
-             
+        /**     
         // Run Simulation
         //sim.doMCSwap(steps);
-        
+        System.out.println("Average System Energy: "+(sim.esys/(double)sim.rej));
+        System.out.println("Average Relaxed Energy: "+(sim.erej/(double)sim.rej));
         WriteConfiguration writer = new WriteConfiguration(sim.getSpace());
 	    writer.setBox(sim.box);
 	    writer.setConfName("201ag-"+steps);
@@ -497,8 +594,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	    System.out.println(sim.histz1.getXRange());
 	    for(int i=0; i<sim.histz1.getNBins(); i++){
 	    //	System.out.println(sim.histz1.getHistogram()[i]);
+	    
 	    }
-	  
+	  **/
     }
 
 	static {

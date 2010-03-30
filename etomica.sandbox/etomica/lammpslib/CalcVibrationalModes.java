@@ -6,14 +6,11 @@ import java.io.Serializable;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import etomica.api.IAction;
-import etomica.api.IAtomList;
-import etomica.api.IAtomPositioned;
+import etomica.action.IAction;
 import etomica.api.IBox;
 import etomica.api.IMolecule;
 import etomica.api.IMoleculeList;
 import etomica.api.IPotentialMaster;
-import etomica.dimer.CalcGradientDifferentiable;
 import etomica.space.ISpace;
 
 /**
@@ -53,12 +50,12 @@ public class CalcVibrationalModes implements IAction, Serializable {
        
         }
 
-    public void setup(IBox aBox, IPotentialMaster aPotentialMaster, IMoleculeList moleculeList, ISpace _space){
+    public void setup(IBox aBox, IMoleculeList moleculeList, ISpace _space){
         ms = moleculeList; 
         box = aBox;
         mass = ((IMolecule)ms.getMolecule(0)).getType().getAtomType(0).getMass();
         mass = Math.sqrt(mass);
-        cgd = new CalcGradientDifferentiable(aBox, lammps, aPotentialMaster, ms, _space);
+        cgd = new CalcGradientDifferentiable(aBox, lammps, ms, _space);
         d = new int[ms.getMoleculeCount()*3];
         positions = new double[d.length];
         dForces = new double[positions.length][positions.length];
@@ -70,7 +67,7 @@ public class CalcVibrationalModes implements IAction, Serializable {
         // setup position array
         for(int i=0; i<ms.getMoleculeCount(); i++){
             for(int j=0; j<3; j++){
-                positions[(3*i)+j] = ((IAtomPositioned)ms.getMolecule(i).getChildList().getAtom(0)).getPosition().x(j);
+                positions[(3*i)+j] = ms.getMolecule(i).getChildList().getAtom(0).getPosition().getX(j);
             }
         }
         // fill dForces array
@@ -111,7 +108,7 @@ public class CalcVibrationalModes implements IAction, Serializable {
             //System.out.println("p  "+prodFreq);
         }
         
-        System.out.println("Normal mode vibrational data calculated.");
+        //System.out.println("Normal mode vibrational data calculated.");
         //System.out.println(prodFreq);
         
     }

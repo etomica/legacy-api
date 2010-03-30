@@ -1,6 +1,21 @@
 package etomica.lammpslib;
 
-import etomica.dimer.LammpsInterface;
+import etomica.api.IAtom;
+import etomica.api.IAtomType;
+import etomica.api.IBox;
+import etomica.api.IMoleculeList;
+import etomica.api.IPotentialMaster;
+import etomica.api.IVectorMutable;
+import etomica.atom.AtomLeafAgentManager;
+import etomica.atom.AtomLeafAgentManager.AgentSource;
+import etomica.atom.iterator.IteratorDirective;
+import etomica.integrator.IntegratorVelocityVerlet;
+import etomica.nbr.list.PotentialMasterList;
+import etomica.potential.PotentialCalculationForceSum;
+import etomica.space.ISpace;
+import etomica.units.ElectronVolt;
+import etomica.util.FunctionMultiDimensionalDifferentiable;
+import etomica.util.numerical.FiniteDifferenceDerivative;
 
 
 /**
@@ -29,9 +44,8 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
     long lammps;
     
     
-    public CalcGradientDifferentiable(IBox aBox, long library, IPotentialMaster aPotentialMaster, IMoleculeList ms, ISpace _space){
+    public CalcGradientDifferentiable(IBox aBox, long library, IMoleculeList ms, ISpace _space){
         this.box = aBox;
-        this.potentialMaster = aPotentialMaster;
         this.movableSet = ms;
         this.space = _space;
         this.lammps = library;
@@ -61,7 +75,7 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         
         for(int i=0; i<position.length/3; i++){
            for(int j=0; j<3; j++){
-        	   ((IAtomPositioned)movableSet.getMolecule(i).getChildList().getAtom(0)).getPosition().setX(j, position[(3*i)+j]);
+        	  movableSet.getMolecule(i).getChildList().getAtom(0).getPosition().setX(j, position[(3*i)+j]);
            }
         }
         
@@ -71,8 +85,8 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         IMoleculeList loopSet = box.getMoleculeList();
         IVectorMutable workVector = space.makeVector();
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
-            workVector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
-            LammpsInterface2.setAtomPosition(lammps, i, workVector.x(0), workVector.x(1), workVector.x(2));
+            workVector.E(loopSet.getMolecule(i).getChildList().getAtom(0).getPosition());
+            LammpsInterface2.setAtomPosition(lammps, i, workVector.getX(0), workVector.getX(1), workVector.getX(2));
         }
         LammpsInterface2.doLammpsStep(lammps, 1);
         
@@ -120,10 +134,10 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         int rowCount = 0;
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
         	if(loopSet.getMolecule(i).getType()==movableSet.getMolecule(0).getType()){
-        		workvector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
+        		workvector.E(loopSet.getMolecule(i).getChildList().getAtom(0).getPosition());
             	LammpsInterface2.getForce(lammps, i, workvector);
 	        	for(int l=0; l<3; l++){
-	                forceRow[rowCount] = -ElectronVolt.UNIT.toSim(workvector.x(l));
+	                forceRow[rowCount] = -ElectronVolt.UNIT.toSim(workvector.getX(l));
 	                rowCount++;
 	            }
         	}
@@ -142,10 +156,10 @@ public class CalcGradientDifferentiable implements FunctionMultiDimensionalDiffe
         rowCount = 0;
         for(int i=0; i<loopSet.getMoleculeCount(); i++){
         	if(loopSet.getMolecule(i).getType()==movableSet.getMolecule(0).getType()){
-	        	workvector.E(((IAtomPositioned)loopSet.getMolecule(i).getChildList().getAtom(0)).getPosition());
+	        	workvector.E(loopSet.getMolecule(i).getChildList().getAtom(0).getPosition());
 	        	LammpsInterface2.getForce(lammps, i, workvector);
 	            for(int l=0; l<3; l++){
-	                forceRow[rowCount]-= -ElectronVolt.UNIT.toSim(workvector.x(l));
+	                forceRow[rowCount]-= -ElectronVolt.UNIT.toSim(workvector.getX(l));
 	                forceRow[rowCount]/= (2.0*newH);
 	                rowCount++;
 	            }
