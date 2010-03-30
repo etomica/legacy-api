@@ -130,16 +130,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		e0 = getLammpsEnergy(0, true, false);
 		
 		while (step < maxsteps) {
-
-			if(step % 2==0 || vac==0) {				
-				MDlammps(10);
-				step++;
-				continue;
-			}
 			
 			//MCsoluteRelaxCell();
-			
-			MCswapPotential();
+			MDlammps(10);
+			MCswapPotential2LJ();
 			
 			step++;
 		}
@@ -217,13 +211,19 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		e0 = getLammpsEnergy(mdsteps, true, true);
 	}
 	
-	public void MCswapPotential(){
+	public void MCswapPotential2LJ(){
 				
 		LammpsInterface2.doCommand(lammpsSim, "pair_style hybrid meam lj/cut 4.2");
 		LammpsInterface2.doCommand(lammpsSim, "pair_coeff * * meam library.meam Ag Sn12 Ag3Sn.meam Ag Sn12");
-		LammpsInterface2.doCommand(lammpsSim, "pair_coeff 1 2 lj/cut 0.70984 2.637");
+		LammpsInterface2.doCommand(lammpsSim, "pair_coeff 1 2 lj/cut 0.772 2.532");
 		
-		if(checkMove()){System.out.println(step+" A - SwapNeighbors   "+e0+"   "+e1+"   "+bfactor); return;}
+		if(checkMove()){
+			LammpsInterface2.doCommand(lammpsSim, "pair_style meam");
+    		LammpsInterface2.doCommand(lammpsSim, "pair_coeff * * library.meam Ag Sn12 Ag3Sn.meam Ag Sn12");
+			System.out.println(step+" A - SwapNeighbors   "+e0+"   "+e1+"   "+bfactor); 
+			return;
+		}
+		
         else{
             System.out.println(step+" R - SwapNeighbors   "+e0+"   "+e1+"   "+bfactor);
             LammpsInterface2.doCommand(lammpsSim, "pair_style meam");
@@ -523,6 +523,14 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         final String APP_NAME = "SimMCMoveSwapSpeciesGB";
         final SimMCMoveSwapSpeciesGB sim = new SimMCMoveSwapSpeciesGB(tin,silver,temp1,boxVector,infile);        
         
+        // Disperse Solute
+        //sim.randomizeSolute();
+        // Equilibrate
+        sim.getLammpsEnergy(2000, false, true);
+        sim.doMC(1000);
+        //sim.getLammpsEnergy(20000);
+        
+        /**
 	    CalcVibrationalModes vib = new CalcVibrationalModes(sim.lammpsSim);
         vib.setup(sim.box, sim.box.getMoleculeList(sim.silver), sim.space);
                 
@@ -561,13 +569,8 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			System.out.println(eps);
 			eps+=0.001;
 		}
-               
-        // Disperse Solute
-        //sim.randomizeSolute();
-        // Equilibrate
-        //sim.getLammpsEnergy(1000, false, true);
-        //sim.doMC(100);
-        //sim.getLammpsEnergy(20000);
+        **/    
+       
         /**     
         // Run Simulation
         //sim.doMCSwap(steps);
