@@ -157,10 +157,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				moleculeList.getMolecule(i).getChildList().getAtom(0).getPosition().E(lammpsVector);
 			}
 			// Set new box size
-			System.out.println("Old box size: "+box.getBoundary().getBoxSize());
+			//System.out.println("Old box size: "+box.getBoundary().getBoxSize());
 			LammpsInterface2.getBox(lammpsSim, boxVector);
 			box.getBoundary().setBoxSize(boxVector);
-			System.out.println("New box size: "+boxVector);
+			//System.out.println("New box size: "+boxVector);
 			pbc.actionPerformed();
 			updateCellVList();
 		}
@@ -481,8 +481,8 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
             }
         }
         vac = cellVList.size();
-        System.out.println("Cells with vacancies: "+vac);
-        System.out.println("Neighbor cell size: "+neighborCell.lattice.getCellSize()[0]);
+        //System.out.println("Cells with vacancies: "+vac);
+        //System.out.println("Neighbor cell size: "+neighborCell.lattice.getCellSize()[0]);
 	}
 	
 	public boolean checkMove(){
@@ -526,7 +526,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         // Disperse Solute
         //sim.randomizeSolute();
         // Equilibrate
-        sim.getLammpsEnergy(2000, false, true);
+        sim.getLammpsEnergy(3000, false, true);
         sim.doMC(1000);
         //sim.getLammpsEnergy(20000);
         
