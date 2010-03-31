@@ -17,16 +17,44 @@ namespace lammpswrappers
 
     class LammpsPairLennardJonesCutoffCoulombCutoff : public LammpsPair {
 
-        public:			
-            LammpsPairLennardJonesCutoffCoulombCutoff(int n);		
+        public:
+            /**
+              * Creates a native Lammps pair_style of lj/cut/coul/cut.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              *   DEFAULT_EPSILON        = 1.0
+              *   DEFAULT_SIGMA          = 1.1
+              *   DEFAULT_LJ_CUTOFF      = 2.5
+              *   DEFAULT_COULOMB_CUTOFF = 5.0
+              * @param n Number of bodies in the potential
+              */
+            LammpsPairLennardJonesCutoffCoulombCutoff(int n);
+            /**
+              * Creates a native Lammps pair_style of lj/cut/coul/cut.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              * @param n Number of bodies in the potential
+              * @param epsilon Lammps simulation pair_coeff epsilon
+              *                parameter.
+              * @param sigma Lammps simulation pair_coeff sigma parameter.
+              * @param ljCutoff Lammps simulation pair_coeff cutoff1
+              *                 parameter.
+              * @param coulombCutoff Lammps simulation pair_coeff cutoff2
+              *                      parameter.
+              */
             LammpsPairLennardJonesCutoffCoulombCutoff(int n, double epsilon, double sigma,
-                                                      double ljCutoff, double coulombCutofff);		
+                                                      double ljCutoff, double coulombCutoff);		
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
-            // Non-API methods
             static const int EPSILON_INDEX;
             static const int SIGMA_INDEX;
             static const int LJ_CUTOFF_INDEX;

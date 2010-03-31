@@ -19,9 +19,16 @@ namespace lammpswrappers
     class LammpsNeighborListBin : public LammpsNeighborList {
 
         public:
+            /**
+              * Create a neighbor list that uses the bin algorithm.
+              * Native Lammps calls :
+              *   neighbor ... bin
+              *
+              * @param sim Simulation pertaining to this neighbor list.
+              * @param cutoff extra distance beyond force cutoff
+              */
             LammpsNeighborListBin(IAPISimulation *sim, double cutoff);
 
-        protected:
     };
 }
 

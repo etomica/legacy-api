@@ -16,6 +16,10 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
+    /**
+      * The PotentialGroup provides an easy way to specifiy atom interactions
+      * within a molecule.
+      */
     class PotentialGroup : public virtual IAPIPotential {
 
         public:			

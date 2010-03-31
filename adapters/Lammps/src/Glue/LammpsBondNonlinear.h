@@ -17,13 +17,37 @@ namespace lammpswrappers
 
     class LammpsBondNonlinear : public LammpsPotential {
 
-        public:			
-            LammpsBondNonlinear(int n);		
+        public:
+            /**
+              * Creates a native lammps bond_style of nonlinear.
+              * Bond parameters (native Lammps simulation bond_coeff command):
+              *   EPSILON = 100.0;
+              *   R0      = 1.0;
+              *   LAMBDA  = 1.5;
+              * @param n Number of bodies in the potential
+              */
+            LammpsBondNonlinear(int n);
+            /**
+              * Creates a native lammps bond_style of nonlinear.
+              * @param n Number of bodies in the potential
+              * @param epsilon Native Lammps simulation bond_coeff epsilon parameter.
+              * @param r0 Native Lammps simulation bond_coeff r0 parameter.
+              * @param lambda Native Lammps simulation bond_coeff lambda parameter.
+              */
             LammpsBondNonlinear(int n, double epsilon, double r0, double lambda);
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double getRange();
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
             // Non-API methods

@@ -16,14 +16,28 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
+    /**
+      * This class is not functional and an instance should not be
+      * created.
+      */
     class LammpsPairMeam : public LammpsPair {
 
-        public:			
+        public:
+            /**
+              * This class is not functional and an instance should not be
+              * created.
+              */
             LammpsPairMeam(JNIEnv *javaEnv, int n, jstring jlibraryFile, jstring jelements, jstring jparmFile);		
 
             // API Compliance
-            double energy(IAPIAtomList *);
-            void setBox(IAPIBox *);
+            /**
+              * This method is not implemented.
+              */
+            double energy(IAPIAtomList *as);
+            /**
+              * This method is not implemented.
+              */
+            void setBox(IAPIBox *b);
 
             // Non-API methods
             char *getLibraryFile();

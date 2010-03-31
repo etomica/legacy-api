@@ -37,8 +37,8 @@ namespace glotzwrappers
             /**
               *
               * @param jenv The Java Native Interface (JNI) environment.
-              * @param jobj The JNI object that holds the java atom positin
-              *             definitin class instance.
+              * @param jobj The JNI object that holds the java atom position
+              *             definition class instance.
               * @param sim Simulation that the atom position definition is a
               *            part of.
               */

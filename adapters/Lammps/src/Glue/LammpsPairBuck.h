@@ -17,15 +17,40 @@ namespace lammpswrappers
 
     class LammpsPairBuck : public LammpsPair {
 
-        public:			
-            LammpsPairBuck(int n);		
+        public:
+            /**
+              * Creates a native Lammps pair_style of buck.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              *   DEFAULT_A      = 1000.0
+              *   DEFAULT_RHO    = 2.0
+              *   DEFAULT_C      = 1.0
+              *   DEFAULT_CUTOFF = 2.5
+              * @param n Number of bodies in the potential
+              */
+            LammpsPairBuck(int n);
+            /**
+              * Creates a native Lammps pair_style of buck.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              * @param n Number of bodies in the potential
+              * @param a Lammps simulation pair_coeff a parameter.
+              * @param rho Lammps simulation pair_coeff rho parameter.
+              * @param C Lammps simulation pair_coeff C parameter.
+              * @param cutoff Lammps simulation pair_coeff cutoff parameter.
+              */
             LammpsPairBuck(int n, double a, double rho, double C, double cutoff);		
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
-            // Non-API methods
             static const int A_INDEX;
             static const int RHO_INDEX;
             static const int C_INDEX;

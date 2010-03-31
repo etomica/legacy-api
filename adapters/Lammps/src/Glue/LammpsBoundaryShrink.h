@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsBoundaryShrink : public LammpsBoundary {
 
         public:
+            /**
+              * Create a boundary with a shrink-wrapped style in each
+              * dimension.
+              * @param sim The simulation that holds the boundary.
+              */
             LammpsBoundaryShrink(IAPISimulation *sim);
 
             // API Compliance
@@ -27,6 +32,12 @@ namespace lammpswrappers
             virtual bool getPeriodicity(int d);
 
             // Non-API methods
+            /**
+              * Create and issue the native lammps boundary command for a
+              * shrink-wrapped bound in each dimenstion
+              * Native Lammps calls :
+              *   boundary s s s
+              */
             virtual void lammpsSetup();
 
     };

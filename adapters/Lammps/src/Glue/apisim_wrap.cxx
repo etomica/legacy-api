@@ -6760,20 +6760,6 @@ JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_LammpsVector_1map(JNIEnv *jen
 }
 
 
-JNIEXPORT jlong JNICALL Java_lammps_wrapper_testJNI_LammpsVector_1getLammpsVector(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jlong jresult = 0 ;
-  lammpswrappers::LammpsVector *arg1 = (lammpswrappers::LammpsVector *) 0 ;
-  double *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(lammpswrappers::LammpsVector **)&jarg1; 
-  result = (double *)(arg1)->getLammpsVector();
-  *(double **)&jresult = result; 
-  return jresult;
-}
-
-
 JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_delete_1LammpsVector(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lammpswrappers::LammpsVector *arg1 = (lammpswrappers::LammpsVector *) 0 ;
   
@@ -8597,20 +8583,6 @@ JNIEXPORT jboolean JNICALL Java_lammps_wrapper_testJNI_LammpsBoundaryCustom_1get
 }
 
 
-JNIEXPORT jstring JNICALL Java_lammps_wrapper_testJNI_LammpsBoundaryCustom_1getBoundaryArgument(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  jstring jresult = 0 ;
-  lammpswrappers::LammpsBoundaryCustom *arg1 = (lammpswrappers::LammpsBoundaryCustom *) 0 ;
-  char *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(lammpswrappers::LammpsBoundaryCustom **)&jarg1; 
-  result = (char *)(arg1)->getBoundaryArgument();
-  if(result) jresult = jenv->NewStringUTF(result);
-  return jresult;
-}
-
-
 JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_LammpsBoundaryCustom_1lammpsSetup(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lammpswrappers::LammpsBoundaryCustom *arg1 = (lammpswrappers::LammpsBoundaryCustom *) 0 ;
   
@@ -9637,18 +9609,6 @@ JNIEXPORT jdouble JNICALL Java_lammps_wrapper_testJNI_LammpsPair_1getRange(JNIEn
   result = (double)(arg1)->getRange();
   jresult = (jdouble)result; 
   return jresult;
-}
-
-
-JNIEXPORT void JNICALL Java_lammps_wrapper_testJNI_LammpsPair_1setLammpsPair(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2) {
-  lammpswrappers::LammpsPair *arg1 = (lammpswrappers::LammpsPair *) 0 ;
-  LAMMPS_NS::Pair *arg2 = (LAMMPS_NS::Pair *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(lammpswrappers::LammpsPair **)&jarg1; 
-  arg2 = *(LAMMPS_NS::Pair **)&jarg2; 
-  (arg1)->setLammpsPair(arg2);
 }
 
 

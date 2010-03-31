@@ -20,6 +20,10 @@ namespace lammpswrappers
     class LammpsBoundaryFixed : public LammpsBoundary {
 
         public:
+            /**
+              * Create a boundary with a fixed style in each dimension.
+              * @param sim The simulation that holds the boundary.
+              */
             LammpsBoundaryFixed(IAPISimulation *sim);
 
             // API Compliance
@@ -27,6 +31,12 @@ namespace lammpswrappers
             virtual bool getPeriodicity(int d);
 
             // Non-API methods
+            /**
+              * Create and issue the native lammps boundary command for a
+              * fixed bound in each dimenstion
+              * Native Lammps calls :
+              *   boundary f f f
+              */
             virtual void lammpsSetup();
 
     };

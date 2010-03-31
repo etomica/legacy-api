@@ -19,10 +19,23 @@ namespace lammpswrappers
 
     class LammpsIntegratorRespa : public LammpsIntegrator {
 
-        public:			
+        public:
+            /**
+              * Create an integrator (native Lammps simulation run_style) of
+              * type respa.
+              * @param sim Simulation that contains the integrator.
+              * @param nLvl The number of levels of rRESPA
+              * @param lvl An array containing the loop factors between
+              *            rRESPA levels
+              */
             LammpsIntegratorRespa(IAPISimulation *sim, int nLvl, int lvl[]);
 
         protected:
+            /**
+              * Native Lammps calls :
+              *   run_style respa
+              *
+              */
             virtual void lammpsSetup();
 
         private:

@@ -19,9 +19,16 @@ namespace lammpswrappers
     class LammpsNeighborListNsq : public LammpsNeighborList {
 
         public:
+            /**
+              * Create a neighbor list that uses the nsq algorithm.
+              * Native Lammps calls :
+              *   neighbor ... nsq
+              *
+              * @param sim Simulation pertaining to this neighbor list.
+              * @param cutoff extra distance beyond force cutoff
+              */
             LammpsNeighborListNsq(IAPISimulation *sim, double cutoff);
 
-        protected:
     };
 }
 

@@ -12,7 +12,14 @@ namespace lammpswrappers
 
     class LammpsNVE {
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation nve fix.
+              */
             LammpsNVE();
+            /**
+              * @return Returns the fix type
+              */
             char *getFixType();
 
         protected:

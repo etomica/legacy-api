@@ -19,6 +19,9 @@ namespace lammpswrappers
     class LammpsConformation : public virtual LammpsInterfaceConformation {
 
         public:
+            /**
+              * @param sim The simulation that holds the boundary.
+              */
             LammpsConformation(IAPISimulation *sim);
 
             // API Compliance

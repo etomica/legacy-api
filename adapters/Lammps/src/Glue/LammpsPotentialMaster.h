@@ -29,6 +29,12 @@ namespace lammpswrappers
             LammpsPotentialMaster(IAPISimulation *sim);
 
             // API Compliance
+            /**
+              * Add the given interaction between the given atom types.
+              * @param potential The interaction
+              * @param at1 First of the two atom types.
+              * @param at2 Second of the two atom types.
+              */
             void addPotential(IAPIPotentialAtomic *potential, IAPIAtomType *at1, IAPIAtomType *at2);
 
             // Non-API Method

@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsLatticeSC : public virtual LammpsLattice {
 
         public:
+            /**
+              * Create a SC lattice (native Lammps simulation lattice).
+              * @param sim Simulation that contains the integrator.
+              * @param sc Scale factor between lattice and simulation box.
+              */
             LammpsLatticeSC(IAPISimulation *sim, double sc);
 
         private:

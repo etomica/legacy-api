@@ -18,7 +18,14 @@ namespace lammpswrappers
     class LammpsInterfaceConformation {
 
         public:
-            virtual void initializePositions(IAPIAtomList *) = 0;
+            /**
+              * Sets the position of atoms(probably in the same molecule).
+              * The atoms will probably already have a position and this
+              * method will adjust the positions to reflect their position
+              * within a the given list(molecule).
+              * @param atom A list containing atoms
+              */
+            virtual void initializePositions(IAPIAtomList *atom) = 0;
     };
 }
 #endif

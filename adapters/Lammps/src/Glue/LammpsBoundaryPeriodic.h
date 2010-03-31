@@ -21,6 +21,10 @@ namespace lammpswrappers
     class LammpsBoundaryPeriodic : public LammpsBoundary {
 
         public:
+            /**
+              * Create a boundary with a periodic style in each dimension.
+              * @param sim The simulation that holds the boundary.
+              */
             LammpsBoundaryPeriodic(IAPISimulation *sim);
 
             // API Compliance
@@ -31,6 +35,12 @@ namespace lammpswrappers
             virtual bool getPeriodicity(int d);
 
             // Non-API methods
+            /**
+              * Create and issue the native lammps boundary command for a
+              * periodic bound in each dimenstion
+              * Native Lammps calls :
+              *   boundary p p p
+              */
             virtual void lammpsSetup();
 
         private:

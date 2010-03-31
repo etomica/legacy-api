@@ -37,16 +37,7 @@ namespace glotzwrappers
               * @param values array to assign vector value to
               */
             virtual void assignTo(double values[]) = 0;
-            /**
-              * @return Returns the dimension of the vector
-              */
             virtual int getD() = 0;
-            /**
-              * Compares this vector with the given vector.
-              * @param v Vector to compare this vector to.
-              * @return Returns true if all of the elements of this vector
-              *         are the same as the elements of the given vector.
-              */
             virtual bool equals(IAPIVector *v) = 0;
             /**
               * @param index Dimension to return vector's value

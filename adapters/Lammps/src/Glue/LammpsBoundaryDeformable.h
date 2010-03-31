@@ -20,6 +20,16 @@ namespace lammpswrappers
     class LammpsBoundaryDeformable : public LammpsBoundary {
 
         public:
+            /**
+              * Change the volume of the simulation box (using native Lammps
+              * simulation fix ... deform command).
+              * @param sim The simulation that holds the boundary.
+              * @param steps perform box deformation every this many timesteps
+              * @param vecLower Vector containing boundary style for lower
+              *                 bounds.
+              * @param vecUpper Vector containing boundary style for upper y
+              *                 bounds.
+              */
             LammpsBoundaryDeformable(IAPISimulation *sim, int steps,
                                   IAPIVector *vecLower, IAPIVector *vecUpper);
 
@@ -28,6 +38,12 @@ namespace lammpswrappers
             virtual bool getPeriodicity(int d);
 
             // Non-API methods
+            /**
+              * Create and issue the native lammps fix deform command using
+              * the parameters stored in the class instance. Style is final.
+              * Native Lammps calls :
+              *   fix ... all deform
+              */
             virtual void lammpsSetup();
 
         private:

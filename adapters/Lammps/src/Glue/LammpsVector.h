@@ -17,6 +17,11 @@ namespace lammpswrappers
 
     class LammpsVector : public virtual IAPIVectorMutable {
         public:
+            /**
+              * The only reason this class exists is a defiency in the
+              * parsers that make a java layer over this C++ layer.
+              * Really, VERY BAD.
+              */
             LammpsVector();
 
             // API Compliance
@@ -46,9 +51,6 @@ namespace lammpswrappers
             virtual double Mv1Squared(IAPIVector *v) = 0;
             virtual void normalize() = 0;
             virtual void map(IAPIFunction *f) = 0;
-
-            // Non-api method
-            double *getLammpsVector();
 
         protected:
             int D;

@@ -452,34 +452,6 @@ printf("lammps_command : %s\n", command); fflush(stdout);
         free(pairStyleList);
         free(cutoffStyleList);
 
-/*
-        if(typeid(*mSim->getLammpsSim()->force->pair) == typeid(PairHybrid)) {
-printf("POTENTIAL TYPE : Hybrid\n"); fflush(stdout);
-        }
-        else if(typeid(*mSim->getLammpsSim()->force->pair) == typeid(PairLJCut)) {
-printf("POTENTIAL TYPE : PairLJCut\n"); fflush(stdout);
-            for(int i = 0; i < pairPotentialList.size(); i++) {
-                IAPIPotential *pot = pairPotentialList.at(i);
-                if(typeid(*pot) == typeid(PotentialGroup)) {
-                    PotentialGroup *pg = dynamic_cast<PotentialGroup *>(pot);
-                    for(int j = 0; j < pg->getPotentialCount(); j++) {
-                        IAPIPotential *pt = pg->getPotential(j);
-                        if(typeid(*pt) == typeid(LammpsPairLennardJonesCutoff)) {
-                            dynamic_cast<LammpsPair *>(pt)->setLammpsPair(mSim->getLammpsSim()->force->pair);
-printf("CUTOFF : %f\n", dynamic_cast<LammpsPair *>(pt)->getRange()); fflush(stdout);
-                        }
-                        else {
-printf("LammpsPotentialMaster::setPairStyle() : IMPLEMENTATION ERROR.\n"); fflush(stdout);
-                        }
-                    }
-                }
-            }
-        }
-        else {
-printf("POTENTIAL TYPE : Unknown\n"); fflush(stdout);
-        }
-*/
-
         return pairStyleCount;
     }
 }

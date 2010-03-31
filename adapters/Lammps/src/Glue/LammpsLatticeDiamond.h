@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsLatticeDiamond : public virtual LammpsLattice {
 
         public:
+            /**
+              * Create a Diamond lattice (native Lammps simulation lattice).
+              * @param sim Simulation that contains the integrator.
+              * @param sc Scale factor between lattice and simulation box.
+              */
             LammpsLatticeDiamond(IAPISimulation *sim, double sc);
 
         private:

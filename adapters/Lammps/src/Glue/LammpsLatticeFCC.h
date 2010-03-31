@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsLatticeFCC : public virtual LammpsLattice {
 
         public:
+            /**
+              * Create a FCC lattice (native Lammps simulation lattice).
+              * @param sim Simulation that contains the integrator.
+              * @param sc Scale factor between lattice and simulation box.
+              */
             LammpsLatticeFCC(IAPISimulation *sim, double sc);
 
         private:

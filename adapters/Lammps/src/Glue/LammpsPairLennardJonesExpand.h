@@ -17,16 +17,43 @@ namespace lammpswrappers
 
     class LammpsPairLennardJonesExpand : public LammpsPair {
 
-        public:			
-            LammpsPairLennardJonesExpand(int n);		
+        public:
+            /**
+              * Creates a native Lammps pair_style of lj/expand.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              *   DEFAULT_EPSILON        = 1.0
+              *   DEFAULT_SIGMA          = 1.1
+              *   DEFAULT_DELTA          = 0.5
+              *   DEFAULT_LJ_CUTOFF      = 2.5
+              * @param n Number of bodies in the potential
+              */
+            LammpsPairLennardJonesExpand(int n);
+            /**
+              * Creates a native Lammps pair_style of lj/cut/coul/cut.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              * @param n Number of bodies in the potential
+              * @param epsilon Lammps simulation pair_coeff epsilon
+              *                parameter.
+              * @param sigma Lammps simulation pair_coeff sigma parameter.
+              * @param delta Lammps simulation pair_coeff delta parameter.
+              * @param ljCutoff Lammps simulation pair_coeff cutoff1
+              *                 parameter.
+              */
             LammpsPairLennardJonesExpand(int n, double epsilon, double sigma,
                                          double delta, double ljCutoff);		
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
-            // Non-API methods
             static const int EPSILON_INDEX;
             static const int SIGMA_INDEX;
             static const int DELTA_INDEX;

@@ -17,14 +17,42 @@ namespace lammpswrappers
 
     class LammpsBondQuartic : public LammpsPotential {
 
-        public:			
-            LammpsBondQuartic(int n);		
+        public:
+            /**
+              * Creates a native lammps bond_style of quartic.
+              * Bond parameters (native Lammps simulation bond_coeff command):
+              *   K       = 10000.0;
+              *   B1      = 10000.0;
+              *   B2      = 10000.0;
+              *   RC      = 1.0;
+              *   U0      = 1.0;
+              * @param n Number of bodies in the potential
+              */
+            LammpsBondQuartic(int n);
+            /**
+              * Creates a native lammps bond_style of quartic
+              * @param n Number of bodies in the potential
+              * @param k Native Lammps simulation bond_coeff k parameter.
+              * @param b1 Native Lammps simulation bond_coeff b1 parameter.
+              * @param b2 Native Lammps simulation bond_coeff b2 parameter.
+              * @param rc Native Lammps simulation bond_coeff rc parameter.
+              * @param u0 Native Lammps simulation bond_coeff u0 parameter.
+              */
             LammpsBondQuartic(int n, double k, double b1,
                            double b2, double rc, double u0);		
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double getRange();
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
             // Non-API methods

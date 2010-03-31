@@ -17,13 +17,37 @@ namespace lammpswrappers
 
     class LammpsBondMorse : public LammpsPotential {
 
-        public:			
-            LammpsBondMorse(int n);		
+        public:
+            /**
+              * Creates a native lammps bond_style of morse.
+              * Bond parameters (native Lammps simulation bond_coeff command):
+              *   D     = 1.0;
+              *   ALPHA = 1.0;
+              *   R0    = 1.0;
+              * @param n Number of bodies in the potential
+              */
+            LammpsBondMorse(int n);
+            /**
+              * Creates a native lammps bond_style of morse.
+              * @param n Number of bodies in the potential
+              * @param d Native Lammps simulation bond_coeff d parameter.
+              * @param alpha Native Lammps simulation bond_coeff alpha parameter.
+              * @param r0 Native Lammps simulation bond_coeff r0 parameter.
+              */
             LammpsBondMorse(int n, double d, double alpha, double r0);
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double getRange();
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
             // Non-API methods

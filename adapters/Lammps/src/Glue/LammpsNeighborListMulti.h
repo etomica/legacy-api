@@ -19,9 +19,16 @@ namespace lammpswrappers
     class LammpsNeighborListMulti : public LammpsNeighborList {
 
         public:
+            /**
+              * Create a neighbor list that uses the multi algorithm.
+              * Native Lammps calls :
+              *   neighbor ... multi
+              *
+              * @param sim Simulation pertaining to this neighbor list.
+              * @param cutoff extra distance beyond force cutoff
+              */
             LammpsNeighborListMulti(IAPISimulation *sim, double cutoff);
 
-        protected:
     };
 }
 

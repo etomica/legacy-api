@@ -12,9 +12,6 @@ namespace lammpswrappers
     LammpsVector::LammpsVector() {
     }
 
-    double *LammpsVector::getLammpsVector() {
-        return pos;
-    }
 
 
 }

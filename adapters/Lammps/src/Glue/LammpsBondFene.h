@@ -17,14 +17,40 @@ namespace lammpswrappers
 
     class LammpsBondFene : public LammpsPotential {
 
-        public:			
-            LammpsBondFene(int n);		
+        public:
+            /**
+              * Creates a native lammps bond_style of fene.
+              * Bond parameters (native Lammps simulation bond_coeff command):
+              *   K       = 10000.0;
+              *   R0      = 1.0;
+              *   EPSILON = 1.0;
+              *   SIGMA   = 1.0;
+              * @param n Number of bodies in the potential
+              */
+            LammpsBondFene(int n);
+            /**
+              * Creates a native lammps bond_style of fene.
+              * @param n Number of bodies in the potential
+              * @param k Native Lammps simulation bond_coeff k parameter.
+              * @param r0 Native Lammps simulation bond_coeff r0 parameter.
+              * @param epsilon Native Lammps simulation bond_coeff epsilon parameter.
+              * @param sigma Native Lammps simulation bond_coeff sigma parameter.
+              */
             LammpsBondFene(int n, double k, double r0,
                            double epsilon, double sigma);		
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double getRange();
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
             // Non-API methods

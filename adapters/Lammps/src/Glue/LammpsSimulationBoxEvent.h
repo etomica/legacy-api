@@ -17,8 +17,6 @@ using namespace molesimAPI;
 namespace lammpswrappers
 {
 
-    /**
-      */
     class LammpsSimulationBoxEvent : public LammpsSimulationEvent,
                                      public virtual IAPISimulationBoxEvent {
 

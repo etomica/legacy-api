@@ -17,13 +17,39 @@ namespace lammpswrappers
 
     class LammpsPairLennardJonesCutoff : public LammpsPair {
 
-        public:			
-            LammpsPairLennardJonesCutoff(int n);		
+        public:
+            /**
+              * Creates a native Lammps pair_style of lj/cut.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              *   DEFAULT_EPSILON        = 1.0
+              *   DEFAULT_SIGMA          = 1.1
+              *   DEFAULT_LJ_CUTOFF      = 2.5
+              * @param n Number of bodies in the potential
+              */
+            LammpsPairLennardJonesCutoff(int n);
+            /**
+              * Creates a native Lammps pair_style of lj/cut/coul/cut.
+              * Pair parameters (native Lammps simulation pair_coeff
+              * command) :
+              * @param n Number of bodies in the potential
+              * @param epsilon Lammps simulation pair_coeff epsilon
+              *                parameter.
+              * @param sigma Lammps simulation pair_coeff sigma parameter.
+              * @param ljCutoff Lammps simulation pair_coeff cutoff1
+              *                 parameter.
+              */
             LammpsPairLennardJonesCutoff(int n, double epsilon, double sigma, double ljCutoff);		
 
             // API Compliance
-            double energy(IAPIAtomList *);
-            void setBox(IAPIBox *);
+            /**
+              * This method is not implemented.
+              */
+            double energy(IAPIAtomList *as);
+            /**
+              * This method is not implemented.
+              */
+            void setBox(IAPIBox *b);
 
             // Non-API methods
             static const int EPSILON_INDEX;

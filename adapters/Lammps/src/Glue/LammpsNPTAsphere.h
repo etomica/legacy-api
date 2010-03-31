@@ -14,6 +14,13 @@ namespace lammpswrappers
 
     class LammpsNPTAsphere : public LammpsNPT {
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation npt/asphere fix.
+              * @param tStart Temperature at start of simulation.
+              * @param tStop Temperature at end of simulation.
+              * @param tDamp Temperature damping parameter.
+              */
             LammpsNPTAsphere(double tStart, double tStop, double tDamp);
 
     };

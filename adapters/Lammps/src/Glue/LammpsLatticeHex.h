@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsLatticeHex : public virtual LammpsLattice {
 
         public:
+            /**
+              * Create a Hex lattice (native Lammps simulation lattice).
+              * @param sim Simulation that contains the integrator.
+              * @param sc Scale factor between lattice and simulation box.
+              */
             LammpsLatticeHex(IAPISimulation *sim, double sc);
 
         private:

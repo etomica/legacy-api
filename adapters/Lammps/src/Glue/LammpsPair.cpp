@@ -29,12 +29,5 @@ printf("LammpsPair::getRange() is NOT implemented.\n"); fflush(stdout);
 //        return mPair->cutforce;
     }
 
-    /*
-     * setLammpsPair()
-     */
-    void LammpsPair::setLammpsPair(LAMMPS_NS::Pair *pair) {
-        mPair = pair;
-    }
-
 }
 

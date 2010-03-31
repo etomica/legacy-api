@@ -119,7 +119,7 @@ namespace lammpswrappers
         strcpy(temp, "\0");
         sprintf(temp, "%s %.0f ",
                 STYLES[tableStyle],
-                parameters[0]);
+                parameters[VALUES_INDEX]);
 
         char *construction;
         construction = (char *) malloc ((strlen(temp) + 1) * sizeof(char));

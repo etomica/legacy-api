@@ -20,6 +20,11 @@ namespace lammpswrappers
     class LammpsLatticeBCC : public virtual LammpsLattice {
 
         public:
+            /**
+              * Create a BCC lattice (native Lammps simulation lattice).
+              * @param sim Simulation that contains the integrator.
+              * @param sc Scale factor between lattice and simulation box.
+              */
             LammpsLatticeBCC(IAPISimulation *sim, double sc);
 
         private:

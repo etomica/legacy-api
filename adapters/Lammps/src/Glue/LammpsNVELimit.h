@@ -13,7 +13,12 @@ namespace lammpswrappers
 {
 
     class LammpsNVELimit : public LammpsNVE {
+
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation nve/limit fix.
+              */
             LammpsNVELimit();
 
     };

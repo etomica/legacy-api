@@ -13,7 +13,14 @@ namespace lammpswrappers
     class LammpsNPH {
 
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation nph fix.
+              */
             LammpsNPH();
+            /**
+              * @return Returns the fix type.
+              */
             char *getFixType();
 
         protected:

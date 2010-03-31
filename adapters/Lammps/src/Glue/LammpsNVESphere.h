@@ -13,7 +13,12 @@ namespace lammpswrappers
 {
 
     class LammpsNVESphere : public LammpsNVE {
+
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation nve/sphere fix.
+              */
             LammpsNVESphere();
 
     };

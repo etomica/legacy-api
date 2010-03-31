@@ -28,27 +28,31 @@ namespace glotzwrappers
 
         public:
             /**
-              *
+              * @param jenv The Java Native Interface (JNI) environment.
+              * @param jobj The JNI object that holds the java integrator
+              *             listener class instance.
               */			
             GlotzillaIntegratorListenerNative(JNIEnv *jenv, jobject jobj);
 
             /**
               * The listener method called when the integrator is
-              * initializeing.
+              * initializing.  Passes the call to the java integrator
+              * listener object held.
               * @param event Information relating to integrator event.
               */
             void integratorInitialized(IAPIIntegratorEvent *event);
             /**
               * The listener method called just prior to the integrator step.
+              * Passes the call to the java integrator listener object held.
               * @param event Information relating to integrator event.
               */
             void integratorStepStarted(IAPIIntegratorEvent *event);
             /**
               * The listener method called directly after the integrator step.
+              * Passes the call to the java integrator listener object held.
               * @param event Information relating to integrator event.
               */
             void integratorStepFinished(IAPIIntegratorEvent *event);
-
             /**
               * The method that the native Glotzilla simulation calls when
               * the native Glotzilla simulation pre move pre force

@@ -13,7 +13,12 @@ namespace lammpswrappers
 {
 
     class LammpsNVENoforce : public LammpsNVE {
+
         public:
+            /**
+              * Class that stores parameters for the native Lammps
+              * simulation nve/noforce fix.
+              */
             LammpsNVENoforce();
 
     };

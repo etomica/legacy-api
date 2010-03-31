@@ -21,11 +21,10 @@ namespace lammpswrappers
         public:			
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             IAPIVector *position(IAPIMolecule *atom);
-
-        protected:
-
-        private:
 
     };
 }

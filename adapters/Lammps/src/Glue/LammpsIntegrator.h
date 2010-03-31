@@ -95,6 +95,12 @@ namespace lammpswrappers
         protected:
             LammpsSimulation *mSimulation;
             bool initialized;
+            /**
+              * Native Lammps calls :
+              *   fix ... all temp/rescale
+              *   fix ... all momentum
+              *   timestep
+              */
             virtual void lammpsSetup();
             double timeStep;
 

@@ -17,13 +17,39 @@ namespace lammpswrappers
 
     class LammpsBondClass2 : public LammpsPotential {
 
-        public:			
+        public:
+            /**
+              * Creates a native lammps bond_style of class2.
+              * Bond parameters (native Lammps simulation bond_coeff command):
+              *   R0 = 1.0;
+              *   K2 = 1.0;
+              *   K3 = 1.0;
+              *   K4 = 1.0
+              * @param n Number of bodies in the potential
+              */
             LammpsBondClass2(int n);		
+            /**
+              * Creates a native lammps bond_style of class2.
+              * @param n Number of bodies in the potential
+              * @param r0 Native Lammps simulation bond_coeff r0 parameter.
+              * @param k2 Native Lammps simulation bond_coeff k2 parameter.
+              * @param k3 Native Lammps simulation bond_coeff k3 parameter.
+              * @param k4 Native Lammps simulation bond_coeff k4 parameter.
+              */
             LammpsBondClass2(int n, double r0, double k2, double k3, double k4);
 
             // API Compliance
+            /**
+              * This method is not implemented.
+              */
             double getRange();
+            /**
+              * This method is not implemented.
+              */
             double energy(IAPIAtomList *);
+            /**
+              * This method is not implemented.
+              */
             void setBox(IAPIBox *);
 
             // Non-API methods
