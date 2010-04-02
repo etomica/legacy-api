@@ -76,7 +76,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		eps = 0.465;
 		sigma = 2.463;
 		eps0 = 0.465;
-		eps1 = 0.465;
+		eps1 = 0.0;
 		sigma0 = 2.463;
 		sigma1 = 0.0;
 			
@@ -162,10 +162,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			if(box.getNMolecules(lj)==0){findVacancy(vacancyPosition);}
 			
 			//Insertion via LJ growth - parameters are deltas
-			PartialInsersion(eps*0.00, sigma*0.01, true, 0.02);
+			PartialInsersion(eps*0.0, sigma*0.001, true, 0.025);
 			
 			//Relax system with MD
-			MDlammps(20);
+			MDlammps(2);
 			
 			//Reset a stuck system
 			if(rejb==true && rejf==true){
@@ -174,7 +174,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				stuck++;
 				if(stuck>50){resetState(); stuck=0;}
 			}
-			System.out.println(step+"    "+sigma1);
+			System.out.println(e1+"    "+sigma1+"   "+bfactor);
 			step++;
 		}
 		
@@ -314,7 +314,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				if(trials>9){break;}
 				trials++;
 			}
-			if(count1>4 && trials<10){break;}
+			if(count1>4 && trials<11){break;}
 			trials=0;
 		}
 		
