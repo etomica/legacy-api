@@ -39,7 +39,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	private static final String APP_NAME = "MCMoveSwapSpeciesGB";
 	public IBox box;
 	public SpeciesSpheresMono tin, silver, lj;
-	public double e0, e1, erej, esys, eps, sigma, eps1, eps0, sigma1, sigma0;
+	public double e0, e1, e1avg, e0avg, eps, sigma, eps1, eps0, sigma1, sigma0;
 	public int num, step, acc, vac, numSolute, ljstages;
 	public IVectorMutable workVector, lammpsVector, boxVector, vacancyPosition, interstitialPosition;
 	public IAtom atomS;
@@ -53,7 +53,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	public IVectorMutable[] neighborPositions;
 	public double[] stateBias;
 	private BoxImposePbc pbc;
-	public boolean comments, rejf, rejb, rej;
+	public boolean comments, mccomments, rej;
 	public NeighborCellManager neighborCell;
 
 	public SimMCMoveSwapSpeciesGB(int numSpeciesA, int numSpeciesB,
@@ -62,13 +62,14 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 
 		e1 = 0;
 		e0 = 0;
-		erej = 0;
-		esys = 0;
+		e1avg = 0;
+		e0avg= 0;
 		num = 0;
-		step = 0;
+		step = 1;
 		acc = 0;
 		vac = 0;
 		comments=false;	
+		mccomments=false;
 			
 		workVector = space.makeVector();
 		lammpsVector = space.makeVector();
@@ -128,7 +129,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		
 		// XYZ File Output
 		writer = new XYZWriter(box);
-		writer.setFileName("mcrun-md4.xyz");
+		writer.setFileName("agint-test1.xyz");
 		writer.setIsAppend(true);
 		writer.actionPerformed();
 
@@ -147,19 +148,14 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			
 			if(step>maxsteps && lj.getNumLeafAtoms()==0){System.out.println("> Simulation finished.");break;}		
 			
-			
 			//Insertion via LJ growth - parameters are deltas
-			PartialInsersion(eps/(stateBias.length-2), 0.0, false, 0.05);			
-
-			if(bfactor>0.5){
-				System.out.println(e0+" "+e1+" "+eps1+" "+sigma1+" "+bfactor);
-			}
-			else{System.out.println(e0+" "+e1+" "+eps1+" "+sigma1+" "+bfactor+" -----!!----");}
+			PartialInsersion(eps/(stateBias.length-3), 0.0, false, 0.05);			
 			
 			//Relax system with MD
-			MDlammps(5);
+			MDlammps(10);
 			
 			step++;
+			
 		}
 		
 	}
@@ -179,7 +175,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		stateBias = new double[7];
 		stateBias = energyBias;
 		
-		ljstages = stateBias.length-1;
+		ljstages = stateBias.length-2;
 	}
 
 	public double getLammpsEnergy(int run, boolean setcoords, boolean getcoords) {// in eV
@@ -360,6 +356,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		if(box.getNMolecules(lj)==0){
 			//find random silver atom
 			findSoluteRandom();
+			
 			if(comments){System.out.println("> Found random silver atom "+atomS.getLeafIndex()+".");}
 			if(comments){System.out.println("\n> Begin partial insertion of atom...");}
 			if(comments){System.out.println("  >> Bias is "+stateBias[0]+" for current state, and "+stateBias[1]+" for attempted state.");}
@@ -371,6 +368,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		//
 		// ************************
 		else if(eps0/eps==1.0 && sigma0/sigma==1.0 && box.getNMolecules(lj)==1){
+			
+			//Update vectors
+			interstitialPosition.E(box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition());
+			
 			if(comments){System.out.println("\n> Continue insertion or return to MEAM...");}
 			
 			//(LJ-100)-->(MEAM-100)
@@ -392,6 +393,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				if(relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
 				MClj2lj(new double[]{eps0-deltaeps, eps1+deltaeps},new double[]{sigma0-deltasigma, sigma1+deltasigma},4,stateBias[2]-stateBias[1]);
 				if(rej && relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
+				if(rej==false){MDlammps(100);}
 			}
 		}
 		
@@ -400,6 +402,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		//
 		// ************************
 		else if(box.getNMolecules(lj)==2){
+			//Update vectors
+			interstitialPosition.E(box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition());
+			vacancyPosition.E(box.getMoleculeList(lj).getMolecule(1).getChildList().getAtom(0).getPosition());
+			
 			if(comments){System.out.println("\n> Grow or shrink inserted atom...");}
 			
 			//(LJ-X)-->(LJ-Y)
@@ -442,22 +448,32 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		//
 		// ************************
 		else if(eps1/eps==1.0 && sigma1/sigma==1.0 && box.getNMolecules(lj)==1){
+			
+			//Update vectors
+			vacancyPosition.E(box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition());
+			
 			if(comments){System.out.println("> Shrink insertion or return to MEAM...");}
 			
 			//(LJ-100)-->(LJ-X)
 			if(random.nextInt(2)==0){
 				if(comments){System.out.println("  >> Shrinking insertion by creating LJ atom at first interstitial.");}			
-				if(comments){System.out.println("  >> Bias is "+stateBias[1]+" for current state, and "+stateBias[stateBias.length-2]+" for attempted state.");}
+				if(comments){System.out.println("  >> Bias is "+stateBias[stateBias.length-3]+" for current state, and "+stateBias[stateBias.length-2]+" for attempted state.");}
 				if(relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
-				MClj2lj(new double[]{eps0+deltaeps, eps1-deltaeps},new double[]{sigma0+deltasigma, sigma1-deltasigma},3,stateBias[stateBias.length-2]-stateBias[1]);
+				MClj2lj(new double[]{eps0+deltaeps, eps1-deltaeps},new double[]{sigma0+deltasigma, sigma1-deltasigma},3,stateBias[stateBias.length-2]-stateBias[stateBias.length-3]);
 				if(rej && relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
 			}
 			//(LJ-100)-->(MEAM)
 			else{
 				if(comments){System.out.println("  >> Returning to MEAM potential.");}
-				if(comments){System.out.println("  >> Bias is "+stateBias[1]+" for current state, and "+stateBias[0]+" for attempted state.");}
-				MClj2meam(4,stateBias[0]-stateBias[1]);
-				if(rej==false){calcAverages();}
+				if(comments){System.out.println("  >> Bias is "+stateBias[stateBias.length-2]+" for current state, and "+stateBias[stateBias.length-1]+" for attempted state.");}
+				MClj2meam(4,stateBias[stateBias.length-1]-stateBias[stateBias.length-2]);
+				if(rej==false){
+					//Reset epsilons
+					eps0 = eps;
+					eps1 = 0.0;
+					MDlammps(1000);
+					calcAverages();
+				}
 			}
 		}	
 	}
@@ -482,7 +498,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single 0.0 0.0 0.0");
 		}
 		
-		if(comments){System.out.print("  >> MC - LJ("+eps[0]+","+sigma[0]+") to LJ("+eps[1]+","+sigma[1]+") move...");};
+		if(mccomments){System.out.print("  >> MC - LJ("+eps[0]+","+sigma[0]+")--LJ("+eps[1]+","+sigma[1]+") move...");};
 				
 		String paircoeff;
 		paircoeff = "pair_coeff 2 3 lj/cut "+eps[0]+" "+sigma[0];
@@ -492,7 +508,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		
 		if(checkMove(ebias)){
 			rej=false;
-			if(comments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");}
+			if(mccomments){System.out.print("accepted. "+step+" "+(e1-e0)+" "+e0+" "+e1+" "+bfactor+"\n");}
 			eps0 = eps[0];
 			eps1 = eps[1];
 			sigma0 = sigma[0];
@@ -500,7 +516,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		}	
         else{
         	rej=true;
-        	if(comments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+        	if(mccomments){System.out.print("rejected. "+step+" "+(e1-e0)+" "+e0+" "+e1+" "+bfactor+"\n");} 
             paircoeff = "pair_coeff 2 3 lj/cut "+eps0+" "+sigma0;
     		LammpsInterface2.doCommand(lammpsSim, paircoeff);
             paircoeff = "pair_coeff 2 4 lj/cut "+eps1+" "+sigma1;
@@ -526,7 +542,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MClj2meam(int ljtype, double ebias){
-		if(comments){System.out.print("  >> MC - LJ to MEAM move...");};
+		if(mccomments){System.out.print("  >> MC - LJ to MEAM move...");};
 		
 		//Creates new Ag atom in place of LJ atom
 		box.setNMolecules(silver, numSolute);
@@ -536,20 +552,20 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		//Remove atom from LAMMPS, Create new silver
 		LammpsInterface2.doCommand(lammpsSim, "group lj"+ljtype+" type "+ljtype);
 		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group lj"+ljtype);
-		LammpsInterface2.doCommand(lammpsSim, "create_atoms 1 single 0.0 0.0 0.0");
+		LammpsInterface2.doCommand(lammpsSim, "create_atoms 1 single "+atomS.getPosition().getX(0)+" "+atomS.getPosition().getX(1)+" "+atomS.getPosition().getX(2)+" units box");
 		if(checkMove(ebias)){
-			if(comments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
 			rej=false;
 		}	
         else{
         	rej=true;
-        	if(comments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+        	if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
             box.setNMolecules(lj,1);
             box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition().E(atomS.getPosition());    		
     		//Remove Silver from LAMMPS, Create new LJ atom
     		LammpsInterface2.doCommand(lammpsSim, "create_atoms "+ljtype+" single "+atomS.getPosition().getX(0)+" "+atomS.getPosition().getX(1)+" "+atomS.getPosition().getX(2)+" units box"); //LJ Type (old position atom)
     		box.removeMolecule(atomS.getParentGroup());
-    		LammpsInterface2.doCommand(lammpsSim, "group lj3 type 3");
+    		LammpsInterface2.doCommand(lammpsSim, "group lj"+ljtype+" type "+ljtype);
     		LammpsInterface2.doCommand(lammpsSim, "group silver type 1");
             LammpsInterface2.doCommand(lammpsSim, "delete_atoms overlap 0.1 silver lj"+ljtype);
             
@@ -557,7 +573,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MCmeam2lj(double eps, double sigma, double ebias){
-		if(comments){System.out.print("  >> MC - MEAM to LJ move...");};
+		if(mccomments){System.out.print("  >> MC - MEAM to LJ move...");};
 		//Creates new LJ atom in place of Ag atom
 		box.setNMolecules(lj,1);
         box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition().E(atomS.getPosition());
@@ -571,12 +587,12 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         String paircoeff = "pair_coeff 2 3 lj/cut "+eps+" "+sigma;
 		LammpsInterface2.doCommand(lammpsSim, paircoeff);
 		if(checkMove(ebias)){
-			if(comments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
 			rej=false;
 		}
         else{
         	rej=true;
-        	if(comments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+        	if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
             box.setNMolecules(silver, numSolute);
     		atomS = box.getMoleculeList(silver).getMolecule(numSolute-1).getChildList().getAtom(0);
     		atomS.getPosition().E(box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition());
@@ -652,8 +668,6 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			acc++;
 			return true;
 		} else {// Rejected
-			esys +=e0;
-			erej +=e1;
 			return false;
 		}
 	}
@@ -696,9 +710,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		double modeSave=500000;
 		double modeSum=0;
 		String temp12;
-		for(int i=0; i<100; i++){
-			double sigma=2.62;
-			for(int j=0; j<100; j++){
+		for(int i=0; i<50; i++){
+			double sigma=2.4;
+			for(int j=0; j<50; j++){
 				temp12 = "pair_coeff 1 2 lj/cut "+eps;
 				temp12 = temp12+" "+sigma;
 				//System.out.println(temp12);
@@ -717,15 +731,16 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			    	System.out.println(eps+"   "+sigma+"   "+LammpsInterface2.getEnergy(lammpsSim)+"    "+modeSum);
 			    	modeSave=modeSum;
 			    }
-				sigma+=0.001;
+				sigma+=0.01;
 			}
 			System.out.println(eps);
-			eps+=0.001;
+			eps+=0.005;
 		} 
 	}
 		
-	public void setComments(boolean commentOn){
+	public void setComments(boolean commentOn, boolean mccommentOn){
 		comments = commentOn;
+		mccomments = mccommentOn;
 	}
 
 	public static void main(String[] args){
@@ -744,16 +759,12 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         final String APP_NAME = "SimMCMoveSwapSpeciesGB";
         final SimMCMoveSwapSpeciesGB sim = new SimMCMoveSwapSpeciesGB(tin,silver,temp1,boxVector,infile);        
         
-        // Params for Silver and 5 Stage LJ Energy Bias (100-75-50-25-0);
-        sim.setParameters(0.442,2.664,new double[]{3.06,3.23,1.23,1.0,1.23,3.23});
+        // Params for Silver and 5 Stage LJ Energy Bias (MEAM-100-75-50-25-0-100-MEAM);
+        sim.setParameters(0.49,2.55,new double[]{7.353,5.87,3.153,3.75,3.153,5.87,7.353});
         
-        sim.setComments(true);
-        sim.getLammpsEnergy(2000,false,true);
+        sim.setComments(true,true);
+        sim.getLammpsEnergy(2500,false,true);
         sim.doMC(50);
-     
-        
-        
-        
         
         // Disperse Solute
         //sim.randomizeSolute();
