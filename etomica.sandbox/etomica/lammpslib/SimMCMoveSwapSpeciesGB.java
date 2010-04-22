@@ -52,9 +52,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	public HistogramSimple histz1, histz2;
 	public ArrayList<Cell> cellVList;
 	public IVectorMutable[] neighborPositions;
+	public IVectorMutable[] ivForces;
 	public double[] stateBias;
 	private BoxImposePbc pbc;
-	public boolean comments, mccomments, rej;
+	public boolean comments, mccomments, rej, relaxedc, relaxede;
 	public NeighborCellManager neighborCell;
 
 	public SimMCMoveSwapSpeciesGB(int numSpeciesA, int numSpeciesB,
@@ -79,6 +80,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		boxVector = space.makeVector();
 		vacancyPosition = space.makeVector();
 		interstitialPosition = space.makeVector();
+		ivForces = space.makeVectorArray(3);
 
 		random = new RandomNumberGenerator();
 
@@ -151,11 +153,11 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			//PartialInsersionLJ(eps/(stateBias.length-3), 0.0, false, 0.05);			
 			
 			//Insertion via MEAM growth
-			PartialInsersionMEAM(stateBias);		
+			PartialInsersionMEAM(stateBias,true);		
 			
 			//Relax system with MD
-			if(state>0){MDlammps(10);}
-			
+			MDlammps(1);
+
 			step++;
 			
 		}
@@ -351,7 +353,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	 * 
 	 */
 	
-	public void PartialInsersionMEAM(double [] stateBias){
+	public void PartialInsersionMEAM(double [] stateBias, boolean relax){
 		// SPECIES LIST: 1-Ag 2-Sn 3-Ag75 4-Ag50 5-Ag25 6-Ag0
 		
 
@@ -361,17 +363,20 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		// ************************
 		if(state==0){
 			if(comments){System.out.println("*** State "+state+". ***");}
+			
 			//find random silver atom
 			findSoluteRandom(interstitialPosition);
+			
 			if(comments){System.out.println("> Found random silver atom "+atomS.getLeafIndex()+".");}
-			
 			if(comments){System.out.println("  >> Randomly finding a vacancy location.");}
-			findVacancyRandom(vacancyPosition);
 			
+			findVacancyRandom(vacancyPosition);
 			
 			if(comments){System.out.println("\n> Begin partial insertion of atom...");}
 			if(comments){System.out.println("  >> Bias is "+stateBias[0]+".");}
+			
 			MCmeam2s75(stateBias[0]);
+			
 			if(rej==false){state=1;}
 		}
 		
@@ -388,12 +393,13 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			if(comments){System.out.println("\n> Continue insertion or return to MEAM...");}
 			
 			//(MEAM-75)-->(MEAM-100)
-//			if(random.nextInt(2)==0){
+			if(random.nextInt(2)==0){
 				if(comments){System.out.println("  >> Returning to MEAM-100 potential.");}
 				if(comments){System.out.println("  >> Bias is "+(-stateBias[0])+".");}
 				MCs752meam(-stateBias[0]);
 				if(rej==false){state=0;}
-/**			}
+	
+			}
 			//(LMEAM-75)-->(MEAM-50)
 			else{
 								
@@ -401,9 +407,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 				if(comments){System.out.println("  >> Bias is "+stateBias[1]+".");}
 				MCs752s50(stateBias[1]);
 				//Extra relaxation
-				if(rej==false){MDlammps(20);state=2;}
+				if(rej==false){state=2;}
 			}
-**/		}
+		}
 		
 		// ************************
 		// (MEAM-75)<--(MEAM-50)-->(MEAM-25)
@@ -465,8 +471,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		
 	}
 	
-	public void MCmeam2s75(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-100 to MEAM-75 move...");};
+	public void MCmeam2s75(double ebias){	
 		
 		//ETOMICA - Creates new LJ atom in place of Ag atom
 		box.setNMolecules(lj,2);
@@ -476,20 +481,30 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         
         //LAMMPS - Create new MEAM Atoms
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
-		LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25		
 		LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
-		LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
 		LammpsInterface2.doCommand(lammpsSim, "delete_atoms overlap 0.1 silver ag75");
+		LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25		
+		LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
 		
-
+		//Expand atoms around vacancy
+		double eng = getLammpsEnergy(0,false,false);
+		if((e0-eng)>-10){expandNeighbors(vacancyPosition,2.8,0.77);}
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-100 to MEAM-75 move...");};
 		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			//LAMMPS - Set force
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			rej=true;
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
+			
+			//Compress atoms around vacancy
+			if(relaxede==true){compressNeighbors(vacancyPosition,2.8,0.77);relaxede=false;}
+			
 			//Delete new atoms
 			box.setNMolecules(lj,0);
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
@@ -503,8 +518,8 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		}
 	}
 	
-	public void MCs752meam(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-75 to MEAM-100 move...");};
+	public void MCs752meam(double ebias){		
+		
 		//ETOMICA - Delete new atoms
 		box.setNMolecules(lj,0);
 		box.setNMolecules(silver, numSolute);
@@ -517,46 +532,66 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 1 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-100
 		LammpsInterface2.doCommand(lammpsSim, "group silver type 1");
 		
+		//Compress atoms around vacancy
+		compressNeighbors(vacancyPosition,2.8,0.77);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-75 to MEAM-100 move...");};
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			rej=true;
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
+			
+			//Expand atoms around vacancy
+			if(relaxedc==true){expandNeighbors(vacancyPosition,2.8,0.77);relaxedc=false;}
+			
 			box.setNMolecules(lj,2);
 	        box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition().E(interstitialPosition);
 	        box.getMoleculeList(lj).getMolecule(1).getChildList().getAtom(0).getPosition().E(vacancyPosition);
 	        box.removeMolecule(atomS.getParentGroup());
-	        //Create new MEAM Atoms
-			LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
-			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25
-			LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
-			LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
+	        //Create new MEAM Atoms		
+	        LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
+	        LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
 			LammpsInterface2.doCommand(lammpsSim, "group silver type 1");
-			LammpsInterface2.doCommand(lammpsSim, "delete_atoms overlap 0.1 silver ag75");
+			LammpsInterface2.doCommand(lammpsSim, "delete_atoms overlap 0.1 silver ag75");  
+	        LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25 
+			LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
 			
-			writer.actionPerformed();
+			//writer.actionPerformed();
 		}
 	}
 	
 	public void MCs752s50(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-75 to MEAM-50 move...");};
+		
+
+		//Remove atoms
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
 		//LAMMPS - Create new atoms
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 3 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-50
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 3 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-50
 		LammpsInterface2.doCommand(lammpsSim, "group ag50 type 3");
-		//Remove atoms
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
+		
+		//Expand atoms around vacancy slightly
+		expandNeighbors(vacancyPosition,2.8,0.25);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-75 to MEAM-50 move...");};
 		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			rej=true;
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
+			
+			//Compress atoms around vacancy slightly
+			compressNeighbors(vacancyPosition,2.8,0.25);relaxede=false;
+			
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25
@@ -566,22 +601,32 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MCs502s75(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-50 to MEAM-75 move...");};
+		
+		//Remove atoms
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
 		//LAMMPS - Create new atoms
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25
 		LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
 		LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
-		//Remove atoms
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
+
+		//Compress atoms around vacancy
+		compressNeighbors(vacancyPosition,2.8,0.25);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-50 to MEAM-75 move...");};
 		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			//Delete new atoms
 			rej=true;
+			
+			//Expand atoms around vacancy
+			expandNeighbors(vacancyPosition,2.8,0.25);relaxedc=false;
+			
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
@@ -592,22 +637,32 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MCs502s25(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-50 to MEAM-25 move...");};
+		
+		//Remove atoms
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
 		//LAMMPS - Create new atoms
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-75
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-25
 		LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
 		LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
-		//Remove atoms
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
+		
+		//Compress atoms around interstitial
+		compressNeighbors(interstitialPosition,2.8,0.25);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-50 to MEAM-25 move...");};
 		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1; 
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			//Delete new atoms
 			rej=true;
+			
+			//Expand atoms around interstitial
+			expandNeighbors(interstitialPosition,2.8,0.25);relaxedc=false;
+			
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
@@ -618,23 +673,33 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MCs252s50(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-25 to MEAM-50 move...");};
+		//Remove atoms
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
+		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
 		//LAMMPS - Create new atoms
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 3 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-50
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 3 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-50
 		LammpsInterface2.doCommand(lammpsSim, "group ag50 type 3");
-		//Remove atoms
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
-		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");
+		
+		//Expand atoms around interstitial slightly
+		expandNeighbors(interstitialPosition,2.8,0.25);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-25 to MEAM-50 move...");};
 		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			//Delete new atoms
 			rej=true;
+			
+			//Compress atoms around interstitial slightly
+			compressNeighbors(interstitialPosition,2.8,0.25);relaxede=false;
+			
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
+			
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag50");
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-25
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-75
@@ -644,39 +709,54 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 	}
 	
 	public void MCs252meam(double ebias){
-		if(mccomments){System.out.print("  >> MC - MEAM-25 to MEAM-100 move...");};
 		
 		//ETOMICA - Delete new atoms
 		box.setNMolecules(lj,0);
 		box.setNMolecules(silver, numSolute);
 		atomS = box.getMoleculeList(silver).getMolecule(numSolute-1).getChildList().getAtom(0);
-		atomS.getPosition().E(interstitialPosition);
-		
+		atomS.getPosition().E(vacancyPosition);
 		//LAMMPS
 		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
 		LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag25");	
 		LammpsInterface2.doCommand(lammpsSim, "create_atoms 1 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-100
 		LammpsInterface2.doCommand(lammpsSim, "group silver type 1");
 		
+		//Compress atoms around interstitial
+		compressNeighbors(interstitialPosition,2.8,0.77);
+		
+		if(mccomments){System.out.print("  >> MC - MEAM-25 to MEAM-100 move...");};
+		
 		if(checkMove(ebias)){//Accepted
-			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
+			if(mccomments){System.out.print("accepted. "+step+" "+e0+" "+e1+" "+bfactor+"\n");} 
+			e0 = e1;
 			rej=false;
 		}
 		else{//Rejected, cleanup.
 			rej=true;
+			
+			//Expand atoms around interstitial
+			expandNeighbors(interstitialPosition,2.8,0.77);relaxedc=false;
+			
 			if(mccomments){System.out.print("rejected. "+step+" "+e0+" "+e1+" "+bfactor+"\n");}
+			
 			box.setNMolecules(lj,2);
 	        box.getMoleculeList(lj).getMolecule(0).getChildList().getAtom(0).getPosition().E(interstitialPosition);
 	        box.getMoleculeList(lj).getMolecule(1).getChildList().getAtom(0).getPosition().E(vacancyPosition);
 	        box.removeMolecule(atomS.getParentGroup());
-	        //Create new MEAM Atoms
-			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-25
+	        
+	        
+	        //Remove Silver from LAMMPS (must create and delete ag75 to maintain LAMMPS atom ordering of (1...Nsolute, 1 interstitial, 1 vacancy)
 			LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-75
 			LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
-			LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
-			//Remove Silver from LAMMPS
 			LammpsInterface2.doCommand(lammpsSim, "group silver type 1");
 			LammpsInterface2.doCommand(lammpsSim, "delete_atoms overlap 0.1 silver ag75");
+			LammpsInterface2.doCommand(lammpsSim, "delete_atoms group ag75");
+	        //Create new MEAM Atoms
+			LammpsInterface2.doCommand(lammpsSim, "create_atoms 4 single "+interstitialPosition.getX(0)+" "+interstitialPosition.getX(1)+" "+interstitialPosition.getX(2)+" units box"); //MEAM-25
+			LammpsInterface2.doCommand(lammpsSim, "group ag25 type 4");
+			LammpsInterface2.doCommand(lammpsSim, "create_atoms 2 single "+vacancyPosition.getX(0)+" "+vacancyPosition.getX(1)+" "+vacancyPosition.getX(2)+" units box"); //MEAM-75
+			LammpsInterface2.doCommand(lammpsSim, "group ag75 type 2");
+
 		}
 	}
 	
@@ -758,9 +838,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			if(random.nextInt(2)==0){
 				if(comments){System.out.println("  >> Shrinking inserted atom.");}
 				if(comments){System.out.println("  >> Bias is "+stateBias[biasRow]+" for current state, and "+stateBias[biasRow-1]+" for attempted state.");}
-				if(relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
+				//if(relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
 				MClj2lj(new double[]{eps0+deltaeps, eps1-deltaeps},new double[]{sigma0+deltasigma, sigma1-deltasigma},0,stateBias[biasRow-1]-stateBias[biasRow]);
-				if(rej && relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
+				//if(rej && relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
 				
 				//If LJ-Y == LJ-100 (move accepted)
 				if(eps0/eps==1.0 && sigma0/sigma==1.0){
@@ -775,9 +855,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			else{
 				if(comments){System.out.println("  >> Growing inserted atom.");}
 				if(comments){System.out.println("  >> Bias is "+stateBias[biasRow]+" for current state, and "+stateBias[biasRow+1]+" for attempted state.");}
-				if(relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
+				//if(relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
 				MClj2lj(new double[]{eps0-deltaeps, eps1+deltaeps},new double[]{sigma0-deltasigma, sigma1+deltasigma},0,stateBias[biasRow+1]-stateBias[biasRow]);
-				if(rej && relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
+				//if(rej && relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
 				//If LJ-Z == LJ-100
 				if(eps1/eps==1.0 && sigma1/sigma==1.0){
 					if(comments){System.out.println("  >> Inserted atom is mature.  Removing first interstitial.");}
@@ -804,9 +884,9 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			if(random.nextInt(2)==0){
 				if(comments){System.out.println("  >> Shrinking insertion by creating LJ atom at first interstitial.");}			
 				if(comments){System.out.println("  >> Bias is "+stateBias[stateBias.length-3]+" for current state, and "+stateBias[stateBias.length-2]+" for attempted state.");}
-				if(relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
+				//if(relax){relaxNeighbors(vacancyPosition,interstitialPosition,2.8,relaxB);}
 				MClj2lj(new double[]{eps0+deltaeps, eps1-deltaeps},new double[]{sigma0+deltasigma, sigma1-deltasigma},3,stateBias[stateBias.length-2]-stateBias[stateBias.length-3]);
-				if(rej && relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
+				//if(rej && relax){relaxNeighbors(interstitialPosition,vacancyPosition,2.8,relaxB);}
 			}
 			//(LJ-100)-->(MEAM)
 			else{
@@ -942,7 +1022,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		LammpsInterface2.doCommand(lammpsSim, "unfix int1"); 
 		LammpsInterface2.doCommand(lammpsSim, "fix int2 all nvt 300.0 300.0 0.1 drag 1.0");
 		
-/**		if(checkMove(ebias)){
+		if(checkMove(ebias)){
 			if(mccomments){System.out.print("accepted. "+step+" "+e1+" "+bfactor+"\n");} 
 			rej=false;
 		}
@@ -960,7 +1040,7 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 			LammpsInterface2.doCommand(lammpsSim, "unfix int2"); 
 			LammpsInterface2.doCommand(lammpsSim, "fix int1 all npt 300.0 300.0 0.1  xyz 0.0 0.0 0.1 drag 1.0");
 		}	
-**/	}
+	}
 	
 	public void doLJgetParams(){
 		MoleculeArrayList marray = new MoleculeArrayList();
@@ -1041,44 +1121,74 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		} 
 	}
 	
-	public void relaxNeighbors(IVectorMutable compressv, IVectorMutable expandv, double xm, double b){
+	public void compressNeighbors(IVectorMutable compressv, double xm, double b){
 		// CONTRACT AND EXPAND LATTICE AT OLD AND NEW POINTS
+		MoleculeArrayList compressList = new MoleculeArrayList();
 		double rmag;
 		IAtom neighbor;
 		int exp=0;
 		int comp=0;
 		IVectorMutable rij = space.makeVector();
-		if(comments){System.out.print("  >> Compressing neighbors...");};
-		//Compress atoms near vector compressv
+				
+		// Build Neighbor Lists
 		for(int i=0; i<box.getMoleculeList().getMoleculeCount(); i++){
 			neighbor = box.getMoleculeList().getMolecule(i).getChildList().getAtom(0);
 			rij.Ev1Mv2(neighbor.getPosition(),compressv);
 			box.getBoundary().nearestImage(rij);
 			rmag = rij.squared();
-			if(rmag<0.1){continue;} 
-			if(rmag<(xm*xm)){
-				rmag = Math.sqrt(rmag);
-				neighbor.getPosition().Ea1Tv1((rmag-b)/(1.0-(b/xm))/rmag, rij);
-				neighbor.getPosition().PE(compressv);
-				comp++;
-			}	
+			if(rmag<(0.9*0.9) || rmag<(b*b)){continue;}
+			if(rmag<(xm*xm)){compressList.add(neighbor.getParentGroup());}
 		}
+		if(comments){System.out.print("  >> Compressing neighbors...");};
+
+		//Compress atoms near vector compressv
+		for(int i=0; i<compressList.getMoleculeCount(); i++){
+			neighbor = compressList.getMolecule(i).getChildList().getAtom(0);
+			rij.Ev1Mv2(neighbor.getPosition(),compressv);
+			box.getBoundary().nearestImage(rij);
+			rmag = rij.squared();
+			rmag = Math.sqrt(rmag);
+			neighbor.getPosition().Ea1Tv1((rmag-b)/(1.0-(b/xm))/rmag, rij);
+			neighbor.getPosition().PE(compressv);
+			comp++;
+		}	
 		if(comments){System.out.print(comp+"compressed.\n");};
-		if(comments){System.out.print("  >> Expanding neighbors...");};
-		//Expand atoms near vector expandv
+		relaxedc = true;
+	}
+	
+	public void expandNeighbors(IVectorMutable expandv, double xm, double b){
+		// CONTRACT AND EXPAND LATTICE AT OLD AND NEW POINTS
+		MoleculeArrayList expandList = new MoleculeArrayList();
+		double rmag;
+		IAtom neighbor;
+		int exp=0;
+		int comp=0;
+		IVectorMutable rij = space.makeVector();
+				
+		// Build Neighbor Lists
 		for(int i=0; i<box.getMoleculeList().getMoleculeCount(); i++){
 			neighbor = box.getMoleculeList().getMolecule(i).getChildList().getAtom(0);
 			rij.Ev1Mv2(neighbor.getPosition(),expandv);
 			box.getBoundary().nearestImage(rij);
 			rmag = rij.squared();
-			if(rmag<0.1){continue;} // neighbor and atom at expandv are same
-			if(rmag<(xm*xm)){
-				rmag = Math.sqrt(rmag);
-				neighbor.getPosition().Ea1Tv1(((-b/xm)*rmag+rmag+b)/rmag, rij);
-				neighbor.getPosition().PE(expandv);
-				exp++;
-			}
+			if(rmag<(0.9*0.9) || rmag<(b*b)){continue;}
+			if(rmag<(xm*xm)){expandList.add(neighbor.getParentGroup());}
+		}						
+		if(comments){System.out.print("  >> Expanding neighbors...");};
+		
+		//Expand atoms near vector expandv
+		for(int i=0; i<expandList.getMoleculeCount(); i++){
+			neighbor = expandList.getMolecule(i).getChildList().getAtom(0);
+			rij.Ev1Mv2(neighbor.getPosition(),expandv);
+			box.getBoundary().nearestImage(rij);
+			rmag = rij.squared();
+			rmag = Math.sqrt(rmag);
+			neighbor.getPosition().Ea1Tv1(((-b/xm)*rmag+rmag+b)/rmag, rij);
+			neighbor.getPosition().PE(expandv);
+			exp++;
 		}
+		
+		relaxede = true;
 		if(comments){System.out.print(exp+"expanded.\n");};
 	}
 	
@@ -1104,11 +1214,11 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
 		
 		if((e1-e0)<e0avg){
 		e0avg =(e1-e0);
+		System.out.println("e1-e0: "+e0avg);
 		average++;
 		}
 		
 		if (bfactor > 1.0 || random.nextDouble() < bfactor) {// Accepted
-			e0 = e1;
 			acc++;
 			return true;
 		} else {// Rejected
@@ -1137,19 +1247,18 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
     	// Simulation Steps
     	int steps = 10000;
     	// Atoms Numbers
-    	int tin = 1152;
-    	int silver = 1;
+    	int tin = 4788;
+    	int silver = 100;
     	// Box
     	Vector3D boxVector = new Vector3D(2.0*17.76305,2.0*17.550016608,2.0*54.62403960); 
     	// Temperature
     	double temp1 = 300;
     	// Lammps infile
-    	String infile = "in.agmeam";
+    	String infile = "in.gbmc";
         final String APP_NAME = "SimMCMoveSwapSpeciesGB";
         final SimMCMoveSwapSpeciesGB sim = new SimMCMoveSwapSpeciesGB(tin,silver,temp1,boxVector,infile);
         
-        sim.e0 = sim.getLammpsEnergy(2500,false,true);
-                
+        sim.e0 = sim.getLammpsEnergy(2000,false,true);
         
         /** // LENNARD JONES INSERTION
         sim.doLJgetParams();
@@ -1158,10 +1267,10 @@ public class SimMCMoveSwapSpeciesGB extends Simulation {
         **/
         
         // MEAM INSERSION - State 1 (100<->75/25, 75/25<->50/50, 50/50<->25/75, 25/75<->100)
-        sim.setParameters(0.0,0.0,new double[]{-0.25,0.0,0.0,-0.25});
+        sim.setParameters(0.0,0.0,new double[]{-1.9,0.0,0.0,1.9});
         
-        sim.setComments(true,true);
-        sim.doMC(2500);
+        sim.setComments(false,true);
+        sim.doMC(200000);
         
         System.out.println(sim.e0avg);
         
